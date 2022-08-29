@@ -1,0 +1,9 @@
+token.php
+secret.php
+db.php
+/json
+/temp
+/vendor
+cmd.lnk
+composer.lock
+botlog.txt

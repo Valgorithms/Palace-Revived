@@ -12,7 +12,7 @@ function webapiFail($part, $id) {
 }
 
 function webapiSnow($string) {
-    return preg_match('/^[0-9]{16,18}$/', $string);
+    return preg_match('/^[0-9]{16,20}$/', $string);
 }
 
 $socket = new \React\Socket\Server(sprintf('%s:%s', '0.0.0.0', '55555'), $tutelar->loop);

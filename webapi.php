@@ -40,9 +40,9 @@ $webapi = new \React\Http\Server($loop, function (\Psr\Http\Message\ServerReques
     $id3 = (isset($path[5]) ? (string) strtolower($path[5]) : false); if ($id3) $echo .= "/$id3";
     $id4 = (isset($path[6]) ? (string) strtolower($path[6]) : false); if ($id4) $echo .= "/$id4";
     $idarray = array(); //get from post data (NYI)
-    $tutelar->logger->info($echo);
+    //$tutelar->logger->info($echo);
     
-    if ($ip) $tutelar->logger->info('API IP ' . $ip);
+    //if ($ip) $tutelar->logger->info('API IP ' . $ip);
     $whitelist = ['127.0.0.1', $external_ip, $vzg_ip, $civ13_ip];
     $substr_whitelist = ['10.0.0.', '192.168.'];
     $whitelisted = false;
@@ -53,7 +53,7 @@ $webapi = new \React\Http\Server($loop, function (\Psr\Http\Message\ServerReques
 
     switch ($sub) {
         case (str_starts_with($sub, 'index.')):
-            return new \React\Http\Message\Response(301, ['Location' => "http://$vzg_ip:8080/?login", 'Connection' => 'Close'], ''); //Redirect to the website to log in
+            return new \React\Http\Message\Response(301, ['Location' => "https://$vzg_ip:8443/?login", 'Connection' => 'Close'], ''); //Redirect to the website to log in
 
         case 'github':
             return new \React\Http\Message\Response(301, ['Location' => 'https://github.com/VZGCoders/Palace-Revived', 'Connection' => 'Close'], ''); //Redirect to the github

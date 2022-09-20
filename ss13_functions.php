@@ -131,12 +131,18 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
             $builder->setAllowedMentions(['parse'=>[]]);
             $embed = new \Discord\Parts\Embed\Embed($tutelar->discord);
             $embed->setTitle('Suggestion ID: ' . $id);
-            $embed->setDescription('Suggestion submitted by: ' . $suggestion['user_id']);
+            $embed->setDescription('Suggestion submitted by: <@' . $suggestion['user_id'] . '>');
+            if ($user = $tutelar->discord->users->get('id', $suggestion['user_id'])) {
+                $embed->setAuthor($user->displayname, $user->avatar);
+                $embed->setThumbnail($user->avatar);
+            }
+            if (strlen($suggestion['content']) <= 1024) $embed->addFieldValues('Suggestion', $suggestion['content']);
+            else $builder->setContent($suggestion['content']);
             $embed->setTimestamp();
-            $builder->setContent($suggestion['content']);
             $builder->addEmbed($embed);
             $channel->sendMessage($builder)->done(function($message){$message->react("👍")->done(function($result)use($message){$message->react("👎");});});
             if ($m = $message->guild->channels->get('id' , $tutelar->discord_config[$message->guild_id]['channels']['suggestion_pending'])->messages->get('id', $suggestion['message_id'])) $m->delete(); 
+            else ($m = $message->guild->channels->get($tutelar->discord_config[$message->guild_id]['channels']['suggestion_pending'])->messages->fetch('id', $suggestion['message_id'])->done(function ($message) {$message->delete();}));
             $message->react("👍");
             return $tutelar->VarSave('suggestions.json', $tutelar->suggestions);
         }

@@ -21,7 +21,7 @@ $log_builder = function(\Tutelar\Tutelar $tutelar, $new, ?string $title = '', ?s
         $guild_id = $new->guild_id;
         $user = $new->user;
         if(in_array($title, ['Member Left', 'Member Joined'])) {
-            $embed->addFieldValues('Created', '<t:' . floor((int) $user->createdTimestamp()) . ':F>' );
+            $embed->addFieldValues('Created', '<t:' . floor((int) $user->createdTimestamp()) . ':F>');
             $embed->addFieldValues('Member Count', sizeof($new->guild->members));
             $array = [];
             foreach ($new->roles as $role) $array []= (string) $role;
@@ -54,7 +54,7 @@ $log_builder = function(\Tutelar\Tutelar $tutelar, $new, ?string $title = '', ?s
             if ($old->nick != $new->nick) $embed->addFieldValues('Nickname', "`{$old->nick}`→`{$new->nick}`" , true);
             if ($old->avatar != $new->avatar) $embed->addFieldValues('Avatar', "`{$old->avatar}`→`{$new->avatar}`" , true);
             if(in_array($title, ['Member Left', 'Member Joined'])) {
-                $embed->addFieldValues('Created', '');
+                $embed->addFieldValues('Created', '<t:' . floor((int) $user->createdTimestamp()) . ':F>');
                 $embed->addFieldValues('Member Count', sizeof($new->guild->members));
             }
             if ($new->roles != $old->roles) {

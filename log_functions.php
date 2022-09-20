@@ -44,7 +44,12 @@ $log_builder = function(\Tutelar\Tutelar $tutelar, $new, ?string $title = '', ?s
     //Embed changes
     if ($old) {
         if (str_contains(get_class($old), 'Message')) {
-            if ($new->content != $old->content) $builder->addFileFromContent('message_content_old.txt', $old->content);
+            if ($new->content != $old->content) {
+                if (strlen($old->content) <= 1024) $embed->addFieldValues('Old', $old->content);
+                else $builder->addFileFromContent('message_content_old.txt', $old->content);
+                if (strlen($new->content) <= 1024) $embed->addFieldValues('New', $new->content);
+                else $builder->addFileFromContent('message_content_new.txt', $new->content);
+            }
         } elseif ($old instanceof \Discord\Parts\User\Member) {
             if ($old->nick != $new->nick) $embed->addFieldValues('Nickname', "`{$old->nick}`→`{$new->nick}`" , true);
             if ($old->avatar != $new->avatar) $embed->addFieldValues('Avatar', "`{$old->avatar}`→`{$new->avatar}`" , true);

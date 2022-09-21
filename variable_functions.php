@@ -282,7 +282,6 @@ $owner_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_
 };
 $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower)
 {
-    echo '[MANAGER_MESSAGE] ' . $message_content_lower . PHP_EOL;
     if(str_starts_with($message_content_lower, 'reset')) {
         $message_content = trim(substr($message_content, strlen('reset')));
         $message_content_lower = strtolower($message_content);
@@ -491,7 +490,6 @@ $debug_guild_message = function (\Tutelar\Tutelar $tutelar, $message, string $me
 };
 $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($perm_check, $debug_guild_message, $owner_message, $manager_message, $admin_message, $moderator_message)
 {
-    echo '[GUILD MESSAGE]' . PHP_EOL;
     if($message->user_id == $tutelar->owner_id) {
         $debug_guild_message($tutelar, $message, $message_content, $message_content_lower);
         $owner_message($tutelar, $message, $message_content, $message_content_lower);

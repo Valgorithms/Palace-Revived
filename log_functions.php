@@ -84,15 +84,17 @@ $log_builder = function(\Tutelar\Tutelar $tutelar, $new, ?string $title = '', ?s
 
 $log_message = function (\Tutelar\Tutelar $tutelar, $message) use ($log_builder)
 {
+    return; //We have no reason to log anything for new messages right now
     if ($message->user_id == $tutelar->discord->id) return; // Ignore messages sent by this bot
     if ($message->webhook_id) return; // Ignore messages sent by webhooks
-    return; //We have no reason to log anything for new messages right now
+    if (isset($message->user) && $message->user->bot) return; //Don't log messages made by bots
 };
 
 $log_MESSAGE_UPDATE = function (\Tutelar\Tutelar $tutelar, $message, $message_old = null) use ($log_builder)
 {
     if ($message->user_id == $tutelar->discord->id) return; // Ignore messages sent by this bot
     if ($message->webhook_id) return; // Ignore messages sent by webhooks
+    if (isset($message->user) && $message->user->bot) return; //Don't log messages made by bots
     if ($message->guild_id && $channel = $tutelar->discord->getChannel($tutelar->discord_config[$message->guild_id]['channels']['log'])) {
         $builder = $log_builder($tutelar, $message, 'Message Updated', null, $message_old);
         $channel->sendMessage($builder)->done(
@@ -108,7 +110,9 @@ $log_MESSAGE_UPDATE = function (\Tutelar\Tutelar $tutelar, $message, $message_ol
 $log_MESSAGE_DELETE = function (\Tutelar\Tutelar $tutelar, $message) use ($log_builder)
 {
     if ($message->user_id == $tutelar->discord->id) return; // Ignore messages sent by this bot
+    if ($message->webhook_id) return; // Ignore messages sent by webhooks
     if ($message->channel_id == $tutelar->discord_config[$message->guild_id]['channels']['log']) return; //Don't log deleted logs
+    if (isset($message->user) && $message->user->bot) return; //Don't log messages made by bots
     if ($message->guild_id && $channel = $tutelar->discord->getChannel($tutelar->discord_config[$message->guild_id]['channels']['log'])) {
         $builder = $log_builder($tutelar, $message, 'Message Deleted');
         $channel->sendMessage($builder)->done(
@@ -129,7 +133,7 @@ $log_MESSAGE_DELETE_BULK = function (\Tutelar\Tutelar $tutelar, $messages) use (
 $log_GUILD_MEMBER_ADD = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\Member $member) use ($log_builder)
 {
     if ($channel = $tutelar->discord->getChannel($tutelar->discord_config[$member->guild_id]['channels']['welcomelog'] ?? $tutelar->discord_config[$member->guild_id]['channels']['log'])) {
-        $builder = $log_builder($tutelar, $message, 'Message Joined', $member);
+        $builder = $log_builder($tutelar, $member, 'Message Joined', $member);
         $channel->sendMessage($builder)->done(
             function ($message) use ($tutelar, $member) {
                 $tutelar->logger->info('Logged added member: ' . $member->id);

@@ -406,7 +406,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
             preg_match('/<#([0-9]*)>/', $message_content_lower, $matches);
             if (!isset($matches[1]) || !$message->guild->channels->get('id', $matches[1])) return $message->reply('Channel not found! Please mention the channel in the format of <#channel_id>');
             $message_content_lower = trim(substr($message_content_lower, strlen($matches[0])));
-            if (is_null($tutelar->discord_config[$message->guild_id]['channels'][$message_content_lower])) return $message->reply('Invalid channel configuration `' . $message_content_lower . '`! Valid options are ' . implode(', ', array_keys($tutelar->discord_config[$message->guild_id]['channels'])));
+            if (!isset($tutelar->discord_config[$message->guild_id]['channels'][$message_content_lower])) return $message->reply('Invalid channel configuration `' . $message_content_lower . '`! Valid options are ' . implode(', ', array_keys($tutelar->discord_config[$message->guild_id]['channels'])));
             $tutelar->discord_config[$message->guild_id]['channels'][$message_content_lower] = $matches[1];
             $tutelar->logger->info('Updated ' . $message_content_lower . ' channel id ' . $matches[1]);
             $message->react("👍");

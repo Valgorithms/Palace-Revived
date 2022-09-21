@@ -1020,8 +1020,8 @@ class Tutelar
         if($reaction->message_id == $array['id']) foreach($array['roles'] as $k => $v) {
             if (!isset($v['emoji'])) continue;
             if ($reaction->emoji == $v['emoji']) {
-                if (! $reaction->member->roles->get('name', $v['name']) ?? $reaction->member->roles->get('id', $v['id']))
-                if (! $role = $reaction->guild->roles->get('name', $v['name']) ?? $reaction->guild->roles->get('id', $v['id'])) return $this->logger->warning('Unable to get configured role from server! ' . $v['name'] . ' : ' . $v['id']);
+                if ($reaction->member->roles->get('name', $v['name']) ?? $reaction->member->roles->get('id', $v['id'])) return;
+                if (! $role = ($reaction->guild->roles->get('name', $v['name']) ?? $reaction->guild->roles->get('id', $v['id']))) return $this->logger->warning('Unable to get configured role from server! ' . $v['name'] . ' : ' . $v['id']);
                 $reaction->member->addRole($role->id);
                 $reaction->channel->sendMessage($reaction->user . ' added the `' . $role->name . '` role!')->done(function ($message) {
                     $this->discord->getLoop()->addTimer(10, function () use ($message) {

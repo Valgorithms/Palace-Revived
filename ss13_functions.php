@@ -164,10 +164,13 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
             ];
             $builder = new \Discord\Builders\MessageBuilder();
             $embed = new \Discord\Parts\Embed\Embed($tutelar->discord);
+            $embed->setAuthor($message->author->displayname, $message->author->avatar);
+            $embed->setThumbnail($message->author->avatar);
             $embed->setTitle('Suggestion ID: ' . $message->id);
             $embed->setDescription('Suggestion submitted by: ' . $message->author);
             $embed->setTimestamp();
-            $builder->addFileFromContent('suggestion.txt', $message_content);
+            if (strlen($message_content) <= 1024) $embed->addFieldValues('Suggestion', $message_content);
+            else $builder->setContent($message_content);
             $builder->addEmbed($embed);
             $channel->sendMessage($builder)->done(function($new_message) use ($tutelar, $message) {
                 $tutelar->suggestions[$message->guild_id]['pending'][$message->id]['message_id'] = $new_message->id;

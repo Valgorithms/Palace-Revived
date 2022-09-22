@@ -51,12 +51,9 @@ $log_builder = function(\Tutelar\Tutelar $tutelar, $new, ?string $title = '', ?s
                 else $builder->addFileFromContent('message_content_new.txt', $new->content);
             }
         } elseif ($old instanceof \Discord\Parts\User\Member) {
+            if ($old->username != $new->username) $embed->addFieldValues('Username', "`{$old->username}`→`{$new->username}`" , true);
             if ($old->nick != $new->nick) $embed->addFieldValues('Nickname', "`{$old->nick}`→`{$new->nick}`" , true);
             if ($old->avatar != $new->avatar) $embed->addFieldValues('Avatar', "`{$old->avatar}`→`{$new->avatar}`" , true);
-            if(in_array($title, ['Member Left', 'Member Joined'])) {
-                $embed->addFieldValues('Created', '<t:' . floor((int) $user->createdTimestamp()) . ':F>');
-                $embed->addFieldValues('Member Count', sizeof($new->guild->members));
-            }
             if ($new->roles != $old->roles) {
                 $new_role_names = [];
                 $old_role_names = [];
@@ -71,7 +68,7 @@ $log_builder = function(\Tutelar\Tutelar $tutelar, $new, ?string $title = '', ?s
             //
         }
     }
-    
+    if (in_array($title, ['Member Updated', 'Message Deleted']) && sizeof($embed->fields)<1) return; //Don't push empty changes
     //Template embed elements
     if ($title) $embed->setTitle($title);
     if ($desc) $embed->setDescription($desc);
@@ -109,8 +106,10 @@ $log_MESSAGE_UPDATE = function (\Tutelar\Tutelar $tutelar, $message, $message_ol
 
 $log_MESSAGE_DELETE = function (\Tutelar\Tutelar $tutelar, $message) use ($log_builder)
 {
-    if ($message->user_id == $tutelar->discord->id) return; // Ignore messages sent by this bot
-    if ($message->webhook_id) return; // Ignore messages sent by webhooks
+    if (! $message instanceof stdClass) {
+        if ($message->user_id == $tutelar->discord->id) return; // Ignore messages sent by this bot
+        if ($message->webhook_id) return; // Ignore messages sent by webhooks
+    }
     if ($message->channel_id == $tutelar->discord_config[$message->guild_id]['channels']['log']) return; //Don't log deleted logs
     if (isset($message->user) && $message->user->bot) return; //Don't log messages made by bots
     if ($message->guild_id && $channel = $tutelar->discord->getChannel($tutelar->discord_config[$message->guild_id]['channels']['log'])) {
@@ -133,7 +132,7 @@ $log_MESSAGE_DELETE_BULK = function (\Tutelar\Tutelar $tutelar, $messages) use (
 $log_GUILD_MEMBER_ADD = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\Member $member) use ($log_builder)
 {
     if ($channel = $tutelar->discord->getChannel($tutelar->discord_config[$member->guild_id]['channels']['welcomelog'] ?? $tutelar->discord_config[$member->guild_id]['channels']['log'])) {
-        $builder = $log_builder($tutelar, $member, 'Message Joined', $member);
+        $builder = $log_builder($tutelar, $member, 'Member Joined', $member);
         $channel->sendMessage($builder)->done(
             function ($message) use ($tutelar, $member) {
                 $tutelar->logger->info('Logged added member: ' . $member->id);
@@ -161,7 +160,7 @@ $log_GUILD_MEMBER_REMOVE = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\U
 $log_GUILD_MEMBER_UPDATE = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\Member $member, ?\Discord\Parts\User\Member $member_old = null) use ($log_builder)
 {
     if ($channel = $tutelar->discord->getChannel($tutelar->discord_config[$member->guild_id]['channels']['log'])) {
-        $builder = $log_builder($tutelar, $member, 'Member Updated', $member, $member_old);
+        if ($builder = $log_builder($tutelar, $member, 'Member Updated', $member, $member_old))
         $channel->sendMessage($builder)->done(
             function ($message) use ($tutelar, $member) {
                 $tutelar->logger->info('Logged updated member: ' . $member->id);

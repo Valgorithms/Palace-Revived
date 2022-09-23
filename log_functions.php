@@ -89,6 +89,7 @@ $log_message = function (\Tutelar\Tutelar $tutelar, $message) use ($log_builder)
 
 $log_MESSAGE_UPDATE = function (\Tutelar\Tutelar $tutelar, $message, $message_old = null) use ($log_builder)
 {
+    if (is_null($message) || is_null($message->author) || is_null($message->edited_timestamp)) return;
     if ($message->user_id == $tutelar->discord->id) return; // Ignore messages sent by this bot
     if ($message->webhook_id) return; // Ignore messages sent by webhooks
     if (isset($message->user) && $message->user->bot) return; //Don't log messages made by bots

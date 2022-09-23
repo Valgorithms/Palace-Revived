@@ -23,6 +23,7 @@ class Tutelar
     public $filecache_prefix = '';
     
     protected $webapi;
+    protected $webauth;
     
     public $timers = [];
     
@@ -172,6 +173,16 @@ class Tutelar
     {
         $this->logger->info('Shutting down');
         if((isset($this->discord))) $this->discord->stop();
+    }
+    
+    public function setWebAPI($webapi): void
+    {
+        $this->webapi = $webapi;
+    }
+    
+    public function setWebAuth($webauth): void //NYI
+    {
+        $this->webauth = $webauth;
     }
     
     /*

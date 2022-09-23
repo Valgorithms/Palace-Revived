@@ -7,3 +7,4 @@ db.php
 cmd.lnk
 composer.lock
 botlog.txt
+webauth.php

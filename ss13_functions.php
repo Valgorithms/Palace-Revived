@@ -131,7 +131,7 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
             $builder->setAllowedMentions(['parse'=>[]]);
             $embed = new \Discord\Parts\Embed\Embed($tutelar->discord);
             $embed->setTitle('Suggestion ID: ' . $id);
-            $embed->setDescription('Suggestion submitted by: <@' . $suggestion['user_id'] . '>');
+            $embed->setDescription('Suggestion submitted by: <@' . $suggestion['user_id'] . '>' . PHP_EOL . 'Suggestion approved by: ' . $message->author);
             if ($user = $tutelar->discord->users->get('id', $suggestion['user_id'])) {
                 $embed->setAuthor($user->displayname, $user->avatar);
                 $embed->setThumbnail($user->avatar);

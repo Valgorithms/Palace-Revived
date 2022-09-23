@@ -253,5 +253,5 @@ if (include 'verifier_functions.php') {
 
 include 'tutelar.php';
 $tutelar = new Tutelar\Tutelar($options);
-include 'webapi.php'; //$socket, $webapi, webapiFail(), webapiSnow();
+if (include 'webapi.php') $tutelar->setWebAPI($webapi); //$socket, $webapi, $external_ip, webapiFail(), webapiSnow()
 $tutelar->run();

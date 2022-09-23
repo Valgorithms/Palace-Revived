@@ -18,6 +18,7 @@ function webapiSnow($string) {
 $external_ip = file_get_contents("http://ipecho.net/plain");
 $vzg_ip = gethostbyname('www.valzargaming.com');
 $civ13_ip = gethostbyname('www.civ13.com');
+
 $socket = new \React\Socket\Server(sprintf('%s:%s', '0.0.0.0', '55557'), $tutelar->loop);
 $webapi = new \React\Http\Server($loop, function (\Psr\Http\Message\ServerRequestInterface $request) use ($tutelar, $socket, $external_ip, $vzg_ip, $civ13_ip)
 {

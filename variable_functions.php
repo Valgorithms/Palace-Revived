@@ -92,7 +92,7 @@ $slash_init = function (\Tutelar\Tutelar $tutelar)
         $server_index[3] = 'Blue Colony';
         $server_url[3] = $servers['Blue Colony'];
         //$server_index[4] = "Kepler Station CC13" . PHP_EOL;
-        //$server_url[4] = "byond://73.200.62.219:7778";
+        //$server_url[4] = "byond://69.244.83.231:7778";
         
         $server_state_dump = array(); // new assoc array for use with the embed
         foreach ($server_index as $index => $servername){ //This is stupid. The arrays above need to be rewritten as assoc $servers and the methods below need to change as such.
@@ -204,7 +204,7 @@ $on_ready = function (\Tutelar\Tutelar $tutelar) use ($slash_init)
 $set_ips = function (\Tutelar\Tutelar $tutelar)
 {
     $civ_ip = gethostbyname('www.civ13.com') ?? '51.254.161.128';
-    $external_ip = file_get_contents('http://ipecho.net/plain') ?? '73.200.62.219';
+    $external_ip = file_get_contents('http://ipecho.net/plain') ?? '69.244.83.231';
     $tutelar->ips = [
         'nomads' => $civ_ip,
         'tdm' => $civ_ip,
@@ -608,7 +608,7 @@ $browser_get = function (\Tutelar\Tutelar $tutelar, string $url, array $headers 
 
 $browser_post = function (\Tutelar\Tutelar $tutelar, string $url, array $headers = ['Content-Type' => 'application/x-www-form-urlencoded'], array $data = [], bool $curl = true)
 {
-    //Send a POST request to 73.200.62.219:8081/discord2ckey/ with POST['id'] = $id
+    //Send a POST request to 69.244.83.231:8081/discord2ckey/ with POST['id'] = $id
     if( ! $curl && $browser = $tutelar->browser) return $browser->post($url, $headers, http_build_query($data));
 
     $ch = curl_init(); //create curl resource

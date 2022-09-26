@@ -482,6 +482,11 @@ $moderator_message = function (\Tutelar\Tutelar $tutelar, $message, string $mess
         }
         return $message->react("🤐");
     }
+    if(str_starts_with($message_content_lower, 'clear')) {
+        $message_content = trim(substr($message_content, strlen('clear')));
+        if (! $message_content) return $message->channel->limitDelete(100);
+        if(is_numeric($message_content)) return $message->channel->limitDelete($message_content);
+    }
     //if (str_starts_with($message_content_lower, 'tip approve ')) {
 };
 $debug_guild_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower)

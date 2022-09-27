@@ -538,7 +538,7 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
         return;
     }
     if($message->guild->owner_id == $message->user_id) $owner_message($tutelar, $message, $message_content, $message_content_lower);    
-    if($perm_check($tutelar->discord, ['administrator', 'manage_server'], $message->member)) $manager_message($tutelar, $message, $message_content, $message_content_lower);
+    if($perm_check($tutelar->discord, ['administrator', 'manage_guild'], $message->member)) $manager_message($tutelar, $message, $message_content, $message_content_lower);
     if($perm_check($tutelar->discord, ['administrator', 'ban_members'], $message->member)) $admin_message($tutelar, $message, $message_content, $message_content_lower);
     if($perm_check($tutelar->discord, ['administrator', 'moderate_members'], $message->member)) $moderator_message($tutelar, $message, $message_content, $message_content_lower);
 };
@@ -549,7 +549,32 @@ $guild_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_
 
 $any_debug_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower)
 {
-    //
+    if ($message_content_lower == 'guilds') {
+        $string = '';
+        foreach ($tutelar->discord->guilds as $guild) $string .= "{$guild->name} ({$guild->id}) [{$guild->member_count}]" . PHP_EOL;
+        return $message->reply($string);
+    }
+    if (str_starts_with($message_content_lower, 'guild leave ')) {
+        $tutelar->discord->guilds->get('id', explode(' ', str_replace('guild leave ', "", $message_content_lower))[0])->leave()->done(
+            function ($result) use ($message) { $message->react("👍"); },
+            function ($error) use ($message) { $message->react("👎"); }
+        );
+    }
+    if (str_starts_with($message_content_lower, 'guild invite ')) {
+        if (!is_numeric($id = explode(' ', str_replace('guild invite ', "", $message_content_lower))[0])) return $message->react("👎");
+        if (!$guild = $tutelar->discord->guilds->get('id', $id)) return $message->react("👎");
+        if ($guild->vanity_url_code) return $message->channel->sendMessage("{$guild->name} ({$guild->id}) https://discord.gg/{$guild->vanity_url_code}");
+        if (!$bot_member = $guild->members->get('id', $tutelar->discord->id) || ! $perm_check($tutelar->discord, ['administrator', 'manage_guild'], $guild->members->get('id', $tutelar->discord->id))) return;
+        foreach ($guild->invites as $invite) if ($invite->code) return $message->channel->sendMessage("{$guild->name} ({$guild->id}) https://discord.gg/{$invite->code}");
+        
+        foreach ($guild->channels as $channel) if($channel->type != 4) return $channel->createInvite([
+            'max_age' => 60, // 1 minute
+            'max_uses' => 1, // 1 use
+        ])->done(
+            function ($invite) use ($message, $guild) { $message->reply("{$guild->name} ({$guild->id}) https://discord.gg/{$invite->code}"); },
+            function ($error) use ($message, $guild) { $message->react("❌"); }
+        );
+    }
 };
 $any_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($any_debug_message)
 {

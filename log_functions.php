@@ -53,6 +53,10 @@ $log_builder = function(\Tutelar\Tutelar $tutelar, $new, ?string $title = '', ?s
     if ($old) {
         if (str_contains(get_class($old), 'Message')) {
             if ($new->content != $old->content) {
+                if ($new->referenced_message) {
+                    if (strlen($new->referenced_message->content) <= 1024) $embed->addFieldValues('Replied to message content', $new->referenced_message->content);
+                    else $builder->addFileFromContent('replied_message.txt', $new->referenced_message->content);
+                }
                 if (strlen($old->content) <= 1024) $embed->addFieldValues('Old', $old->content);
                 else $builder->addFileFromContent('message_content_old.txt', $old->content);
                 if (strlen($new->content) <= 1024) $embed->addFieldValues('New', $new->content);

@@ -518,15 +518,13 @@ $whois = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\User $user, $g
 $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($whois, $perm_check, $debug_guild_message, $owner_message, $manager_message, $admin_message, $moderator_message)
 {
     if (str_starts_with($message_content_lower, 'whois')) {
-        $message_content = trim(substr($message_content, strlen('whois')));
-        $mention = \GetMentions($message_content)[0];
-        if (is_numeric($mention)) {
-            if ($member	= $message->guild->members->get('id', $mention)) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
-            $discord->users->fetch($mention)->done(
-                function ($user) use ($tutelar, $message) { $message->channel->sendMessage($whois($tutelar, $user, $message->guild_id)); },
-                function ($error) use ($message) { $message->react("👎"); }
-            );
-        }
+        if (is_numeric($message_content = trim(substr($message_content, strlen('whois')))) && $member = $message->guild->members->get('id', $message_content)) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
+        if (! is_numeric($mention = \GetMentions($message_content)[0])) return $message->react("👎");
+        if ($member = $message->guild->members->get('id', $mention)) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
+        $discord->users->fetch($mention)->done(
+            function ($user) use ($tutelar, $message) { $message->channel->sendMessage($whois($tutelar, $user, $message->guild_id)); },
+            function ($error) use ($message) { $message->react("👎"); }
+        );
     }
     
     if($message->user_id == $tutelar->owner_id) {

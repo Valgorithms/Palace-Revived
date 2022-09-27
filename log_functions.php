@@ -16,6 +16,14 @@ $log_builder = function(\Tutelar\Tutelar $tutelar, $new, ?string $title = '', ?s
         if ($new->referenced_message) $embed->addFieldValues('Reply To', "[Link]({$new->referenced_message->getLinkAttribute()})", true);
         if ($new->getLinkAttribute()) $embed->addFieldValues('Channel', $new->channel, true);
         if ($new->getLinkAttribute()) $embed->addFieldValues('Message ID', $new->id, true);
+        if ($title == 'Message Deleted') {
+            if ($new->referenced_message) {
+                if (strlen($new->referenced_message->content) <= 1024) $embed->addFieldValues('Replied to message content', $new->referenced_message->content);
+                else $builder->addFileFromContent('replied_message.txt', $new->referenced_message->content);
+            }
+            if (strlen($new->content) <= 1024) $embed->addFieldValues('Deleted message content', $new->content);
+            else $builder->addFileFromContent('deleted_message.txt', $new->content);
+        }
         //if ($new->content) $builder->addFileFromContent('message_content.txt', $new->content);
     } elseif ($new instanceof \Discord\Parts\User\Member) {
         $guild_id = $new->guild_id;
@@ -68,7 +76,8 @@ $log_builder = function(\Tutelar\Tutelar $tutelar, $new, ?string $title = '', ?s
             //
         }
     }
-    if (in_array($title, ['Member Updated', 'Message Deleted']) && sizeof($embed->fields)<1) return; //Don't push empty changes
+    if ($title == 'Member Updated' && sizeof($embed->fields)<1) return; //Don't log empty changes
+    if ($title == 'Message Deleted' && sizeof($embed->fields)<3) return; //Don't log uncached changes
     //Template embed elements
     if ($title) $embed->setTitle($title);
     if ($desc) $embed->setDescription($desc);

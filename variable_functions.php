@@ -499,7 +499,7 @@ $debug_guild_message = function (\Tutelar\Tutelar $tutelar, $message, string $me
 $whois = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\User $user, $guild_id = null)
 {
     $servers = [];
-    foreach ($tutelar->discord->guilds as $guild) if ($member = $guild->members->filter(fn ($m) => $m->id == $user->id)) $servers[] = $guild->name;
+    foreach ($tutelar->discord->guilds as $guild) if ($member = $guild->members->find(fn ($m) => $m->id == $user->id)) $servers[] = $member->guild->name;
     $embed = new \Discord\Parts\Embed\Embed($tutelar->discord);
     $embed
         ->setTitle("{$user->displayname} ({$user->id})")
@@ -510,7 +510,7 @@ $whois = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\User $user, $g
         ->setTimestamp()
         ->setFooter($tutelar->discord->username . ' by Valithor#5947')
         ->setURL("");
-    if ($guild_id && $member = $tutelar->discord->guilds->get('id', $guild_id)->members->get('id', $user->id)) $embed->addFieldValues("Joined", '<t:' . floor($member->joined_at->timestamp) . ':R>', true);
+    if ($guild_id && $member = $tutelar->discord->guilds->get('id', $guild_id)->members->get('id', $user->id)) $embed->addFieldValues('Joined', '<t:' . floor($member->joined_at->timestamp) . ':R>', true);
     if (!empty($servers)) $embed->addFieldValues('Shared Servers', implode(PHP_EOL, $servers));
     return $embed;
 };

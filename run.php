@@ -46,20 +46,21 @@ $twitch_options = array(
 	'secret' => $secret, // Client secret
 	'nick' => $nick, 
 	'channels' => [
-		strtolower($nick), // Your channel
-		'smalltowngamingtv', // (Optional) Additional channels
-		'rattlesire',
-		'shrineplays',
-		'violentvixen_',
-		'linkdrako',
-		'ebonychimera',
+        strtolower($nick), // Your channel
+        //'smalltowngamingtv', // (Optional) Additional channels
+        //'rattlesire',
+        //'shrineplays',
+        //'violentvixen_',
+        //'linkdrako',
+        //'ebonychimera',
+		'shriekingechodanica', // (Optional) Additional channels
 	],
 	
 	//Optional
 	'discord' => $discord, // Pass your own instance of DiscordPHP (https://github.com/discord-php/DiscordPHP)	
 	'discord_output' => true, // Output Twitch chat to a Discord server
-	'guild_id' => '923969098185068594', //ID of the Discord server
-	'channel_id' => '924019611534503996', //ID of the Discord channel to output messages to
+	'guild_id' => '999053951670423643', //ID of the Discord server
+	'channel_id' => '1014429625826414642', //ID of the Discord channel to output messages to
 	
 	'loop' => $loop, // Pass your own instance of $loop to share with other ReactPHP applications
 	'socket_options' => [
@@ -75,14 +76,15 @@ $twitch_options = array(
 		';',
 	],
 	'whitelist' => [ // Users who are allowed to use restricted functions
-		strtolower($nick), //Your channel
-		'smalltowngamingtv',
-		'rattlesire',
-		'shrineplays',
-		'violentvixen_',
-		'linkdrako',
-		'ebonychimera',
-	],
+        strtolower($nick), //Your channel
+        //'smalltowngamingtv',
+        //'rattlesire',
+        //'shrineplays',
+        //'violentvixen_',
+        //'linkdrako',
+        //'ebonychimera',
+        'shriekingechodanica',
+    ],
 	'badwords' => [ // List of blacklisted words or phrases in their entirety; User will be immediately banned with reason 'badword' if spoken in chat
 		'Buy followers, primes and viewers',
 		'bigfollows . com',

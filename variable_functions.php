@@ -487,14 +487,48 @@ $moderator_message = function (\Tutelar\Tutelar $tutelar, $message, string $mess
         if (! $message_content) return $message->channel->limitDelete(100);
         if(is_numeric($message_content)) return $message->channel->limitDelete($message_content);
     }
-    //if (str_starts_with($message_content_lower, 'tip approve ')) {
+    //TwitchPHP
+    if (str_starts_with($message_content_lower, 'join #')) return $tutelar->twitch->joinChannel(explode(' ', str_replace('join #', "", $message_content_lower))[0]);
+	if (str_starts_with($message_content_lower, 'leave #')) return $tutelar->twitch->leaveChannel(explode(' ', str_replace('leave #', "", $message_content_lower))[0]);
 };
 $debug_guild_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower)
 {
   if($message_content_lower == 'save') return $tutelar->saveConfig() ? $message->react("👍") : $message->react("👎");
 };
-$guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($perm_check, $debug_guild_message, $owner_message, $manager_message, $admin_message, $moderator_message)
+
+$whois = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\User $user, $guild_id = null)
 {
+    $servers = [];
+    foreach ($tutelar->discord->guilds as $guild) if ($member = $guild->members->filter(fn ($m) => $m->id == $user->id)) $servers[] = $guild->name;
+    $embed = new \Discord\Parts\Embed\Embed($tutelar->discord);
+    $embed
+        ->setTitle("{$user->displayname} ({$user->id})")
+        ->setColor(0xe1452d)
+        ->addFieldValues("Avatar", "[Link]({$user->avatar})", true)
+        ->addFieldValues("Account Created", '<t:' . floor($user->createdTimestamp()) . ':R>', true)
+        ->setThumbnail($user->avatar)
+        ->setTimestamp()
+        ->setFooter($tutelar->discord->username . ' by Valithor#5947')
+        ->setURL("");
+    if ($guild_id && $member = $tutelar->discord->guilds->get('id', $guild_id)->members->get('id', $user->id)) $embed->addFieldValues("Joined", '<t:' . floor($member->joined_at->timestamp) . ':R>', true);
+    if (!empty($servers)) $embed->addFieldValues('Shared Servers', implode(PHP_EOL, $servers));
+    return $embed;
+};
+
+$guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($whois, $perm_check, $debug_guild_message, $owner_message, $manager_message, $admin_message, $moderator_message)
+{
+    if (str_starts_with($message_content_lower, 'whois')) {
+        $message_content = trim(substr($message_content, strlen('whois')));
+        $mention = \GetMentions($message_content)[0];
+        if (is_numeric($mention)) {
+            if ($member	= $message->guild->members->get('id', $mention)) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
+            $discord->users->fetch($mention)->done(
+                function ($user) use ($tutelar, $message) { $message->channel->sendMessage($whois($tutelar, $user, $message->guild_id)); },
+                function ($error) use ($message) { $message->react("👎"); }
+            );
+        }
+    }
+    
     if($message->user_id == $tutelar->owner_id) {
         $debug_guild_message($tutelar, $message, $message_content, $message_content_lower);
         $owner_message($tutelar, $message, $message_content, $message_content_lower);

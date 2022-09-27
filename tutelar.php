@@ -167,6 +167,9 @@ class Tutelar
         $this->logger->info('Starting Discord loop');
         if(!(isset($this->discord))) $this->logger->warning('Discord not set!');
         else $this->discord->run();
+        $this->logger->info('Starting Twitch loop');
+        if(!(isset($this->twitch))) $this->logger->warning('Twitch not set!');
+		else $this->twitch->run();
     }
     
     public function stop(): void

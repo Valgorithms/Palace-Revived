@@ -12,8 +12,8 @@ $log_builder = function(\Tutelar\Tutelar $tutelar, $new, ?string $title = '', ?s
     if (str_contains(get_class($new), 'Message')) {
         $guild_id = $new->guild_id;
         $user = $new->author;
-        if ($new->getLinkAttribute()) $embed->addFieldValues('Link', $new->getLinkAttribute(), true);
-        if ($new->referenced_message) $embed->addFieldValues('Reply To', $new->referenced_message->getLinkAttribute(), true);
+        if ($new->getLinkAttribute()) $embed->addFieldValues('Message', "[Link]({$new->getLinkAttribute()})", true);
+        if ($new->referenced_message) $embed->addFieldValues('Reply To', "[Link]({$new->referenced_message->getLinkAttribute()})", true);
         if ($new->getLinkAttribute()) $embed->addFieldValues('Channel', $new->channel, true);
         if ($new->getLinkAttribute()) $embed->addFieldValues('Message ID', $new->id, true);
         //if ($new->content) $builder->addFileFromContent('message_content.txt', $new->content);

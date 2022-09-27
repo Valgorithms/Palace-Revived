@@ -138,6 +138,7 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
             }
             if (strlen($suggestion['content']) <= 1024) $embed->addFieldValues('Suggestion', $suggestion['content']);
             else $builder->setContent($suggestion['content']);
+            if (isset($tutelar->owner_id) && $owner = $tutelar->discord->users->get('id', $tutelar->owner_id)) $embed->setFooter(($tutelar->github ?  "{$tutelar->github}" . PHP_EOL : '') . "{$tutelar->discord->username} by {$owner->displayname}");
             $embed->setTimestamp();
             $builder->addEmbed($embed);
             $channel->sendMessage($builder)->done(function($message){$message->react("👍")->done(function($result)use($message){$message->react("👎");});});
@@ -168,6 +169,7 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
             $embed->setThumbnail($message->author->avatar);
             $embed->setTitle('Suggestion ID: ' . $message->id);
             $embed->setDescription('Suggestion submitted by: ' . $message->author);
+            if (isset($tutelar->owner_id) && $owner = $tutelar->discord->users->get('id', $tutelar->owner_id)) $embed->setFooter(($tutelar->github ?  "{$tutelar->github}" . PHP_EOL : '') . "{$tutelar->discord->username} by {$owner->displayname}");
             $embed->setTimestamp();
             if (strlen($message_content) <= 1024) $embed->addFieldValues('Suggestion', $message_content);
             else $builder->setContent($message_content);

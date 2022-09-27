@@ -84,7 +84,6 @@ class Stats
             ->addFieldValues('Channel count', $this->getChannelCount())
             ->addFieldValues('User count', $this->discord->users->count())
             ->addFieldValues('Memory usage', $this->getMemoryUsageFriendly());
-
         $message->channel->sendEmbed($embed);
     }
 

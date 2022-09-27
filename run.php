@@ -154,7 +154,9 @@ $options = array(
     //Configurations
     'command_symbol' => '!s',
     'owner_id' => '116927250145869826', //Valithor#5947
-    'tutelar_guild_id' => '923969098185068594', //ValZarGaming
+    'owner_guild_id' => '923969098185068594', //ValZarGaming
+    'github' => 'https://github.com/VZGCoders/Palace-Revived',
+    
     'files' => [
         'statuslist' => getcwd() . '\status.txt',
         'serverinfo' => 'V:\WinNMP2021\WWW\vzg.project\servers\serverinfo.json'

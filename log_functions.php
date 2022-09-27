@@ -85,7 +85,7 @@ $log_builder = function(\Tutelar\Tutelar $tutelar, $new, ?string $title = '', ?s
     //Template embed elements
     if ($title) $embed->setTitle($title);
     if ($desc) $embed->setDescription($desc);
-    if ($guild_id != '115233111977099271') $embed->setFooter($tutelar->discord->username . ' by Valithor#5947'); //The DiscordPHP server doesn't need to include a footer on embeds
+    if ($guild_id != '115233111977099271' && isset($tutelar->owner_id) && $owner = $tutelar->discord->users->get('id', $tutelar->owner_id)) $embed->setFooter(($tutelar->github ?  "{$tutelar->github}" . PHP_EOL : '') . "{$tutelar->discord->username} by {$owner->displayname}");//The DiscordPHP server doesn't need to include a footer on embeds
     $embed->setColor($color);
     $embed->setTimestamp();
     $builder->addEmbed($embed);

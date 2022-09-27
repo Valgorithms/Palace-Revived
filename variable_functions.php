@@ -177,10 +177,10 @@ $slash_init = function (\Tutelar\Tutelar $tutelar)
             }
         }
         //Finalize the embed
+        if (isset($tutelar->owner_id) && $owner = $tutelar->discord->users->get('id', $tutelar->owner_id)) $embed->setFooter(($tutelar->github ?  "{$tutelar->github}" . PHP_EOL : '') . "{$tutelar->discord->username} by {$owner->displayname}");
         $embed
             ->setColor(0xe1452d)
             ->setTimestamp()
-            ->setFooter($tutelar->discord->usernamename . ' by Valithor#5947')
             ->setURL("");
         
         $message = Discord\Builders\MessageBuilder::new()
@@ -508,8 +508,8 @@ $whois = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\User $user, $g
         ->addFieldValues("Account Created", '<t:' . floor($user->createdTimestamp()) . ':R>', true)
         ->setThumbnail($user->avatar)
         ->setTimestamp()
-        ->setFooter($tutelar->discord->username . ' by Valithor#5947')
         ->setURL("");
+    if (isset($tutelar->owner_id) && $owner = $tutelar->discord->users->get('id', $tutelar->owner_id)) $embed->setFooter(($tutelar->github ?  "{$tutelar->github}" . PHP_EOL : '') . "{$tutelar->discord->username} by {$owner->displayname}");
     if ($guild_id && $member = $tutelar->discord->guilds->get('id', $guild_id)->members->get('id', $user->id)) $embed->addFieldValues('Joined', '<t:' . floor($member->joined_at->timestamp) . ':R>', true);
     if (!empty($servers)) $embed->addFieldValues('Shared Servers', implode(PHP_EOL, $servers));
     return $embed;
@@ -519,7 +519,7 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
 {
     if (str_starts_with($message_content_lower, 'whois')) {
         if (is_numeric($message_content = trim(substr($message_content, strlen('whois')))) && $member = $message->guild->members->get('id', $message_content)) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
-        if (! is_numeric($mention = \GetMentions($message_content)[0])) return $message->react("👎");
+        if (!is_numeric($mention = \GetMentions($message_content)[0])) return $message->react("👎");
         if ($member = $message->guild->members->get('id', $mention)) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
         $discord->users->fetch($mention)->done(
             function ($user) use ($tutelar, $message) { $message->channel->sendMessage($whois($tutelar, $user, $message->guild_id)); },

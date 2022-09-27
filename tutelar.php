@@ -31,7 +31,7 @@ class Tutelar
     
     public $command_symbol = [];
     public $owner_id = '116927250145869826';
-    public $tutelar_guild_id = '923969098185068594';
+    public $owner_guild_id = '923969098185068594';
     
     public $files = [];
     public $ips = [];
@@ -92,7 +92,8 @@ class Tutelar
             elseif(is_string($options['command_symbol'])) $this->command_symbol[] = $options['command_symbol'];
         }
         if(isset($options['owner_id'])) $this->owner_id = $options['owner_id'];
-        if(isset($options['tutelar_guild_id'])) $this->tutelar_guild_id = $options['tutelar_guild_id'];
+        if(isset($options['owner_guild_id'])) $this->owner_guild_id = $options['owner_guild_id'];
+        if(isset($options['github'])) $this->github = $options['github'];
         
         if (isset($options['discord']) || isset($options['discord_options'])) {
             if(isset($options['discord'])) $this->discord = $options['discord'];

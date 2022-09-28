@@ -33,7 +33,7 @@ $discord2ckey = function ($tutelar, $id)
 
 $ss13_slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($discord2ckey)
 { 
-    if ($command = $commands->get('name', 'ckey')) $commands->delete($command->id);
+    //if ($command = $commands->get('name', 'ckey')) $commands->delete($command->id);
     if (! $commands->get('name', 'ckey')) {
         $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
             'type' => \Discord\Parts\Interactions\Command\Command::USER,

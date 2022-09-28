@@ -103,11 +103,11 @@ function GetMentions(string $message_content)
     preg_match_all('/<@([0-9]*)>/', $message_content, $matches1);
     preg_match_all('/<@!([0-9]*)>/', $message_content, $matches2);
     $matches = array_merge($matches1, $matches2);
-    if(!$matches) return [];
+    if (!$matches) return [];
     
     $id_array = [];
     foreach($matches as $array) foreach ($array as $match)
-    if(is_numeric($match) && ! in_array($match, $id_array)) $id_array[] = $match;
+    if (is_numeric($match) && ! in_array($match, $id_array)) $id_array[] = $match;
     
     return $id_array;
 }

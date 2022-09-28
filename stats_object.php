@@ -72,7 +72,7 @@ class Stats
 
     public function handle($message): void
     {
-        $embed = new Discord\Parts\Embed\Embed($this->discord);
+        $embed = new \Discord\Parts\Embed\Embed($this->discord);
         $embed
             ->setTitle('DiscordPHP')
             ->setDescription('This bot runs with DiscordPHP.')

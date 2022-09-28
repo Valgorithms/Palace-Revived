@@ -67,50 +67,50 @@ class Tutelar
         $this->logger = $options['logger'];
         $this->stats = $options['stats'];
         
-        if(isset($options['filecache_auto']) && is_bool($options['filecache_auto'])) $this->filecache = $options['filecache_auto'];
+        if (isset($options['filecache_auto']) && is_bool($options['filecache_auto'])) $this->filecache = $options['filecache_auto'];
         
-        if(isset($options['filecache_path'])) {
+        if (isset($options['filecache_path'])) {
             if (is_string($options['filecache_path'])) $this->filecache_path = $options['filecache_path'];
             else $this->filecache_path = getcwd() . '/json/';
         } else $this->filecache_path = getcwd() . '/json/';
         if (!file_exists($this->filecache_path)) mkdir($this->filecache_path, 0664, true);
         
-        if(isset($options['filecache_prefix']) && is_string($options['filecache_prefix'])) $this->filecache_path = $options['filecache_prefix'];
+        if (isset($options['filecache_prefix']) && is_string($options['filecache_prefix'])) $this->filecache_path = $options['filecache_prefix'];
         
-        if(isset($options['mysqli'])) {
+        if (isset($options['mysqli'])) {
             if (is_array($options['mysqli'])) foreach ($options['mysqli'] as $con) $this->mysqli[] = $con;
             else $this->mysqli[] = $options['mysqli'];
         }
         
-        if(isset($options['pdo'])) {
+        if (isset($options['pdo'])) {
             if (is_array($options['pdo'])) foreach ($options['pdo'] as $pdo) $this->pdo[] = $pdo;
             else $this->pdo[] = $options['pdo'];
         }
         
-        if(isset($options['command_symbol'])) {
-            if(is_array($options['command_symbol'])) foreach ($options['command_symbol'] as $symbol) $this->command_symbol[] = $symbol;
-            elseif(is_string($options['command_symbol'])) $this->command_symbol[] = $options['command_symbol'];
+        if (isset($options['command_symbol'])) {
+            if (is_array($options['command_symbol'])) foreach ($options['command_symbol'] as $symbol) $this->command_symbol[] = $symbol;
+            elseif (is_string($options['command_symbol'])) $this->command_symbol[] = $options['command_symbol'];
         }
-        if(isset($options['owner_id'])) $this->owner_id = $options['owner_id'];
-        if(isset($options['owner_guild_id'])) $this->owner_guild_id = $options['owner_guild_id'];
-        if(isset($options['github'])) $this->github = $options['github'];
+        if (isset($options['owner_id'])) $this->owner_id = $options['owner_id'];
+        if (isset($options['owner_guild_id'])) $this->owner_guild_id = $options['owner_guild_id'];
+        if (isset($options['github'])) $this->github = $options['github'];
         
         if (isset($options['discord']) || isset($options['discord_options'])) {
-            if(isset($options['discord'])) $this->discord = $options['discord'];
-            elseif(isset($options['discord_options'])) $this->discord = new \Discord\Discord($options['discord_options']);
+            if (isset($options['discord'])) $this->discord = $options['discord'];
+            elseif (isset($options['discord_options'])) $this->discord = new \Discord\Discord($options['discord_options']);
         }
         
         if (isset($options['twitch']) || isset($options['twitch_options'])) {
-            if(isset($options['twitch'])) $this->twitch = $options['twitch'];
-            elseif(isset($options['twitch_options'])) $this->twitch = new \Twitch\Twitch($options['twitch_options']);
+            if (isset($options['twitch'])) $this->twitch = $options['twitch'];
+            elseif (isset($options['twitch_options'])) $this->twitch = new \Twitch\Twitch($options['twitch_options']);
         }
         
-        if(isset($options['functions'])) {
+        if (isset($options['functions'])) {
             foreach ($options['functions'] as $key1 => $key2)
                 foreach ($options['functions'][$key1] as $key3 => $func)
                     $this->functions[$key1][$key3] = $func;
         } else $this->logger->warning('No functions passed in options!');
-        if(isset($options['files'])) foreach ($options['files'] as $key => $path) $this->files[$key] = $path;
+        if (isset($options['files'])) foreach ($options['files'] as $key => $path) $this->files[$key] = $path;
         else $this->logger->warning('No files passed in options!');
         $this->afterConstruct();
     }
@@ -118,28 +118,35 @@ class Tutelar
     protected function afterConstruct()
     {
         
-        if(isset($this->discord)) {
+        if (isset($this->discord)) {
             $this->discord->once('ready', function () {
                 //Initialize configurations
-                if(! $discord_config = $this->VarLoad('discord_config.json')) $discord_config = [];
-                foreach ($this->discord->guilds as $guild) if(!isset($discord_config[$guild->id])) $this->SetConfigTemplate($guild, $discord_config);
+                if (! $discord_config = $this->VarLoad('discord_config.json')) $discord_config = [];
+                foreach ($this->discord->guilds as $guild) if (!isset($discord_config[$guild->id])) $this->SetConfigTemplate($guild, $discord_config);
                 $this->discord_config = $discord_config;
                 register_shutdown_function([$this, "VarSave"], 'discord_config.json', $this->discord_config);
                 
-                if(! $suggestions = $this->VarLoad('suggestions.json')) $suggestions = [];
+                if (! $suggestions = $this->VarLoad('suggestions.json')) $suggestions = [];
                 foreach ($this->discord->guilds as $guild) if (!isset($suggestions[$guild->id])) $suggestions[$guild->id] = ['pending' => [], 'approved' => [], 'denied' => []];
                 $this->suggestions = $suggestions;
                 register_shutdown_function([$this, "VarSave"], 'suggestions.json', $this->suggestions);
                 
-                if(! $tips = $this->VarLoad('tips.json')) $tips = [];
+                if (! $tips = $this->VarLoad('tips.json')) $tips = [];
                 $this->tips = $tips;
                 register_shutdown_function([$this, "VarSave"], 'tips.json', $this->tips);
                 
                 $this->command_symbol[] = '<@'.$this->discord->id.'>';
                 $this->command_symbol[] = '<@!'.$this->discord->id.'>';
                 
-                if(!empty($this->functions['ready'])) foreach ($this->functions['ready'] as $key => $func) $func($this);
+                if (!empty($this->functions['ready'])) foreach ($this->functions['ready'] as $key => $func) $func($this);
                 else $this->logger->debug('No ready functions found!');
+                
+                $this->discord->application->commands->freshen()->done(
+                    function ($commands) {
+                        if (!empty($this->functions['ready_slash'])) foreach ($this->functions['ready_slash'] as $key => $func) $func($this, $commands);
+                        else $this->logger->debug('No ready slash functions found!');
+                    }
+                );
                 
                 //Initialize event listeners
                 $this->InitializeListeners();
@@ -166,17 +173,17 @@ class Tutelar
     public function run(): void
     {
         $this->logger->info('Starting Discord loop');
-        if(!(isset($this->discord))) $this->logger->warning('Discord not set!');
+        if (!(isset($this->discord))) $this->logger->warning('Discord not set!');
         else $this->discord->run();
         $this->logger->info('Starting Twitch loop');
-        if(!(isset($this->twitch))) $this->logger->warning('Twitch not set!');
+        if (!(isset($this->twitch))) $this->logger->warning('Twitch not set!');
 		else $this->twitch->run();
     }
     
     public function stop(): void
     {
         $this->logger->info('Shutting down');
-        if((isset($this->discord))) $this->discord->stop();
+        if ((isset($this->discord))) $this->discord->stop();
     }
     
     public function setWebAPI($webapi): void
@@ -216,7 +223,7 @@ class Tutelar
     public function VarSave(string $filename = '', array $assoc_array = []): bool
     {
         if ($filename === '') return false;
-        if(file_put_contents($this->filecache_path . $filename, json_encode($assoc_array)) === false) return false;
+        if (file_put_contents($this->filecache_path . $filename, json_encode($assoc_array)) === false) return false;
         return true;
     }
 
@@ -917,7 +924,7 @@ class Tutelar
         //Finish ready and bot initialization
         $this->discord->on('GUILD_CREATE', function (\Discord\Parts\Guild\Guild $guild)
         {
-            foreach ($this->discord->guilds as $guild) if(!$this->discord_config[$guild->id]) $this->SetConfigTemplate($guild, $this->discord_config);
+            foreach ($this->discord->guilds as $guild) if (!$this->discord_config[$guild->id]) $this->SetConfigTemplate($guild, $this->discord_config);
         });
         $this->discord->on('MESSAGE_REACTION_ADD', function ($reaction) {
             if ($reaction->user_id == $this->discord->id) return; //Do not add roles to the bot
@@ -938,77 +945,77 @@ class Tutelar
         
         
         
-        if(!empty($this->functions['GUILD_CREATE'])) {
+        if (!empty($this->functions['GUILD_CREATE'])) {
             $this->discord->on('GUILD_CREATE', function (\Discord\Parts\Guild\Guild $guild)
             {
                  foreach ($this->functions['GUILD_CREATE'] as $key => $func) $func($this, $guild);
             });
         } else $this->logger->debug('No GUILD_CREATE functions found!');
         
-        if(!empty($this->functions['message'])) {
+        if (!empty($this->functions['message'])) {
             $this->discord->on('message', function ($message)
             {
                 foreach ($this->functions['message'] as $key => $func) $func($this, $message);
             });
         } else $this->logger->debug('No message functions found!');
         
-        if(!empty($this->functions['MESSAGE_UPDATE'])) {
+        if (!empty($this->functions['MESSAGE_UPDATE'])) {
             $this->discord->on('MESSAGE_UPDATE', function ($message, \Discord\Discord $discord, $message_old)
             {
                  foreach ($this->functions['MESSAGE_UPDATE'] as $key => $func) $func($this, $message, $message_old);
             });
         } else $this->logger->debug('No MESSAGE_UPDATE functions found!');
         
-        if(!empty($this->functions['MESSAGE_DELETE'])) {
+        if (!empty($this->functions['MESSAGE_DELETE'])) {
             $this->discord->on('MESSAGE_DELETE', function ($message)
             {
                  foreach ($this->functions['MESSAGE_DELETE'] as $key => $func) $func($this, $message);
             });
         } else $this->logger->debug('No MESSAGE_DELETE functions found!');
         
-        if(!empty($this->functions['MESSAGE_DELETE_BULK'])) {
+        if (!empty($this->functions['MESSAGE_DELETE_BULK'])) {
             $this->discord->on('MESSAGE_DELETE_BULK', function ($messages)
             {
                  foreach ($this->functions['MESSAGE_DELETE_BULK'] as $key => $func) $func($this, $messages);
             });
         } else $this->logger->debug('No MESSAGE_DELETE_BULK functions found!');
         
-        if(!empty($this->functions['GUILD_MEMBER_ADD'])) {
+        if (!empty($this->functions['GUILD_MEMBER_ADD'])) {
             $this->discord->on('GUILD_MEMBER_ADD', function (\Discord\Parts\User\Member $member)
             {
                  foreach ($this->functions['GUILD_MEMBER_ADD'] as $key => $func) $func($this, $member);
             });
         } else $this->logger->debug('No GUILD_MEMBER_ADD functions found!');
         
-        if(!empty($this->functions['GUILD_MEMBER_REMOVE'])) {
+        if (!empty($this->functions['GUILD_MEMBER_REMOVE'])) {
             $this->discord->on('GUILD_MEMBER_REMOVE', function (\Discord\Parts\User\Member $member)
             {
                  foreach ($this->functions['GUILD_MEMBER_REMOVE'] as $key => $func) $func($this, $member);
             });
         } else $this->logger->debug('No GUILD_MEMBER_REMOVE functions found!');
         
-        if(!empty($this->functions['GUILD_MEMBER_UPDATE'])) {
+        if (!empty($this->functions['GUILD_MEMBER_UPDATE'])) {
             $this->discord->on('GUILD_MEMBER_UPDATE', function (\Discord\Parts\User\Member $member, \Discord\Discord $discord, ?\Discord\Parts\User\Member $member_old)
             {
                  foreach ($this->functions['GUILD_MEMBER_UPDATE'] as $key => $func) $func($this, $member, $member_old);
             });
         } else $this->logger->debug('No GUILD_MEMBER_UPDATE functions found!');
         
-        if(!empty($this->functions['GUILD_BAN_ADD'])) {
+        if (!empty($this->functions['GUILD_BAN_ADD'])) {
             $this->discord->on('GUILD_BAN_ADD', function (\Discord\Parts\Guild\Ban $ban)
             {
                  foreach ($this->functions['GUILD_BAN_ADD'] as $key => $func) $func($this, $ban);
             });
         } else $this->logger->debug('No GUILD_BAN_ADD functions found!');
         
-        if(!empty($this->functions['GUILD_BAN_REMOVE'])) {
+        if (!empty($this->functions['GUILD_BAN_REMOVE'])) {
             $this->discord->on('GUILD_BAN_REMOVE', function (\Discord\Parts\Guild\Ban $ban)
             {
                  foreach ($this->functions['GUILD_BAN_REMOVE'] as $key => $func) $func($this, $ban);
             });
         } else $this->logger->debug('No GUILD_BAN_REMOVE functions found!');
         
-        if(!empty($this->functions['userUpdate'])) {
+        if (!empty($this->functions['userUpdate'])) {
             $this->discord->on('userUpdate', function (\Discord\Parts\User\User $user, ?\Discord\Parts\User\User $user_old)
             {
                  foreach ($this->functions['userUpdate'] as $key => $func) $func($this, $user, $user_old);
@@ -1032,7 +1039,7 @@ class Tutelar
     {
         //if (!is_null($emoji_id)) return; //Only unicode emojis are supported by Tutelar right now
         foreach($this->discord_config[$reaction->guild_id]['reaction_roles'] as $key => $array)
-        if($reaction->message_id == $array['id']) foreach($array['roles'] as $k => $v) {
+        if ($reaction->message_id == $array['id']) foreach($array['roles'] as $k => $v) {
             if (!isset($v['emoji'])) continue;
             if ($reaction->emoji == $v['emoji']) {
                 if ($reaction->member->roles->get('name', $v['name']) ?? $reaction->member->roles->get('id', $v['id'])) return;
@@ -1053,7 +1060,7 @@ class Tutelar
     {
         //if (!is_null($emoji_id)) return; //Only unicode emojis are supported by Tutelar right now
         foreach($this->discord_config[$reaction->guild_id]['reaction_roles'] as $key => $array)
-        if($reaction->message_id == $array['id']) foreach($array['roles'] as $k => $v) {
+        if ($reaction->message_id == $array['id']) foreach($array['roles'] as $k => $v) {
             if (!isset($v['emoji'])) continue;
             if ($reaction->emoji == $v['emoji']) {
                 if (! $reaction->member->roles->get('name', $v['name']) ?? $reaction->member->roles->get('id', $v['id'])) return;

@@ -30,7 +30,7 @@ $discord = new \Discord\Discord([
     'token' => "$token",
     'loadAllMembers' => true,
     'storeMessages' => true, //Required for rolepicker and other functions
-    'intents' => Discord\WebSockets\Intents::getDefaultIntents() | Discord\WebSockets\Intents::GUILD_MEMBERS | Discord\WebSockets\Intents::MESSAGE_CONTENT // default intents as well as guild members
+    'intents' => \Discord\WebSockets\Intents::getDefaultIntents() | \Discord\WebSockets\Intents::GUILD_MEMBERS | \Discord\WebSockets\Intents::MESSAGE_CONTENT // default intents as well as guild members
 ]);
 include 'stats_object.php'; 
 $stats = new Stats();
@@ -157,6 +157,7 @@ $options = array(
     'owner_guild_id' => '923969098185068594', //ValZarGaming
     'github' => 'https://github.com/VZGCoders/Palace-Revived',
     
+    //Configurations
     'files' => [
         'statuslist' => getcwd() . '\status.txt',
         'serverinfo' => 'V:\WinNMP2021\WWW\vzg.project\servers\serverinfo.json'
@@ -176,6 +177,9 @@ $options = array(
             'on_ready' => $on_ready,
             'status_changer_random' => $status_changer_random,
             'set_ips' => $set_ips,
+        ],
+        'ready_slash' => [
+            'slash_init' => $slash_init,
         ],
         'message' => [            
             'on_message' => $on_message,
@@ -210,7 +214,6 @@ $options = array(
         'misc' => [ //Custom functions
             //DiscordPHP
             'timeout' => $timeout,
-            'slash_init' => $slash_init,
             'status_changer' => $status_changer,
             'perm_check' => $perm_check,
             //ReactPHP Browser
@@ -249,7 +252,9 @@ if (include 'log_functions.php') {
 }
 if (include 'ss13_functions.php') {
     echo 'Included ss13 functions' . PHP_EOL;
+    $options['functions']['ready_slash']['ss13_slash_init'] = $ss13_slash_init;
     $options['functions']['message']['ss13_on_message'] = $ss13_on_message;
+    $options['functions']['misc']['discord2ckey'] = $discord2ckey;
 }
 if (include 'verifier_functions.php') {
     echo 'Included verifier functions' . PHP_EOL;

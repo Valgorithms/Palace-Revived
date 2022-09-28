@@ -28,7 +28,7 @@ $log_builder = function(\Tutelar\Tutelar $tutelar, $new, ?string $title = '', ?s
     } elseif ($new instanceof \Discord\Parts\User\Member) {
         $guild_id = $new->guild_id;
         $user = $new->user;
-        if(in_array($title, ['Member Left', 'Member Joined'])) {
+        if (in_array($title, ['Member Left', 'Member Joined'])) {
             $embed->addFieldValues('Created', '<t:' . floor((int) $user->createdTimestamp()) . ':F>');
             $embed->addFieldValues('Member Count', sizeof($new->guild->members));
             $array = [];

@@ -495,19 +495,20 @@ $browser_post = function (\Tutelar\Tutelar $tutelar, string $url, array $headers
 
 $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
 {
+    //if ($command = $commands->get('name', 'test')) $commands->delete($command->id);
     //if ($command = $commands->get('name', 'invite')) $commands->delete($command->id);
     if (!$commands->get('name', 'invite')) {
         $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
-                'name' => 'invite',
-                'description' => 'Bot invite link'
+            'name' => 'invite',
+            'description' => 'Bot invite link'
         ]);
         $commands->save($command);
     }
-    
+    //if ($command = $commands->get('name', 'whois')) $commands->delete($command->id);
     if (! $commands->get('name', 'whois')) {
         $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
-                'type' => \Discord\Parts\Interactions\Command\Command::USER,
-                'name' => 'whois',
+            'type' => \Discord\Parts\Interactions\Command\Command::USER,
+            'name' => 'whois',
         ]);
         $commands->save($command);
     }

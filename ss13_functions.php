@@ -36,8 +36,10 @@ $ss13_slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($discord
     //if ($command = $commands->get('name', 'ckey')) $commands->delete($command->id);
     if (! $commands->get('name', 'ckey')) {
         $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
-                'type' => \Discord\Parts\Interactions\Command\Command::USER,
-                'name' => 'ckey',
+            'type' => \Discord\Parts\Interactions\Command\Command::USER,
+            'name' => 'ckey',
+            'dm_permission' => false,
+            'default_permission' => \Discord\Parts\Permissions\Permission::ROLE_PERMISSIONS['moderate_members'],
         ]);
         $commands->save($command);
     }

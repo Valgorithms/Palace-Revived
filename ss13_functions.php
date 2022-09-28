@@ -1,26 +1,22 @@
 <?php
 
 $discord2ckey = function ($tutelar, $id)
-{
+{ 
     if (!$browser_post = $tutelar->functions['misc']['browser_post']) return;
-    if (!$result = $browser_post($tutelar, 'http://civ13.valzargaming.com/discord2ckey/', ['Content-Type' => 'application/x-www-form-urlencoded'], ['discord' => $id], true)) return;
+    if (!$result = $browser_post($tutelar, 'http://civ13.valzargaming.com/discord2ckey/', ['Content-Type' => 'application/x-www-form-urlencoded'], ['discord' => $id], true)) return "<@$id> is either not registered to any ckey or the server did not return a response";
     if (is_array($result)) $result = json_decode(json_encode($result), true); //curl returns string
     elseif (is_string($result)) $result = json_decode($result); //$browser->post returns React\Promise\Promise
     
-    var_dump($result);
     $response = null;
     if (is_object($result) && !str_contains(get_class($result), 'React\Promise')) { //json_decoded object
-        echo '[is_object]' . PHP_EOL;
         if ($result = $result->ckey)  $response = "<@$id> is registered to $result";
         else $response = "<@$id> is not registered to any ckey";
     }
     if (is_array($result)) { //json_decoded array
-        echo '[is_array]' . PHP_EOL;
         if ($result = $result['ckey']) $response = "<@$id> is registered to ckey $result";
         else $response = "<@$id> is not registered to any ckey";
     }
     if (is_string($result)) {
-        echo '[is_array]' . PHP_EOL;
         if ($result) $response = "<@$id> is registered to $result";
         else $response = "<@$id> is not registered to any ckey";
     }
@@ -37,21 +33,21 @@ $discord2ckey = function ($tutelar, $id)
 
 $ss13_slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($discord2ckey)
 { 
-    //if ($command = $commands->get('name', 'discord2ckey')) $commands->delete($command->id);
-    if (! $commands->get('name', 'discord2ckey')) {
+    //if ($command = $commands->get('name', 'ckey')) $commands->delete($command->id);
+    if (! $commands->get('name', 'ckey')) {
         $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
                 'type' => \Discord\Parts\Interactions\Command\Command::USER,
-                'name' => 'discord2ckey',
+                'name' => 'ckey',
         ]);
         $commands->save($command);
     }
     
-    //listen for global commands
+    // listen for global commands
 
     // listen for guild commands
     
     // listen for user commands
-    $tutelar->discord->listenCommand('discord2ckey', function ($interaction) use ($tutelar, $discord2ckey) {
+    $tutelar->discord->listenCommand('ckey', function ($interaction) use ($tutelar, $discord2ckey) {
         if (!$response = $discord2ckey($tutelar, $interaction->data->target_id)) return $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('There was an error retrieving data'));
         if ($response instanceof \React\Promise\Promise ) return $response->done(
             function ($response) use ($interaction) { $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent($response)); }

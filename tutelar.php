@@ -106,9 +106,7 @@ class Tutelar
         }
         
         if (isset($options['functions'])) {
-            foreach ($options['functions'] as $key1 => $key2)
-                foreach ($options['functions'][$key1] as $key3 => $func)
-                    $this->functions[$key1][$key3] = $func;
+            foreach ($options['functions'] as $key1 => $key2) foreach ($options['functions'][$key1] as $key3 => $func) $this->functions[$key1][$key3] = $func;
         } else $this->logger->warning('No functions passed in options!');
         if (isset($options['files'])) foreach ($options['files'] as $key => $path) $this->files[$key] = $path;
         else $this->logger->warning('No files passed in options!');
@@ -141,12 +139,10 @@ class Tutelar
                 if (!empty($this->functions['ready'])) foreach ($this->functions['ready'] as $key => $func) $func($this);
                 else $this->logger->debug('No ready functions found!');
                 
-                $this->discord->application->commands->freshen()->done(
-                    function ($commands) {
-                        if (!empty($this->functions['ready_slash'])) foreach ($this->functions['ready_slash'] as $key => $func) $func($this, $commands);
-                        else $this->logger->debug('No ready slash functions found!');
-                    }
-                );
+                $this->discord->application->commands->freshen()->done(function ($commands) {
+                    if (!empty($this->functions['ready_slash'])) foreach ($this->functions['ready_slash'] as $key => $func) $func($this, $commands);
+                    else $this->logger->debug('No ready slash functions found!');
+                });
                 
                 //Initialize event listeners
                 $this->InitializeListeners();

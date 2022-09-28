@@ -496,7 +496,7 @@ $browser_post = function (\Tutelar\Tutelar $tutelar, string $url, array $headers
 $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
 {
     //if ($command = $commands->get('name', 'invite')) $commands->delete($command->id);
-    if (! $commands->get('name', 'invite')) {
+    if (!$commands->get('name', 'invite')) {
         $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
                 'name' => 'invite',
                 'description' => 'Bot invite link'

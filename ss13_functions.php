@@ -39,7 +39,7 @@ $ss13_slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($discord
             'type' => \Discord\Parts\Interactions\Command\Command::USER,
             'name' => 'ckey',
             'dm_permission' => false,
-            'default_permission' => \Discord\Parts\Permissions\Permission::ROLE_PERMISSIONS['moderate_members'],
+            'default_member_permissions' => \Discord\Parts\Permissions\Permission::ROLE_PERMISSIONS['moderate_members'],
         ]);
         $commands->save($command);
     }

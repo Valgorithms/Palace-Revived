@@ -95,25 +95,19 @@ class Tutelar
         if (isset($options['owner_guild_id'])) $this->owner_guild_id = $options['owner_guild_id'];
         if (isset($options['github'])) $this->github = $options['github'];
         
-        if (isset($options['discord']) || isset($options['discord_options'])) {
-            if (isset($options['discord'])) $this->discord = $options['discord'];
-            elseif (isset($options['discord_options'])) $this->discord = new \Discord\Discord($options['discord_options']);
-        }
+        if (isset($options['discord'])) $this->discord = $options['discord'];
+        elseif (isset($options['discord_options'])) $this->discord = new \Discord\Discord($options['discord_options']);
+        if (isset($options['twitch'])) $this->twitch = $options['twitch'];
+        elseif (isset($options['twitch_options'])) $this->twitch = new \Twitch\Twitch($options['twitch_options']);
         
-        if (isset($options['twitch']) || isset($options['twitch_options'])) {
-            if (isset($options['twitch'])) $this->twitch = $options['twitch'];
-            elseif (isset($options['twitch_options'])) $this->twitch = new \Twitch\Twitch($options['twitch_options']);
-        }
-        
-        if (isset($options['functions'])) {
-            foreach ($options['functions'] as $key1 => $key2) foreach ($options['functions'][$key1] as $key3 => $func) $this->functions[$key1][$key3] = $func;
-        } else $this->logger->warning('No functions passed in options!');
+        if (isset($options['functions'])) foreach ($options['functions'] as $key1 => $key2) foreach ($options['functions'][$key1] as $key3 => $func) $this->functions[$key1][$key3] = $func;
+        else $this->logger->warning('No functions passed in options!');
         if (isset($options['files'])) foreach ($options['files'] as $key => $path) $this->files[$key] = $path;
         else $this->logger->warning('No files passed in options!');
         $this->afterConstruct();
     }
     
-    protected function afterConstruct()
+    protected function afterConstruct() : void
     {
         
         if (isset($this->discord)) {
@@ -161,7 +155,7 @@ class Tutelar
             $options['logger'] = $logger;
         }
         
-        $options['loop'] = $options['loop'] ?? \React\EventLoop\Factory::create();
+        $options['loop'] = $options['loop'] ?? \React\EventLoop\Loop::get();
         $options['browser'] = $options['browser'] ?? new \React\Http\Browser($options['loop']);
         return $options;
     }
@@ -182,7 +176,7 @@ class Tutelar
         if ((isset($this->discord))) $this->discord->stop();
     }
     
-    public function setWebAPI($webapi): void
+    public function setWebAPI(\React\Http\Server $webapi): void
     {
         $this->webapi = $webapi;
     }
@@ -922,7 +916,7 @@ class Tutelar
         {
             foreach ($this->discord->guilds as $guild) if (!$this->discord_config[$guild->id]) $this->SetConfigTemplate($guild, $this->discord_config);
         });
-        $this->discord->on('MESSAGE_REACTION_ADD', function ($reaction) {
+        $this->discord->on('MESSAGE_REACTION_ADD', function (\Discord\Parts\WebSockets\MessageReaction $reaction) {
             if ($reaction->user_id == $this->discord->id) return; //Do not add roles to the bot
             if (is_null($reaction->message)) {
 				$reaction->channel->messages->fetch($reaction->message_id)->done(function ($message) use ($reaction) {
@@ -930,7 +924,7 @@ class Tutelar
 				});
 			} else $this->roleReactionAdd($reaction);
         });
-        $this->discord->on('MESSAGE_REACTION_REMOVE', function ($reaction) {
+        $this->discord->on('MESSAGE_REACTION_REMOVE', function (\Discord\Parts\WebSockets\MessageReaction $reaction) {
             if ($reaction->user_id == $this->discord->id) return; //Do not add roles to the bot
             if (is_null($reaction->message)) $reaction->channel->messages->fetch($reaction->message_id)->done(function ($message) use ($reaction) { $this->roleReactionRemove($reaction); });
 			else $this->roleReactionRemove($reaction);
@@ -1019,19 +1013,17 @@ class Tutelar
         } else $this->logger->debug('No userUpdate functions found!');
     }
     
-    public function reactionLoop($message, array $emojis)
+    public function reactionLoop($message, array $emojis) : void
     {
         $add = function ($message, $emojis) use (&$add) {
-            if (count($emojis) != 0) {
-                $message->react(array_shift($emojis))->done(function () use ($add, $emojis, $message) {
-                    $add($message, $emojis);
-                });
-            }
+            if (count($emojis) != 0) $message->react(array_shift($emojis))->done(function () use ($add, $emojis, $message) {
+                $add($message, $emojis);
+            });
         };
         $add($message, $emojis);
     }
     
-    public function roleReactionAdd($reaction)
+    public function roleReactionAdd(\Discord\Parts\WebSockets\MessageReaction $reaction)
     {
         //if (!is_null($emoji_id)) return; //Only unicode emojis are supported by Tutelar right now
         foreach($this->discord_config[$reaction->guild_id]['reaction_roles'] as $key => $array)
@@ -1042,17 +1034,13 @@ class Tutelar
                 if (! $role = ($reaction->guild->roles->get('name', $v['name']) ?? $reaction->guild->roles->get('id', $v['id']))) return $this->logger->warning('Unable to get configured role from server! ' . $v['name'] . ' : ' . $v['id']);
                 $reaction->member->addRole($role->id);
                 $reaction->channel->sendMessage($reaction->user . ' added the `' . $role->name . '` role!')->done(function ($message) {
-                    $this->discord->getLoop()->addTimer(10, function () use ($message) {
-                        return $message->delete();
-					});
+                    $this->discord->getLoop()->addTimer(10, function () use ($message) { $message->delete(); });
                 });
-                return;
             }
         }
-        return;
     }
     
-    public function roleReactionRemove($reaction)
+    public function roleReactionRemove(\Discord\Parts\WebSockets\MessageReaction $reaction)
     {
         //if (!is_null($emoji_id)) return; //Only unicode emojis are supported by Tutelar right now
         foreach($this->discord_config[$reaction->guild_id]['reaction_roles'] as $key => $array)
@@ -1063,17 +1051,13 @@ class Tutelar
                 if (! $role = $reaction->guild->roles->get('name', $v['name']) ?? $reaction->guild->roles->get('id', $v['id'])) return $this->logger->warning('Unable to get configured role from server! ' . $v['name'] . ' : ' . $v['id']);
                 $reaction->member->removeRole($role->id);
                 $reaction->channel->sendMessage($reaction->user . ' removed the `' . $role->name . '` role')->done(function ($message) {
-                    $this->discord->getLoop()->addTimer(10, function () use ($message) {
-                        return $message->delete();
-					});
+                    $this->discord->getLoop()->addTimer(10, function () use ($message) { $message->delete(); });
                 });
-                return;
             }
         }
-        return;
     }
     
-    public function saveConfig()
+    public function saveConfig() : bool
     {
         return $this->VarSave('discord_config.json', $this->discord_config);
     }

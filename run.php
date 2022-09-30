@@ -16,18 +16,17 @@ require getcwd() . '/secret.php'; //twitchphp helix secrets
 include getcwd() . '/vendor/autoload.php';
 
 $loop = React\EventLoop\Factory::create();
-$redis = new WyriHaximus\React\Cache\Redis((new Clue\React\Redis\Factory($loop))->createLazyClient('127.0.0.1:6379'), 'dphp:cache:'); // prefix is "dphp:cache"
 $logger = new Monolog\Logger('New logger');
 $logger->pushHandler(new Monolog\Handler\StreamHandler('php://stdout'));
 $discord = new \Discord\Discord([
     'loop' => $loop,
     'logger' => $logger,
-    'cacheInterface' => $redis,
+    'cacheInterface' => new WyriHaximus\React\Cache\Redis((new Clue\React\Redis\Factory($loop))->createLazyClient('127.0.0.1:6379'), 'dphp:cache:'),
     'cacheSweep' => false, //Don't periodically wipe the in-memory cache in case something happens to Redis
     /*'socket_options' => [
         'dns' => '8.8.8.8', // can change dns
     ],*/
-    'token' => "$token",
+    'token' => $token,
     'loadAllMembers' => true,
     'storeMessages' => true, //Required for rolepicker and other functions
     'intents' => \Discord\WebSockets\Intents::getDefaultIntents() | \Discord\WebSockets\Intents::GUILD_MEMBERS | \Discord\WebSockets\Intents::MESSAGE_CONTENT // default intents as well as guild members

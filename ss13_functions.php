@@ -32,27 +32,37 @@ $discord2ckey = function ($tutelar, $id)
 };
 
 $ss13_slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($discord2ckey)
-{ 
-    //if ($command = $commands->get('name', 'ckey')) $commands->delete($command->id);
-    if (! $commands->get('name', 'ckey')) {
-        $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
-            'type' => \Discord\Parts\Interactions\Command\Command::USER,
-            'name' => 'ckey',
-            'dm_permission' => false,
-            'default_member_permissions' => \Discord\Parts\Permissions\Permission::ROLE_PERMISSIONS['moderate_members'],
-        ]);
-        $commands->save($command);
-    }
+{
+    if ($command = $commands->get('name', 'ckey')) $commands->delete($command->id);
+    $tutelar->discord->guilds->get('id', '468979034571931648')->commands->freshen()->done( function ($commands) use ($tutelar) {
+        //if ($command = $commands->get('name', 'ckey')) $commands->delete($command->id);
+        if (! $commands->get('name', 'ckey')) {
+            $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
+                'type' => \Discord\Parts\Interactions\Command\Command::USER,
+                'name' => 'ckey',
+                'dm_permission' => false,
+                'default_member_permissions' => (string) new \Discord\Parts\Permissions\RolePermission($tutelar->discord, ['moderate_members' => true]),
+            ]);
+            $commands->save($command);
+        }
+    });
+    $tutelar->discord->guilds->get('id', '807759102624792576')->commands->freshen()->done( function ($commands) use ($tutelar) {
+        //if ($command = $commands->get('name', 'ckey')) $commands->delete($command->id);
+        if (! $commands->get('name', 'ckey')) {
+            $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
+                'type' => \Discord\Parts\Interactions\Command\Command::USER,
+                'name' => 'ckey',
+                'dm_permission' => false,
+                'default_member_permissions' => (string) new \Discord\Parts\Permissions\RolePermission($tutelar->discord, ['moderate_members' => true]),
+            ]);
+            $commands->save($command);
+        }
+    });
     
-    // listen for global commands
-
-    // listen for guild commands
-    
-    // listen for user commands
     $tutelar->discord->listenCommand('ckey', function ($interaction) use ($tutelar, $discord2ckey) {
         if (!$response = $discord2ckey($tutelar, $interaction->data->target_id)) return $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('There was an error retrieving data'));
         if ($response instanceof \React\Promise\Promise ) return $response->done(
-            function ($response) use ($interaction) { $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent($response)); }
+            function ($response) use ($interaction) { $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent($response)->_setFlags(64), true); }
         );
         $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent($response));
     });

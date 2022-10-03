@@ -61,9 +61,7 @@ $ss13_slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($discord
     
     $tutelar->discord->listenCommand('ckey', function ($interaction) use ($tutelar, $discord2ckey) {
         if (!$response = $discord2ckey($tutelar, $interaction->data->target_id)) return $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('There was an error retrieving data'));
-        if ($response instanceof \React\Promise\Promise ) return $response->done(
-            function ($response) use ($interaction) { $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent($response), true); }
-        );
+        if ($response instanceof \React\Promise\Promise) return $response->done( function ($response) use ($interaction) { $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent($response), true); });
         $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent($response), true);
     });
 };

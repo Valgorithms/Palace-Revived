@@ -332,7 +332,7 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
         if (!is_numeric($mention = \GetMentions($message_content)[0])) return $message->react("👎");
         if ($member = $message->guild->members->get('id', $mention)) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
         $tutelar->discord->users->fetch($mention)->done(
-            function ($user) use ($tutelar, $message, $whois) { $message->channel->sendMessage($whois($tutelar, $user, $message->guild_id)); },
+            function ($user) use ($tutelar, $message, $whois) { $message->channel->sendEmbed($whois($tutelar, $user, $message->guild_id)); },
             function ($error) use ($message) { $message->react("👎"); }
         );
     }

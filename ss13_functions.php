@@ -164,7 +164,8 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
         }
     }
     if (str_starts_with($message_content_lower, 'suggest')) {
-        $message_content = trim(substr($message_content, strlen('suggest')));
+        if(str_starts_with($message_content_lower, 'suggestion')) $message_content = trim(substr($message_content, strlen('suggestion')));
+        else $message_content = trim(substr($message_content, strlen('suggest')));
         $message_content_lower = strtolower($message_content);
         if (!$message_content_lower) return;
         

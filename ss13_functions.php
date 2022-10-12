@@ -99,7 +99,7 @@ $ss13_manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
         
         
             if (!isset($tutelar->tips[$message->guild_id]['pending'])) $tutelar->tips[$message->guild_id]['pending'] = [];
-            if (!isset($tutelar->tips[$message->guild_id]['approveed'])) $tutelar->tips[$message->guild_id]['approved'] = [];
+            if (!isset($tutelar->tips[$message->guild_id]['approved'])) $tutelar->tips[$message->guild_id]['approved'] = [];
             if (!isset($tutelar->tips[$message->guild_id]['denied'])) $tutelar->tips[$message->guild_id]['denied'] = [];
             
             $tutelar->logger->info('Updated ' . $message_content_lower . ' channel id ' . $matches[1]);

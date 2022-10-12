@@ -45,7 +45,7 @@ $twitch_options = array(
 	'secret' => $secret, // Client secret
 	'nick' => $nick, 
 	'channels' => [
-        strtolower($nick), // Your channel
+        //strtolower($nick), // Your channel
         //'smalltowngamingtv', // (Optional) Additional channels
         //'rattlesire',
         //'shrineplays',

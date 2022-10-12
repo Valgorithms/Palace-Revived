@@ -97,7 +97,7 @@ class Tutelar
         
         if (isset($options['discord'])) $this->discord = $options['discord'];
         elseif (isset($options['discord_options'])) $this->discord = new \Discord\Discord($options['discord_options']);
-        if (isset($options['twitch'])) $this->twitch = $options['twitch'];
+        if (isset($options['twitch']) && $options['twitch'] instanceof \Twitch\Twitch) $this->twitch = $options['twitch'];
         elseif (isset($options['twitch_options'])) $this->twitch = new \Twitch\Twitch($options['twitch_options']);
         
         if (isset($options['functions'])) foreach ($options['functions'] as $key1 => $key2) foreach ($options['functions'][$key1] as $key3 => $func) $this->functions[$key1][$key3] = $func;
@@ -162,12 +162,12 @@ class Tutelar
     
     public function run(): void
     {
-        $this->logger->info('Starting Discord loop');
-        if (!(isset($this->discord))) $this->logger->warning('Discord not set!');
-        else $this->discord->run();
         $this->logger->info('Starting Twitch loop');
         if (!(isset($this->twitch))) $this->logger->warning('Twitch not set!');
 		else $this->twitch->run();
+        $this->logger->info('Starting Discord loop');
+        if (!(isset($this->discord))) $this->logger->warning('Discord not set!');
+        else $this->discord->run();
     }
     
     public function stop(): void

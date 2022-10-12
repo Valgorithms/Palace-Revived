@@ -52,7 +52,7 @@ $twitch_options = array(
         //'violentvixen_',
         //'linkdrako',
         //'ebonychimera',
-		'shriekingechodanica', // (Optional) Additional channels
+		'shriekingechodanica',
 	],
 	
 	//Optional
@@ -61,9 +61,9 @@ $twitch_options = array(
 	'guild_id' => '999053951670423643', //ID of the Discord server
 	'channel_id' => '1014429625826414642', //ID of the Discord channel to output messages to
 	
-	'loop' => $loop, // Pass your own instance of $loop to share with other ReactPHP applications
+	'loop' => $loop, // (Optional) Pass your own instance of $loop to share with other ReactPHP applications
 	'socket_options' => [
-		'dns' => '8.8.8.8', // Can change DNS provider
+		//'dns' => '8.8.8.8', // Can change DNS provider
 	],
 	'verbose' => true, // Additional output to console (useful for debugging)
 	'debug' => true, // Additional output to console (useful for debugging communications with Twitch)
@@ -102,14 +102,15 @@ $twitch_options = array(
 	'responses' => [ // Whenever a message is sent matching a key and prefixed with a command symbol, reply with the defined value
 		'ping' => 'Pong!',
 		'github' => 'https://github.com/VZGCoders/TwitchPHP',
-		//'lurk' => 'You have said the magick word to make yourself invisible to all eyes upon you, allowing you to fade into the shadows.',
-		//'return' => 'You have rolled a Nat 1, clearing your invisibility buff from earlier. You might want to roll for initiative…',
+		'lurk' => 'You have said the magick word to make yourself invisible to all eyes upon you, allowing you to fade into the shadows.',
+		'return' => 'You have rolled a Nat 1, clearing your invisibility buff from earlier. You might want to roll for initiative…',
 	],
 	'functions' => [ // Enabled functions usable by anyone
 		'help', // Send a list of commands as a chat message
 	],
 	'restricted_functions' => [ // Enabled functions usable only by whitelisted users
-		//'so', //Advertise someone else
+		'so', //Advertise someone else
+        'ban', //Ban someone with or without a reason included after the username
 	],
 	'private_functions' => [ // Enabled functions usable only by the bot owner sharing the same username as the bot
 		'php', //Outputs the current version of PHP as a message
@@ -121,7 +122,6 @@ $twitch_options = array(
 	`HelixCommandClient => [
 		$HelixCommandClient, // Optionally pass your own instance of the HelixCommandClient class
 	],
-	*/
 	'helix' => [ // REQUIRES a bot application https://dev.twitch.tv/console/apps 
 		'bot_id' => $bot_id,  // Obtained from application
 		'bot_secret' => $bot_secret,  // Obtained from application
@@ -129,10 +129,16 @@ $twitch_options = array(
 		'refresh_token' => $refresh_token,  // Obtained from your own server using twitch_oauth.php (see example at https://www.valzargaming.com/twitch_oauth/twitch_oauth_template.html)
 		'expires_in' => $expires_in,  // Obtained from your own server using twitch_oauth.php (see example at https://www.valzargaming.com/twitch_oauth/twitch_oauth_template.html)
 	],
+    */
 	/*
 	'browser' => new \React\Http\Browser($options['loop']), //Optionally pass your own browser for use by Helix' async commands
 	*/
 );
+// Responses that reference other values in options should be declared afterwards
+$twitch_options['responses']['social'] = 'Come follow the magick through several dimensions:  Twitter - '.$twitch_options['social']['twitter'].' |  Discord - '.$twitch_options['social']['discord'].' |  YouTube - '.$twitch_options['social']['youtube'];
+$twitch_options['responses']['tip'] = 'Wanna help fund the magick?  PayPal - '.$twitch_options['tip']['paypal'];
+$twitch_options['responses']['discord'] = $twitch_options['social']['discord'];
+
 $twitch = new Twitch\Twitch($twitch_options);
 
 include 'db.php'; //$mysqli[$mysqli1, $mysqli2, $mysqli3], //$pdo[$pdo1, $pdo2, $pdo3]

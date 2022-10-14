@@ -914,7 +914,7 @@ class Tutelar
         //Finish ready and bot initialization
         $this->discord->on('GUILD_CREATE', function (\Discord\Parts\Guild\Guild $guild)
         {
-            foreach ($this->discord->guilds as $guild) if (!$this->discord_config[$guild->id]) $this->SetConfigTemplate($guild, $this->discord_config);
+            foreach ($this->discord->guilds as $guild) if (!isset($this->discord_config[$guild->id])) $this->SetConfigTemplate($guild, $this->discord_config);
         });
         $this->discord->on('MESSAGE_REACTION_ADD', function (\Discord\Parts\WebSockets\MessageReaction $reaction) {
             if ($reaction->user_id == $this->discord->id) return; //Do not add roles to the bot

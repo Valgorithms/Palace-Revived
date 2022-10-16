@@ -706,9 +706,9 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
     $tutelar->discord->listenCommand('reminder', function ($interaction) use ($tutelar) {
         if (! $when = strtotime($interaction->data->options['time']->value)) return $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('Invalid time specified'), true);
         if (time()-$when>0) $when = $when+86400+(86400*(floor((time()-$when)/86400))); //Set time to tomorrow
-        $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('Reminder added. ' . $interaction->data->options['message']->value . '<t:' . $when-4 . ':R>'));
+        $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('Reminder added. ' . $interaction->data->options['message']->value . '<t:' . $when-4 . ':R>')->setAllowedMentions(['users' => [$interaction->user->id]]));
         $tutelar->discord->getLoop()->addTimer($when-time(), function () use ($tutelar, $interaction) {
-            if ($channel = $tutelar->discord->getChannel($interaction->channel_id)) $channel->sendMessage("{$interaction->user}, " . $interaction->data->options['message']->value);
+            if ($channel = $tutelar->discord->getChannel($interaction->channel_id)) $channel->sendMessage(\Discord\Builders\MessageBuilder::new()->setContent("{$interaction->user}, " . $interaction->data->options['message']->value)->setAllowedMentions(['users' => [$interaction->user->id]]));
         });
     });
 };

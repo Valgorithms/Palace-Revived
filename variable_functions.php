@@ -50,7 +50,6 @@ $status_changer_random = function (\Tutelar\Tutelar $tutelar) use ($status_chang
     $status_changer($tutelar->discord, $activity, $state);
 };
 
-
 $perm_check = function (\Discord\Discord $discord, array $required_perms, $member, \Discord\Parts\Channel\Channel $channel = null): bool
 {
     $perms = $member->getPermissions($channel); // @see https://github.com/discord-php/DiscordPHP/blob/master/src/Discord/Parts/Permissions/RolePermission.php
@@ -477,7 +476,6 @@ $browser_get = function (\Tutelar\Tutelar $tutelar, string $url, array $headers 
     $result = curl_exec($ch);
     return $result; //string
 };
-
 $browser_post = function (\Tutelar\Tutelar $tutelar, string $url, array $headers = ['Content-Type' => 'application/x-www-form-urlencoded'], array $data = [], bool $curl = true)
 {
     //Send a POST request to civ13.valzargaming.com/discord2ckey/ with POST['id'] = $id
@@ -494,7 +492,7 @@ $browser_post = function (\Tutelar\Tutelar $tutelar, string $url, array $headers
 };
 
 $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
-{
+{   
     //if ($command = $commands->get('name', 'invite')) $commands->delete($command->id);
     if (!$commands->get('name', 'invite')) {
         $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
@@ -503,15 +501,11 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
         ]);
         $commands->save($command);
     }
-    //if ($command = $commands->get('name', 'whois')) $commands->delete($command->id);
-    if (! $commands->get('name', 'whois')) {
-        $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
-            'type' => \Discord\Parts\Interactions\Command\Command::USER,
-            'name' => 'whois',
-        ]);
-        $commands->save($command);
-    }
-    
+    //listen for global commands
+    $tutelar->discord->listenCommand('invite', function ($interaction) use ($tutelar) {
+        $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent($tutelar->discord->application->getInviteURLAttribute('8')));
+    });
+
     // Creates commands if they don't already exist
     $tutelar->discord->guilds->get('id', '468979034571931648')->commands->freshen()->done(
         function ($commands) use ($tutelar) {
@@ -537,13 +531,6 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
             }
         }
     );
-        
-    //listen for global commands
-    $tutelar->discord->listenCommand('invite', function ($interaction) use ($tutelar) {
-        $interaction->respondWithMessage(Discord\Builders\MessageBuilder::new()->setContent($tutelar->discord->application->getInviteURLAttribute('8')));
-    });
-
-    // listen for guild commands
     $tutelar->discord->listenCommand('players', function ($interaction) use ($tutelar) {
         if (!$serverinfo = file_get_contents($tutelar->files['serverinfo'])) return $interaction->respondWithMessage('Unable to fetch serverinfo.json, webserver might be down');
         $data_json = json_decode($serverinfo);
@@ -678,11 +665,52 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
         });
     });
 
+    //if ($command = $commands->get('name', 'whois')) $commands->delete($command->id);
+    if (! $commands->get('name', 'whois')) {
+        $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
+            'type' => \Discord\Parts\Interactions\Command\Command::USER,
+            'name' => 'whois',
+        ]);
+        $commands->save($command);
+    }
     // listen for user commands
     $tutelar->discord->listenCommand('whois', function ($interaction) use ($tutelar, $whois) {
         $builder = new \Discord\Builders\MessageBuilder();
         $builder->addEmbed($whois($tutelar, $interaction->data->resolved->users->get('id', $interaction->data->target_id), $interaction->guild_id));
         $interaction->respondWithMessage($builder);
+    });
+
+    //if ($command = $commands->get('name', 'remind')) $commands->delete($command->id);
+    if (! $commands->get('name', 'remind')) {
+        $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
+            'name'			=> 'remind',
+            'description'	=> 'Add a reminder in the channel',
+            'dm_permission' => false,
+            'options'		=> [
+                [
+                    'name'			=> 'time',
+                    'description'	=> 'Add an alias.',
+                    'type'			=>  3,
+                    'required'		=> true,
+                ],
+                [
+                    'name'			=> 'message',
+                    'description'	=> 'Message associated with reminder.',
+                    'type'			=>  3,
+                    'required'		=> true,
+                ],
+            ]
+        ]);
+        $commands->save($command);
+    }
+    $tutelar->discord->listenCommand('remind', function ($interaction) use ($tutelar) {
+        if (! $interaction->guild_id || $interaction->type != \Discord\InteractionType::APPLICATION_COMMAND || $interaction->data->name !== 'remind') return;
+        if (! $when = strtotime($interaction->data->options['time']->value)) return $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('Invalid time specified'), true);
+        if (time()-$when>0) $when = $when+86400+(86400*(floor((time()-$when)/86400))); //Set time to tomorrow
+        $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('Reminder added. ' . $interaction->data->options['message']->value . "<t:$when:R>"));
+        $tutelar->discord->getLoop()->addTimer($when-time(), function () use ($tutelar, $interaction) {
+            if ($channel = $tutelar->discord->getChannel($interaction->channel_id)) $channel->sendMessage("{$interaction->user}, " . $interaction->data->options['message']->value);
+        });
     });
 };
 

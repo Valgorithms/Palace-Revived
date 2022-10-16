@@ -680,22 +680,22 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
         $interaction->respondWithMessage($builder);
     });
 
-    //if ($command = $commands->get('name', 'remind')) $commands->delete($command->id);
-    if (! $commands->get('name', 'remind')) {
+    //if ($command = $commands->get('name', 'reminder')) $commands->delete($command->id);
+    if (! $commands->get('name', 'reminder')) {
         $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
-            'name'			=> 'remind',
+            'name'			=> 'reminder',
             'description'	=> 'Add a reminder in the channel',
             'dm_permission' => false,
             'options'		=> [
                 [
                     'name'			=> 'time',
-                    'description'	=> 'Add an alias.',
+                    'description'	=> 'PHP strtotime() compatible text',
                     'type'			=>  3,
                     'required'		=> true,
                 ],
                 [
                     'name'			=> 'message',
-                    'description'	=> 'Message associated with reminder.',
+                    'description'	=> 'Message associated with your reminder',
                     'type'			=>  3,
                     'required'		=> true,
                 ],
@@ -703,11 +703,10 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
         ]);
         $commands->save($command);
     }
-    $tutelar->discord->listenCommand('remind', function ($interaction) use ($tutelar) {
-        if (! $interaction->guild_id || $interaction->type != \Discord\InteractionType::APPLICATION_COMMAND || $interaction->data->name !== 'remind') return;
+    $tutelar->discord->listenCommand('reminder', function ($interaction) use ($tutelar) {
         if (! $when = strtotime($interaction->data->options['time']->value)) return $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('Invalid time specified'), true);
         if (time()-$when>0) $when = $when+86400+(86400*(floor((time()-$when)/86400))); //Set time to tomorrow
-        $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('Reminder added. ' . $interaction->data->options['message']->value . "<t:$when:R>"));
+        $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('Reminder added. ' . $interaction->data->options['message']->value . '<t:' . $when-4 . ':R>'));
         $tutelar->discord->getLoop()->addTimer($when-time(), function () use ($tutelar, $interaction) {
             if ($channel = $tutelar->discord->getChannel($interaction->channel_id)) $channel->sendMessage("{$interaction->user}, " . $interaction->data->options['message']->value);
         });

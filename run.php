@@ -151,8 +151,7 @@ $options = array(
     'mysqli' => $mysqli,
     'pdo' => $pdo,
     
-    ///Filecache
-    'filecache_auto' => false, // Enable automatic caching some Tutelar-specific variables to file (NYI)
+    //Filecache
     //'filecache_path' = getcwd() . '/json/', // Manually change where cached files get saved to
     //'filecache_prefix' = 'tutelar;cache;', // Manually change automatically generated filenames to include this prefix (possibly easier to locate/ignore with other programs)
     

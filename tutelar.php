@@ -67,8 +67,6 @@ class Tutelar
         $this->logger = $options['logger'];
         $this->stats = $options['stats'];
         
-        if (isset($options['filecache_auto']) && is_bool($options['filecache_auto'])) $this->filecache = $options['filecache_auto'];
-        
         if (isset($options['filecache_path'])) {
             if (is_string($options['filecache_path'])) $this->filecache_path = $options['filecache_path'];
             else $this->filecache_path = getcwd() . '/json/';
@@ -228,7 +226,6 @@ class Tutelar
 
     public function SetConfigTemplate(\Discord\Parts\Guild\Guild $guild, array &$discord_config): void
     {
-        $this->logger->info('Created new config for guild ' . $guild->name);
         $discord_config[$guild->id] = [
             'toggles' => [
                 //'vanity'
@@ -906,7 +903,8 @@ class Tutelar
             'id' => '',
             'roles' => []
         ];
-        $this->VarSave('discord_config.json', $discord_config);
+        if ($this->VarSave('discord_config.json', $discord_config)) $this->logger->info("Created new config for guild {$guild->name}");
+        else $this->logger->warning("Failed top creat new config for guild {$guild->name}");
     }
 
     public function InitializeListeners(): void

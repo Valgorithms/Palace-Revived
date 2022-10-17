@@ -11,6 +11,23 @@
  * Ready Event
  *
 */
+function dbInsert(\Tutelar\Tutelar $tutelar, string $table, array $data)
+{
+    $db = $tutelar->mysqli[0];
+    $data_clean = [];
+    foreach ($data as $d) $data_clean[] = mysqli_real_escape_string($db, $d);
+    
+    $sql = 'INSERT INTO `' . $table . '` (`' . implode('`, `', array_keys($data_clean)) . '`) VALUES (';
+    $sql .= substr(str_repeat('?,', count($data_clean)), 0, -1) . ')';
+
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param(str_repeat('s', count($data_clean)), array_values($data_clean));
+    $stmt->execute();
+    $stmt->store_result();
+
+    return ['insert_id' => (isset($stmt->insert_id) ? $db->insert_id : false)];
+};
+
 
 $set_ips = function (\Tutelar\Tutelar $tutelar)
 {
@@ -297,8 +314,8 @@ $moderator_message = function (\Tutelar\Tutelar $tutelar, $message, string $mess
         if (is_numeric($message_content)) return $message->channel->limitDelete($message_content);
     }
     //TwitchPHP
-    if (str_starts_with($message_content_lower, 'join #')) return $tutelar->twitch->joinChannel(explode(' ', str_replace('join #', "", $message_content_lower))[0]);
-	if (str_starts_with($message_content_lower, 'leave #')) return $tutelar->twitch->leaveChannel(explode(' ', str_replace('leave #', "", $message_content_lower))[0]);
+    if (str_starts_with($message_content_lower, 'join #')) return $tutelar->twitch->joinChannel(explode(' ', str_replace('join #', '', $message_content_lower))[0]);
+	if (str_starts_with($message_content_lower, 'leave #')) return $tutelar->twitch->leaveChannel(explode(' ', str_replace('leave #', '', $message_content_lower))[0]);
 };
 $debug_guild_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower)
 {
@@ -313,11 +330,11 @@ $whois = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\User $user, $g
     $embed
         ->setTitle("{$user->displayname} ({$user->id})")
         ->setColor(0xe1452d)
-        ->addFieldValues("Avatar", "[Link]({$user->avatar})", true)
-        ->addFieldValues("Account Created", '<t:' . floor($user->createdTimestamp()) . ':R>', true)
+        ->addFieldValues('Avatar', "[Link]({$user->avatar})", true)
+        ->addFieldValues('Account Created', '<t:' . floor($user->createdTimestamp()) . ':R>', true)
         ->setThumbnail($user->avatar)
         ->setTimestamp()
-        ->setURL("");
+        ->setURL('');
     if (isset($tutelar->owner_id) && $owner = $tutelar->discord->users->get('id', $tutelar->owner_id)) $embed->setFooter(($tutelar->github ?  "{$tutelar->github}" . PHP_EOL : '') . "{$tutelar->discord->username} by {$owner->displayname}");
     if ($guild_id && $member = $tutelar->discord->guilds->get('id', $guild_id)->members->get('id', $user->id)) $embed->addFieldValues('Joined', '<t:' . floor($member->joined_at->timestamp) . ':R>', true);
     if (!empty($servers)) $embed->addFieldValues('Shared Servers', implode(PHP_EOL, $servers));
@@ -362,13 +379,13 @@ $any_debug_message = function (\Tutelar\Tutelar $tutelar, $message, string $mess
         return $message->reply($string);
     }
     if (str_starts_with($message_content_lower, 'guild leave ')) {
-        $tutelar->discord->guilds->get('id', explode(' ', str_replace('guild leave ', "", $message_content_lower))[0])->leave()->done(
+        $tutelar->discord->guilds->get('id', explode(' ', str_replace('guild leave ', '', $message_content_lower))[0])->leave()->done(
             function ($result) use ($message) { $message->react("👍"); },
             function ($error) use ($message) { $message->react("👎"); }
         );
     }
     if (str_starts_with($message_content_lower, 'guild invite ')) {
-        if (!is_numeric($id = explode(' ', str_replace('guild invite ', "", $message_content_lower))[0])) return $message->react("👎");
+        if (!is_numeric($id = explode(' ', str_replace('guild invite ', '', $message_content_lower))[0])) return $message->react("👎");
         if (!$guild = $tutelar->discord->guilds->get('id', $id)) return $message->react("👎");
         if ($guild->vanity_url_code) return $message->channel->sendMessage("{$guild->name} ({$guild->id}) https://discord.gg/{$guild->vanity_url_code}");
         if (!$bot_member = $guild->members->get('id', $tutelar->discord->id) || ! $perm_check($tutelar->discord, ['administrator', 'manage_guild'], $guild->members->get('id', $tutelar->discord->id))) return;
@@ -409,15 +426,15 @@ $any_called_debug_message = function (\Tutelar\Tutelar $tutelar, $message, strin
         return;
     }
     if ($message_content_lower == 'debug guild names') {
-        $guildstring = "";
+        $guildstring = '';
         foreach($tutelar->discord->guilds as $guild) $guildstring .= "[{$message->guild->name} ({$message->guild->id}) :".count($message->guild->members)." <@{$message->guild->owner_id}>] \n";
         foreach (str_split($guildstring, 2000) as $piece) $message->reply($piece);
         return;
     }
     
     //TwitchPHP
-    if (str_starts_with($message_content_lower, 'join #')) return $tutelar->twitch->joinChannel(explode(' ', str_replace('join #', "", $message_content_lower))[0]);
-	if (str_starts_with($message_content_lower, 'leave #')) return $tutelar->twitch->leaveChannel(explode(' ', str_replace('leave #', "", $message_content_lower))[0]);
+    if (str_starts_with($message_content_lower, 'join #')) return $tutelar->twitch->joinChannel(explode(' ', str_replace('join #', '', $message_content_lower))[0]);
+	if (str_starts_with($message_content_lower, 'leave #')) return $tutelar->twitch->leaveChannel(explode(' ', str_replace('leave #', '', $message_content_lower))[0]);
 };
 $any_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($any_called_debug_message)
 {
@@ -536,15 +553,15 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
         $data_json = json_decode($serverinfo);
         
         $desc_string_array = array();
-        $desc_string = "";
+        $desc_string = '';
         $server_state = array();
         foreach ($data_json as $varname => $varvalue){ //individual servers
             $varvalue = json_encode($varvalue);
             $server_state["$varname"] = $varvalue;
             
-            $desc_string = $desc_string . $varname . ": " . urldecode($varvalue) . "\n";
-            $desc_string_array[] = $desc_string ?? "null";
-            $desc_string = "";
+            $desc_string = $desc_string . $varname . ': ' . urldecode($varvalue) . "\n";
+            $desc_string_array[] = $desc_string ?? 'null';
+            $desc_string = '';
         }
         
         
@@ -593,25 +610,25 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
                         break;
                     case 'season':
                         //"Season", urldecode($serverinfo[0]["Season"])
-                        $server_state_dump[$index]["Season"] = $value;
+                        $server_state_dump[$index]['Season'] = $value;
                         break;
                     case 'map':
                         //"Map", urldecode($serverinfo[0]["Map"]);
-                        $server_state_dump[$index]["Map"] = $value;
+                        $server_state_dump[$index]['Map'] = $value;
                         break;
                     case 'roundduration':
-                        $rd = explode (":", $value);
+                        $rd = explode (':', $value);
                         $remainder = ($rd[0] % 24);
                         $rd[0] = floor($rd[0] / 24);
                         if ($rd[0] != 0 || $remainder != 0 || $rd[1] != 0) $rt = $rd[0] . "d " . $remainder . "h " . $rd[1] . "m";
                         else $rt = null; //"STARTING"; //Round is starting
-                        $server_state_dump[$index]["Round Time"] = $rt;
+                        $server_state_dump[$index]['Round Time'] = $rt;
                         break;
                     case 'stationtime':
-                        $rd = explode (":", $value);
+                        $rd = explode (':', $value);
                         $remainder = ($rd[0] % 24);
                         $rd[0] = floor($rd[0] / 24);
-                        if ($rd[0] != 0 || $remainder != 0 || $rd[1] != 0) $rt = $rd[0] . "d " . $remainder . "h " . $rd[1] . "m";
+                        if ($rd[0] != 0 || $remainder != 0 || $rd[1] != 0) $rt = $rd[0] . 'd ' . $remainder . 'h ' . $rd[1] . 'm';
                         else $rt = null; //"STARTING"; //Round is starting
                         //$server_state_dump[$index]["Station Time"] = $rt;
                         break;
@@ -619,8 +636,8 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
                         //$server_state_dump[$index]["Cache Time"] = gmdate("F j, Y, g:i a", $value) . " GMT";
                         break;
                     default:
-                        if ((substr($key, 0, 6) == "player") && ($key != "players") ){
-                            $server_state_dump[$index]["Players"][] = $value;
+                        if ((substr($key, 0, 6) == 'player') && ($key != 'players') ){
+                            $server_state_dump[$index]['Players'][] = $value;
                             //$playerlist = $playerlist . "$varvalue, ";
                             //"Players", urldecode($serverinfo[0]["players"])
                         }
@@ -636,11 +653,11 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
                 if (!($key && $value)) continue;
                 if (is_array($value)){
                     $output_string = implode(', ', $value);
-                    $embed->addFieldValues($key . " (" . count($value) . ")", $output_string, true);
+                    $embed->addFieldValues($key . ' (' . count($value) . ')', $output_string, true);
                 }elseif ($key == "Host"){
-                    if (strpos($value, "(Offline") == false)
+                    if (strpos($value, '(Offline') == false)
                     $embed->addFieldValues($key, $value, true);
-                }elseif ($key == "Server"){
+                }elseif ($key == 'Server'){
                     $embed->addFieldValues($key, $value, false);
                 }else{
                     $embed->addFieldValues($key, $value, true);
@@ -652,7 +669,7 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
         $embed
             ->setColor(0xe1452d)
             ->setTimestamp()
-            ->setURL("");
+            ->setURL('');
         
         $message = \Discord\Builders\MessageBuilder::new()
             ->setContent('Players')

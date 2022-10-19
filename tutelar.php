@@ -914,7 +914,7 @@ class Tutelar
         {
             foreach ($this->discord->guilds as $guild) if (!isset($this->discord_config[$guild->id])) $this->SetConfigTemplate($guild, $this->discord_config);
         });
-        $this->discord->on('MESSAGE_REACTION_ADD', function (\Discord\Parts\WebSockets\MessageReaction $reaction) {
+        $this->discord->on('MESSAGE_REACTION_ADD', function ($reaction) {
             if ($reaction->user_id == $this->discord->id) return; //Do not add roles to the bot
             if (is_null($reaction->message)) {
 				$reaction->channel->messages->fetch($reaction->message_id)->done(function ($message) use ($reaction) {

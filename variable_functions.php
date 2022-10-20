@@ -369,7 +369,7 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
 };
 $guild_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower)
 {
-    //
+    if ($message->guild_id == $tutelar->owner_guild_id && $message->channel->type == 5) $message->crosspost();
 };
 
 $any_debug_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($perm_check)

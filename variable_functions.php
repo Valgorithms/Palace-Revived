@@ -345,9 +345,10 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
 {
     if (str_starts_with($message_content_lower, 'whois')) {
         if (is_numeric($message_content = trim(substr($message_content, strlen('whois')))) && $member = $message->guild->members->get('id', $message_content)) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
-        if (!is_numeric($mention = \GetMentions($message_content)[0])) return $message->react("👎");
-        if ($member = $message->guild->members->get('id', $mention)) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
-        $tutelar->discord->users->fetch($mention)->done(
+        if (!empty($arr = \GetMentions($message_content))) return $message->react("👎");
+        if (!is_numeric($arr[0])) return $message->react("👎");
+        if ($member = $message->guild->members->get('id', $arr[0])) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
+        $tutelar->discord->users->fetch($arr[0])->done(
             function ($user) use ($tutelar, $message, $whois) { $message->channel->sendEmbed($whois($tutelar, $user, $message->guild_id)); },
             function ($error) use ($message) { $message->react("👎"); }
         );
@@ -565,12 +566,12 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
             if (isset($server['roundduration'])) {
                 $rd = explode(":", urldecode($server['roundduration']));
                 $remainder = ($rd[0] % 24);
+                $rd[0] = floor($rd[0] / 24);
+                if ($rd[0] != 0 || $remainder != 0 || $rd[1] != 0) $rt = $rd[0] . "d " . $remainder . "h " . $rd[1] . "m";
                 else $rt = "STARTING";
                 $embed->addFieldValues('Round Timer', $rt, true);
             }
-            if (isset($server['map'])) $embed->addFieldValues('Map', urldecode($server[
-                $rd[0] = floor($rd[0] / 24);
-                if ($rd[0] != 0 || $remainder != 0 || $rd[1] != 0) $rt = $rd[0] . "d " . $remainder . "h " . $rd[1] . "m";'map']), true);
+            if (isset($server['map'])) $embed->addFieldValues('Map', urldecode($server['map']), true);
             if (isset($server['age'])) $embed->addFieldValues('Epoch', $server['age'], true);
             //Players
             $players = [];

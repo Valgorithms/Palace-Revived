@@ -549,137 +549,43 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
         }
     );
     $tutelar->discord->listenCommand('players', function ($interaction) use ($tutelar) {
-        if (!$serverinfo = file_get_contents($tutelar->files['serverinfo'])) return $interaction->respondWithMessage('Unable to fetch serverinfo.json, webserver might be down');
-        $data_json = json_decode($serverinfo);
-        
-        $desc_string_array = array();
-        $desc_string = '';
-        $server_state = array();
-        foreach ($data_json as $varname => $varvalue){ //individual servers
-            $varvalue = json_encode($varvalue);
-            $server_state["$varname"] = $varvalue;
-            
-            $desc_string = $desc_string . $varname . ': ' . urldecode($varvalue) . "\n";
-            $desc_string_array[] = $desc_string ?? 'null';
-            $desc_string = '';
-        }
-        
-        
-        $servers = [
-            'TDM' => 'byond://' . $tutelar->ips['tdm'] . ':' . $tutelar->ports['tdm'],
-            'Nomads' => 'byond://' . $tutelar->ips['nomads'] . ':' . $tutelar->ports['nomads'],
-            'Persistence' => 'byond://' . $tutelar->ips['vzg'] . ':' . $tutelar->ports['persistence'],
-            'Blue Colony' => 'byond://' . $tutelar->ips['vzg'] . ':' . $tutelar->ports['bc'],
-        ];
-        $server_index[0] = 'TDM';
-        $server_url[0] = $servers['TDM'];
-        $server_index[1] = 'Nomads';
-        $server_url[1] = $servers['Nomads'];
-        $server_index[2] = 'Persistence';
-        $server_url[2] = $servers['Persistence'];
-        $server_index[3] = 'Blue Colony';
-        $server_url[3] = $servers['Blue Colony'];
-        //$server_index[4] = "Kepler Station CC13" . PHP_EOL;
-        //$server_url[4] = "byond://69.244.83.231:7778";
-        
-        $server_state_dump = array(); // new assoc array for use with the embed
-        foreach ($server_index as $index => $servername){ //This is stupid. The arrays above need to be rewritten as assoc $servers and the methods below need to change as such.
-            $assocArray = json_decode($server_state[$index], true);
-            foreach ($assocArray as $key => $value){
-                if ($value) $value = urldecode($value);
-                else $value = null;
-                $playerlist = '';
-                if ($key/* && $value && ($value != "unknown")*/) switch($key){
-                    case 'version': //First key if online
-                        $server_state_dump[$index]['Server'] = '<' . $server_url[$index] . '> '. PHP_EOL . $server_index[$index];
-                        break;
-                    case 'ERROR': //First key if offline
-                        $server_state_dump[$index]['Server'] = $server_url[$index] . PHP_EOL . $server_index[$index] . PHP_EOL . '(Offline)'; //Don't show offline
-                        break;
-                    case 'host':
-                        if ($value == NULL || $value == '') $server_state_dump[$index]['Host'] = 'Taislin'; //Taislin didn't configure the host file
-                        elseif (strpos($value, 'Guest')!==false) $server_state_dump[$index]['Host'] = 'ValZarGaming'; //Byond wasn't logged in at server start
-                        else $server_state_dump[$index]['Host'] = $value;
-                        break;
-                    /*case "players":
-                        $server_state_dump[$index]["Player Count"] = $value;
-                        break;*/
-                    case 'age':
-                        //"Epoch", urldecode($serverinfo[0]["Epoch"])
-                        $server_state_dump[$index]['Epoch'] = $value;
-                        break;
-                    case 'season':
-                        //"Season", urldecode($serverinfo[0]["Season"])
-                        $server_state_dump[$index]['Season'] = $value;
-                        break;
-                    case 'map':
-                        //"Map", urldecode($serverinfo[0]["Map"]);
-                        $server_state_dump[$index]['Map'] = $value;
-                        break;
-                    case 'roundduration':
-                        $rd = explode (':', $value);
-                        $remainder = ($rd[0] % 24);
-                        $rd[0] = floor($rd[0] / 24);
-                        if ($rd[0] != 0 || $remainder != 0 || $rd[1] != 0) $rt = $rd[0] . "d " . $remainder . "h " . $rd[1] . "m";
-                        else $rt = null; //"STARTING"; //Round is starting
-                        $server_state_dump[$index]['Round Time'] = $rt;
-                        break;
-                    case 'stationtime':
-                        $rd = explode (':', $value);
-                        $remainder = ($rd[0] % 24);
-                        $rd[0] = floor($rd[0] / 24);
-                        if ($rd[0] != 0 || $remainder != 0 || $rd[1] != 0) $rt = $rd[0] . 'd ' . $remainder . 'h ' . $rd[1] . 'm';
-                        else $rt = null; //"STARTING"; //Round is starting
-                        //$server_state_dump[$index]["Station Time"] = $rt;
-                        break;
-                    case 'cachetime':
-                        //$server_state_dump[$index]["Cache Time"] = gmdate("F j, Y, g:i a", $value) . " GMT";
-                        break;
-                    default:
-                        if ((substr($key, 0, 6) == 'player') && ($key != 'players') ){
-                            $server_state_dump[$index]['Players'][] = $value;
-                            //$playerlist = $playerlist . "$varvalue, ";
-                            //"Players", urldecode($serverinfo[0]["players"])
-                        }
-                        break;
-                }
-            }
-        }
+        if (!$data_json = json_decode(file_get_contents($tutelar->files['serverinfo']), true)) return $interaction->respondWithMessage('Unable to fetch serverinfo.json, webserver might be down');
+        $server_info[0] = ['name' => 'TDM', 'host' => 'Taislin', 'link' => '<byond://' . $tutelar->ips['tdm'] . ':' . $tutelar->ports['tdm'] . '>'];
+        $server_info[1] = ['name' => 'Nomads', 'host' => 'Taislin', 'link' => '<byond://' . $tutelar->ips['nomads'] . ':' . $tutelar->ports['nomads'] . '>'];
+        $server_info[2] = ['name' => 'Persistence', 'host' => 'ValZarGaming', 'link' => '<byond://' . $tutelar->ips['vzg'] . ':' . $tutelar->ports['persistence'] . '>'];
+        $server_info[3] = ['name' => 'Blue Colony', 'host' => 'ValZarGaming', 'link' => '<byond://' . $tutelar->ips['vzg'] . ':' . $tutelar->ports['bc'] . '>'];
         
         $embed = new \Discord\Parts\Embed\Embed($tutelar->discord);
-        foreach ($server_index as $x => $temp){
-            if (is_array($server_state_dump[$x]))
-            foreach ($server_state_dump[$x] as $key => $value){ //Status / Byond / Host / Player Count / Epoch / Season / Map / Round Time / Station Time / Players
-                if (!($key && $value)) continue;
-                if (is_array($value)){
-                    $output_string = implode(', ', $value);
-                    $embed->addFieldValues($key . ' (' . count($value) . ')', $output_string, true);
-                }elseif ($key == "Host"){
-                    if (strpos($value, '(Offline') == false)
-                    $embed->addFieldValues($key, $value, true);
-                }elseif ($key == 'Server'){
-                    $embed->addFieldValues($key, $value, false);
-                }else{
-                    $embed->addFieldValues($key, $value, true);
-                }
+        foreach ($data_json as $server) {
+            $server_info_hard = array_shift($server_info);
+            if (array_key_exists('ERROR', $server)) continue;
+            if (isset($server_info_hard['name'])) $embed->addFieldValues('Server', $server_info_hard['name'] . PHP_EOL . $server_info_hard['link'], false);
+            if (isset($server_info_hard['host'])) $embed->addFieldValues('Host', $server_info_hard['host'], true);
+            //Round time
+            if (isset($server['roundduration'])) {
+                $rd = explode(":", urldecode($server['roundduration']));
+                $remainder = ($rd[0] % 24);
+                else $rt = "STARTING";
+                $embed->addFieldValues('Round Timer', $rt, true);
             }
+            if (isset($server['map'])) $embed->addFieldValues('Map', urldecode($server[
+                $rd[0] = floor($rd[0] / 24);
+                if ($rd[0] != 0 || $remainder != 0 || $rd[1] != 0) $rt = $rd[0] . "d " . $remainder . "h " . $rd[1] . "m";'map']), true);
+            if (isset($server['age'])) $embed->addFieldValues('Epoch', $server['age'], true);
+            //Players
+            $players = [];
+            foreach (array_keys($server) as $key) {
+                $p = explode('player', $key); 
+                if (isset($p[1]) && is_numeric($p[1])) $players[] = $server[$key];
+            }
+            if (! empty($players)) $embed->addFieldValues('Players (' . count($players) . ')', implode(', ', $players), true);
+            if (isset($server['season'])) $embed->addFieldValues('Season', $server['season'], true);
         }
-        //Finalize the embed
         if (isset($tutelar->owner_id) && $owner = $tutelar->discord->users->get('id', $tutelar->owner_id)) $embed->setFooter(($tutelar->github ?  "{$tutelar->github}" . PHP_EOL : '') . "{$tutelar->discord->username} by {$owner->displayname}");
-        $embed
-            ->setColor(0xe1452d)
-            ->setTimestamp()
-            ->setURL('');
-        
-        $message = \Discord\Builders\MessageBuilder::new()
-            ->setContent('Players')
-            ->addEmbed($embed);
-        $interaction->respondWithMessage($message)->done(
-        function ($success){
-            //
-        }, function ($error) use ($tutelar) {
-             $tutelar->logger->warning('Error responding to interaction with message: ' . $error->getMessage());
-        });
+        $embed->setColor(0xe1452d);
+        $embed->setTimestamp();
+        $embed->setURL('');
+        return $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->addEmbed($embed));
     });
 
     //if ($command = $commands->get('name', 'whois')) $commands->delete($command->id);

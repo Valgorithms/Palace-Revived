@@ -63,13 +63,13 @@ $twitch_options = array(
 	],
 	'whitelist' => [ // Users who are allowed to use restricted functions
         strtolower($nick), //Your channel
+        'shriekingechodanica',
         //'smalltowngamingtv',
         //'rattlesire',
         //'shrineplays',
         //'violentvixen_',
         //'linkdrako',
         //'ebonychimera',
-        'shriekingechodanica',
     ],
 	'badwords' => [ // List of blacklisted words or phrases in their entirety; User will be immediately banned with reason 'badword' if spoken in chat
 		'Buy Followers, primes and viewers',

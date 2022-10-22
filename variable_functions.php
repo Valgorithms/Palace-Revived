@@ -378,7 +378,7 @@ $twitch_relay = function (\Tutelar\Tutelar $tutelar, $message, string $message_c
         }
         //else $channel = $tutelar->twitch->getLastChannel();
         if (! $channel) continue;
-        if (! $tutelar->twitch->sendMessage("{$message->author->displayname}: $message_content", $channel)) $tutelar->logger->warning('[FAILED TO SEND MESSAGE TO TWITCH]');
+        if (! $tutelar->twitch->sendMessage("{$message->author->displayname} => $message_content", $channel)) $tutelar->logger->warning('[FAILED TO SEND MESSAGE TO TWITCH]');
     }
 };
 $guild_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($twitch_relay)

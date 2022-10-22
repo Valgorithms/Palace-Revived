@@ -15,7 +15,7 @@ require getcwd() . '/token.php'; //$token
 require getcwd() . '/secret.php'; //twitchphp helix secrets
 include getcwd() . '/vendor/autoload.php';
 
-$loop = React\EventLoop\Factory::create();
+$loop = \React\EventLoop\Loop::get();
 $logger = new Monolog\Logger('New logger');
 $logger->pushHandler(new Monolog\Handler\StreamHandler('php://stdout'));
 $discord = new \Discord\Discord([
@@ -52,14 +52,15 @@ $twitch_options = array(
         //'violentvixen_',
         //'linkdrako',
         //'ebonychimera',
-		'shriekingechodanica',
+        'shriekingechodanica',
+		//['shriekingechodanica' => ['999053951670423643', '923969098185068594']], //In a future update this will be supported (joinChannel should pull the current discord server ID for the default ['id'])
+        //[strtolower($nick) => '923969098185068594'],
 	],
 	
 	//Optional
 	'discord' => $discord, // Pass your own instance of DiscordPHP (https://github.com/discord-php/DiscordPHP)	
 	'discord_output' => true, // Output Twitch chat to a Discord server
-	'guild_id' => '999053951670423643', //ID of the Discord server
-	'channel_id' => '1014429625826414642', //ID of the Discord channel to output messages to
+    'guild_channel_ids' => ['999053951670423643' => '1014429625826414642', '923969098185068594' => '924019611534503996'], //ID of the Discord server => ID of the Discord channel to output messages to
 	
 	'loop' => $loop, // (Optional) Pass your own instance of $loop to share with other ReactPHP applications
 	'socket_options' => [

@@ -367,9 +367,26 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
     if ($perm_check($tutelar->discord, ['administrator', 'ban_members'], $message->member)) $admin_message($tutelar, $message, $message_content, $message_content_lower);
     if ($perm_check($tutelar->discord, ['administrator', 'moderate_members'], $message->member)) $moderator_message($tutelar, $message, $message_content, $message_content_lower);
 };
-$guild_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower)
+$twitch_relay = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower)
 {
+    if ($channels = $tutelar->twitch->getChannels()) foreach ($channels as $twitch_channel => $arr) foreach ($arr as $guild_id => $channel_id) {
+        if (!($message->guild_id == $guild_id && $message->channel_id == $channel_id)) continue;
+        $channel = '';
+        if (str_starts_with($message_content_lower, "#$twitch_channel")) {
+            $message_content = substr($message_content, strlen(substr(explode(' ', $message_content_lower)[0], 1))+1);
+            $channel = $twitch_channel;
+        }
+        //else $channel = $tutelar->twitch->getLastChannel();
+        if (! $channel) continue;
+        if (! $tutelar->twitch->sendMessage("{$message->author->displayname}: $message_content", $channel)) $tutelar->logger->warning('[FAILED TO SEND MESSAGE TO TWITCH]');
+    }
+};
+$guild_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($twitch_relay)
+{
+    echo '[GUILD_MESSAGE]' . PHP_EOL;
     if ($message->guild_id == $tutelar->owner_guild_id && $message->channel->type == 5) $message->crosspost();
+    
+    if ($message->user_id != $tutelar->discord->id) $twitch_relay($tutelar, $message, $message_content, $message_content_lower);
 };
 
 $any_debug_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($perm_check)
@@ -381,8 +398,8 @@ $any_debug_message = function (\Tutelar\Tutelar $tutelar, $message, string $mess
     }
     if (str_starts_with($message_content_lower, 'guild leave ')) {
         $tutelar->discord->guilds->get('id', explode(' ', str_replace('guild leave ', '', $message_content_lower))[0])->leave()->done(
-            function ($result) use ($message) { $message->react("👍"); },
-            function ($error) use ($message) { $message->react("👎"); }
+            function () use ($message) { $message->react("👍"); },
+            function () use ($message) { $message->react("👎"); }
         );
     }
     if (str_starts_with($message_content_lower, 'guild invite ')) {
@@ -397,7 +414,7 @@ $any_debug_message = function (\Tutelar\Tutelar $tutelar, $message, string $mess
             'max_uses' => 1, // 1 use
         ])->done(
             function ($invite) use ($message, $guild) { $message->reply("{$guild->name} ({$guild->id}) https://discord.gg/{$invite->code}"); },
-            function ($error) use ($message, $guild) { $message->react("❌"); }
+            function () use ($message) { $message->react("❌"); }
         );
     }
 };
@@ -452,13 +469,13 @@ $any_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $mes
 $on_message = function (\Tutelar\Tutelar $tutelar, $message) use ($any_message, $direct_message, $guild_message, $any_called_message, $guild_called_message)
 {
     if (!$message->content) return; //Don't process message without text
-    $message_content = '';
-    $message_content_lower = '';
+    $message_content = $message->content;
+    $message_content_lower = strtolower($message->content);
     $called = false;
     //$tutelar->logger->debug('[MESSAGE] {' . $message->guild_id . '/' . $message->channel_id . '} ' . $message->author->displayname . ': ' . $message->content);
     foreach($tutelar->command_symbol as $symbol) {
         if (str_starts_with($message->content, $symbol)) {
-            $message_content = trim(substr($message->content, strlen($symbol)));
+            $message_content = trim(substr($message_content, strlen($symbol)));
             $message_content_lower = strtolower($message_content);
             $called = true;
             $tutelar->logger->debug($message->guild_id . ' - `' . $message_content . '`');

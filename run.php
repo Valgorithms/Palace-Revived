@@ -43,24 +43,10 @@ $nick = 'ValZarGaming'; // Twitch username (Case sensitive)
 $twitch_options = array(
 	//Required
 	'secret' => $secret, // Client secret
-	'nick' => $nick, 
-	'channels' => [
-        //strtolower($nick), // Your channel
-        //'smalltowngamingtv', // (Optional) Additional channels
-        //'rattlesire',
-        //'shrineplays',
-        //'violentvixen_',
-        //'linkdrako',
-        //'ebonychimera',
-        'shriekingechodanica',
-		//['shriekingechodanica' => ['999053951670423643', '923969098185068594']], //In a future update this will be supported (joinChannel should pull the current discord server ID for the default ['id'])
-        //[strtolower($nick) => '923969098185068594'],
-	],
-	
+	'nick' => $nick,
 	//Optional
 	'discord' => $discord, // Pass your own instance of DiscordPHP (https://github.com/discord-php/DiscordPHP)	
 	'discord_output' => true, // Output Twitch chat to a Discord server
-    'guild_channel_ids' => ['999053951670423643' => '1014429625826414642', '923969098185068594' => '924019611534503996'], //ID of the Discord server => ID of the Discord channel to output messages to
 	
 	'loop' => $loop, // (Optional) Pass your own instance of $loop to share with other ReactPHP applications
 	'socket_options' => [
@@ -86,9 +72,10 @@ $twitch_options = array(
         'shriekingechodanica',
     ],
 	'badwords' => [ // List of blacklisted words or phrases in their entirety; User will be immediately banned with reason 'badword' if spoken in chat
-		'Buy followers, primes and viewers',
+		'Buy Followers, primes and viewers',
 		'bigfollows . com',
 		'stearncomminuty',
+        'Get viewers, followers and primes on',
 	],
 	'social' => [ //NYI
 		'twitter' => 'https://twitter.com/valzargaming',
@@ -134,6 +121,20 @@ $twitch_options = array(
 	'browser' => new \React\Http\Browser($options['loop']), //Optionally pass your own browser for use by Helix' async commands
 	*/
 );
+//Discord servers to relay chat for
+$twitch_options['channels']['shriekingechodanica']['923969098185068594'] = '924019611534503996';
+$twitch_options['channels']['shriekingechodanica']['999053951670423643'] = '1014429625826414642';
+
+$twitch_options['channels'][strtolower($nick)]['923969098185068594'] = '924019611534503996';
+$twitch_options['channels']['rattlesire']['923969098185068594'] = '924019611534503996';
+$twitch_options['channels']['seigiva']['923969098185068594'] = '924019611534503996';
+//strtolower($nick), // Your channel
+//'smalltowngamingtv', // (Optional) Additional channels
+//'rattlesire',
+//'shrineplays',
+//'violentvixen_',
+//'linkdrako',
+//'ebonychimera',
 // Responses that reference other values in options should be declared afterwards
 $twitch_options['responses']['social'] = 'Come follow the magick through several dimensions:  Twitter - '.$twitch_options['social']['twitter'].' |  Discord - '.$twitch_options['social']['discord'].' |  YouTube - '.$twitch_options['social']['youtube'];
 $twitch_options['responses']['tip'] = 'Wanna help fund the magick?  PayPal - '.$twitch_options['tip']['paypal'];

@@ -367,16 +367,16 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
     if ($perm_check($tutelar->discord, ['administrator', 'ban_members'], $message->member)) $admin_message($tutelar, $message, $message_content, $message_content_lower);
     if ($perm_check($tutelar->discord, ['administrator', 'moderate_members'], $message->member)) $moderator_message($tutelar, $message, $message_content, $message_content_lower);
 };
-$twitch_relay = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower)
+$twitch_relay = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower): void
 {
     if ($channels = $tutelar->twitch->getChannels()) foreach ($channels as $twitch_channel => $arr) foreach ($arr as $guild_id => $channel_id) {
         if (!($message->guild_id == $guild_id && $message->channel_id == $channel_id)) continue;
         $channel = '';
         if (str_starts_with($message_content_lower, "#$twitch_channel")) {
-            $message_content = substr($message_content, strlen(substr(explode(' ', $message_content_lower)[0], 1))+1);
+            $message_content = trim(substr($message_content, strlen("#$twitch_channel")));
             $channel = $twitch_channel;
         }
-        //else $channel = $tutelar->twitch->getLastChannel();
+        //else $channel = $tutelar->twitch->getLastChannel(); //Only works reliably if only relaying chat for a single Twitch chat
         if (! $channel) continue;
         if (! $tutelar->twitch->sendMessage("{$message->author->displayname} => $message_content", $channel)) $tutelar->logger->warning('[FAILED TO SEND MESSAGE TO TWITCH]');
     }
@@ -451,8 +451,8 @@ $any_called_debug_message = function (\Tutelar\Tutelar $tutelar, $message, strin
     }
     
     //TwitchPHP
-    if (str_starts_with($message_content_lower, 'join #')) return $tutelar->twitch->joinChannel('#'.explode(' ', str_replace('join #', '', $message_content_lower))[0], $message->guild_id, $message->channel_id);
-	if (str_starts_with($message_content_lower, 'leave #')) return $tutelar->twitch->leaveChannel('#'.explode(' ', str_replace('leave #', '', $message_content_lower))[0], $message->guild_id, $message->channel_id);
+    if (str_starts_with($message_content_lower, 'join #')) return $tutelar->twitch->joinChannel(trim(str_replace('join #', '#', $message_content_lower)), $message->guild_id, $message->channel_id);
+	if (str_starts_with($message_content_lower, 'leave #')) return $tutelar->twitch->leaveChannel(trim(str_replace('leave #', '#', $message_content_lower)), $message->guild_id, $message->channel_id);
 };
 $any_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($any_called_debug_message)
 {

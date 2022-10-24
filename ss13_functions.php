@@ -276,9 +276,11 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
             while (count($questions)<$tokens[2]) if (! in_array($tutelar->tests[$test_key][($rand = array_rand($tutelar->tests[$test_key]))], $questions)) $questions[] = $tutelar->tests[$test_key][$rand];
             return $message->reply("$test_key test:" . PHP_EOL . implode(PHP_EOL, $questions));
         }
-        //Add questions
-        //List questions
-        //Assign questions
+        if ($tokens[1] == 'delete') {
+            $message->reply("Deleted test `$test_key`");
+            unset($tutelar->tests[$test_key]);
+            return $tutelar->VarSave('tests.json', $tutelar->tests);
+        }
     }
     
     if ($message->user_id == $tutelar->owner_id) {

@@ -451,8 +451,8 @@ $any_called_debug_message = function (\Tutelar\Tutelar $tutelar, $message, strin
     }
     
     //TwitchPHP
-    if (str_starts_with($message_content_lower, 'join #')) return $tutelar->twitch->joinChannel(explode(' ', str_replace('join #', '', $message_content_lower))[0]);
-	if (str_starts_with($message_content_lower, 'leave #')) return $tutelar->twitch->leaveChannel(explode(' ', str_replace('leave #', '', $message_content_lower))[0]);
+    if (str_starts_with($message_content_lower, 'join #')) return $tutelar->twitch->joinChannel('#'.explode(' ', str_replace('join #', '', $message_content_lower))[0], $message->guild_id, $message->channel_id);
+	if (str_starts_with($message_content_lower, 'leave #')) return $tutelar->twitch->leaveChannel('#'.explode(' ', str_replace('leave #', '', $message_content_lower))[0], $message->guild_id, $message->channel_id);
 };
 $any_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($any_called_debug_message)
 {

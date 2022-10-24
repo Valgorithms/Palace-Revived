@@ -42,6 +42,7 @@ class Tutelar
     public $discord_config = [];
     public $suggestions = [];
     public $tips = [];
+    public $tests = [];
     
     /**
      * Creates a Tutelar client instance.
@@ -124,6 +125,10 @@ class Tutelar
                 if (! $tips = $this->VarLoad('tips.json')) $tips = [];
                 $this->tips = $tips;
                 register_shutdown_function([$this, "VarSave"], 'tips.json', $this->tips);
+                
+                if (! $tests = $this->VarLoad('tests.json')) $tests = [];
+                $this->tests = $tests;
+                register_shutdown_function([$this, "VarSave"], 'tests.json', $this->tests);
                 
                 $this->command_symbol[] = '<@'.$this->discord->id.'>';
                 $this->command_symbol[] = '<@!'.$this->discord->id.'>';

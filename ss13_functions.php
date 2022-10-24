@@ -249,6 +249,37 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
             return $message->reply("Your suggestion has been submitted for review with ID {$message->id}");
         }
     }
+    if (str_starts_with($message_content_lower, 'tests')) {
+        $message_content = trim(substr($message_content, strlen('tests')));
+        $message_content_lower = strtolower($message_content);
+        $tokens = explode(' ', $message_content);
+        if (!$tokens[0]) return $message->reply('Available tests: `' . implode('`, `', array_keys($tutelar->tests)) . '`');
+        if (! isset($tokens[1]) || (! array_key_exists($test_key = $tokens[0], $tutelar->tests) && $tokens[1] != 'add')) return $message->reply("Test `$test_key` hasn't been created yet! Please add a question first.");
+        if ($tokens[1] == 'list') return $message->reply(\Discord\Builders\MessageBuilder::new()->addFileFromContent("$test_key.txt", var_export($tutelar->tests[$test_key], true)));
+        if ($tokens[1] == 'add') {
+            unset ($tokens[1], $tokens[0]);
+            $tutelar->tests[$test_key][] = $question = implode(' ', $tokens);
+            $message->reply("Added question to test $test_key: $question");
+            return $tutelar->VarSave('tests.json', $tutelar->tests);
+        }
+        if ($tokens[1] == 'remove') {
+            if (! is_numeric($tokens[2])) return $message->replay("Invalid format! Please use the format `tests test_key remove #`");
+            if (! isset($tutelar->tests[$test_key][$tokens[2]])) return $message->reply("Question not found in test $test_key! Please use the format `tests test_key remove #`");
+            $message->reply('Removed question ' . $tokens[2]  . ': '  . $tutelar->tests[$test_key][$tokens[2]]);
+            unset($tutelar->tests[$test_key][$tokens[2]]);
+            return $tutelar->VarSave('tests.json', $tutelar->tests);
+        }
+        if ($tokens[1] == 'post') {
+            if (! is_numeric($tokens[2])) return $message->replay("Invalid format! Please use the format `tests test_key post #`");
+            if (count($tutelar->tests[$test_key])<$tokens[2]) return $message->replay("Can't return more questions than exist in a test!");
+            $questions = [];
+            while (count($questions)<$tokens[2]) if (! in_array($tutelar->tests[$test_key][($rand = array_rand($tutelar->tests[$test_key]))], $questions)) $questions[] = $tutelar->tests[$test_key][$rand];
+            return $message->reply("$test_key test:" . PHP_EOL . implode(PHP_EOL, $questions));
+        }
+        //Add questions
+        //List questions
+        //Assign questions
+    }
     
     if ($message->user_id == $tutelar->owner_id) {
         $ss13_debug_guild_message($tutelar, $message, $message_content, $message_content_lower);

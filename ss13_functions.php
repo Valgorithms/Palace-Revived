@@ -254,7 +254,7 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
         $message_content_lower = strtolower($message_content);
         $tokens = explode(' ', $message_content);
         if (!$tokens[0]) {
-        if (empty($tutelar->tests)) $message->reply("No tests have been created yet! Try creating one with `tests test_key add {Your Test's Question}");
+            if (empty($tutelar->tests)) return $message->reply("No tests have been created yet! Try creating one with `tests test_key add {Your Test's Question}");
             return $message->reply('Available tests: `' . implode('`, `', array_keys($tutelar->tests)) . '`');
         }
         if (! isset($tokens[1]) || (! array_key_exists($test_key = $tokens[0], $tutelar->tests) && $tokens[1] != 'add')) return $message->reply("Test `$test_key` hasn't been created yet! Please add a question first.");

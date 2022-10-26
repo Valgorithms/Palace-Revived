@@ -594,7 +594,7 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
             $players = [];
             foreach (array_keys($server) as $key) {
                 $p = explode('player', $key); 
-                if (isset($p[1]) && is_numeric($p[1])) $players[] = $server[$key];
+                if (isset($p[1]) && is_numeric($p[1])) $players[] = str_replace(['.', '_', ' '], '', strtolower(urldecode($server[$key])));
             }
             if (! empty($players)) $embed->addFieldValues('Players (' . count($players) . ')', implode(', ', $players), true);
             if (isset($server['season'])) $embed->addFieldValues('Season', $server['season'], true);

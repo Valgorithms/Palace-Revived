@@ -345,7 +345,7 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
 {
     if (str_starts_with($message_content_lower, 'whois')) {
         if (is_numeric($message_content = trim(substr($message_content, strlen('whois')))) && $member = $message->guild->members->get('id', $message_content)) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
-        if (!empty($arr = \GetMentions($message_content))) return $message->react("👎");
+        if (empty($arr = \GetMentions($message_content))) return $message->react("👎");
         if (!is_numeric($arr[0])) return $message->react("👎");
         if ($member = $message->guild->members->get('id', $arr[0])) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
         $tutelar->discord->users->fetch($arr[0])->done(

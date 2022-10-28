@@ -122,7 +122,7 @@ $twitch_options = array(
 	*/
 );
 //Discord servers to relay chat for
-$twitch_options['channels']['shriekingechodanica']['923969098185068594'] = '924019611534503996';
+//$twitch_options['channels']['shriekingechodanica']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['shriekingechodanica']['999053951670423643'] = '1014429625826414642';
 
 $twitch_options['channels'][strtolower($nick)]['923969098185068594'] = '924019611534503996';

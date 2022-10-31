@@ -589,7 +589,7 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
                 $embed->addFieldValues('Round Timer', $rt, true);
             }
             if (isset($server['map'])) $embed->addFieldValues('Map', urldecode($server['map']), true);
-            if (isset($server['age'])) $embed->addFieldValues('Epoch', $server['age'], true);
+            if (isset($server['age'])) $embed->addFieldValues('Epoch', urldecode($server['age']), true);
             //Players
             $players = [];
             foreach (array_keys($server) as $key) {

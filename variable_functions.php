@@ -597,7 +597,7 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
                 if (isset($p[1]) && is_numeric($p[1])) $players[] = str_replace(['.', '_', ' '], '', strtolower(urldecode($server[$key])));
             }
             if (! empty($players)) $embed->addFieldValues('Players (' . count($players) . ')', implode(', ', $players), true);
-            if (isset($server['season'])) $embed->addFieldValues('Season', $server['season'], true);
+            if (isset($server['season'])) $embed->addFieldValues('Season', urldecode($server['season']), true);
         }
         if (isset($tutelar->owner_id) && $owner = $tutelar->discord->users->get('id', $tutelar->owner_id)) $embed->setFooter(($tutelar->github ?  "{$tutelar->github}" . PHP_EOL : '') . "{$tutelar->discord->username} by {$owner->displayname}");
         $embed->setColor(0xe1452d);

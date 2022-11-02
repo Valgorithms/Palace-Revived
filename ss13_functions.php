@@ -210,7 +210,7 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
             $builder->addEmbed($embed);
             $channel->sendMessage($builder)->done(function($message){$message->react("👍")->done(function($result)use($message){$message->react("👎");});});
             if ($m = $message->guild->channels->get('id' , $tutelar->discord_config[$message->guild_id]['channels']['suggestion_pending'])->messages->get('id', $suggestion['message_id'])) $m->delete(); 
-            else ($m = $message->guild->channels->get($tutelar->discord_config[$message->guild_id]['channels']['suggestion_pending'])->messages->fetch('id', $suggestion['message_id'])->done(function ($message) {$message->delete();}));
+            else ($m = $message->guild->channels->get('id', $tutelar->discord_config[$message->guild_id]['channels']['suggestion_pending'])->messages->fetch('id', $suggestion['message_id'])->done(function ($message) {$message->delete();}));
             $message->react("👍");
             return $tutelar->VarSave('suggestions.json', $tutelar->suggestions);
         }

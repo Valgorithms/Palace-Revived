@@ -43,7 +43,7 @@ $set_ips = function (\Tutelar\Tutelar $tutelar)
         'tdm' => '1714',
         'persistence' => '7777',
         'bc' => '1717', 
-        'kepler' => '1718',
+        'df13' => '7778',
     ];
 };
 
@@ -462,7 +462,21 @@ $any_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $mes
     if ($message_content_lower == 'help') return $message->reply('Not yet implemented');
     
     //Miscellaneous Discord stuff
-    //if (str_starts_with($message_content_lower, 'avatar'))
+    if (str_starts_with($message_content_lower, 'avatar')) {
+        $message_content_lower = trim(str_replace(['<@!', '<@', '>'], '', substr($message_content_lower, strlen('avatar'))));
+        if (! $message_content_lower) return $message->reply($message->user->avatar);
+        if (is_numeric($message_content_lower)) {
+            return $tutelar->discord->users->fetch($message_content_lower)->done(
+                function ($user) use ($message) {
+                    return $message->reply($user->avatar);
+                },
+                function ($error) use ($message) {
+                    return $message->reply('Unable to locate user!');
+                }
+            );
+        }
+        return $message->reply('Invalid parameter! Please include the ID of the user you want to see the avatar of.');
+    }
 };
 
 
@@ -572,6 +586,7 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
         $server_info[1] = ['name' => 'Nomads', 'host' => 'Taislin', 'link' => "<byond://{$tutelar->ips['nomads']}:{$tutelar->ports['nomads']}>"];
         $server_info[2] = ['name' => 'Persistence', 'host' => 'ValZarGaming', 'link' => "<byond://{$tutelar->ips['vzg']}:{$tutelar->ports['persistence']}>"];
         $server_info[3] = ['name' => 'Blue Colony', 'host' => 'ValZarGaming', 'link' => "<byond://{$tutelar->ips['vzg']}:{$tutelar->ports['bc']}>"];
+        $server_info[4] = ['name' => 'Pocket Stronghold 13', 'host' => 'ValZarGaming', 'link' => "<byond://{$tutelar->ips['vzg']}:{$tutelar->ports['df13']}>"];
         
         $embed = new \Discord\Parts\Embed\Embed($tutelar->discord);
         foreach ($data_json as $server) {
@@ -647,7 +662,7 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
     $tutelar->discord->listenCommand('reminder', function ($interaction) use ($tutelar) {
         if (! $when = strtotime($interaction->data->options['time']->value)) return $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('Invalid time specified'), true);
         if (time()-$when>0) $when = $when+86400+(86400*(floor((time()-$when)/86400))); //Set time to tomorrow
-        $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setConten"('Reminder added. {$interaction->data->options['message']->value}<t:" . $when-4 . ':R>')->setAllowedMentions(['users' => [$interaction->user->id]]));
+        $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent("Reminder added. {$interaction->data->options['message']->value}<t:" . $when-4 . ':R>')->setAllowedMentions(['users' => [$interaction->user->id]]));
         $tutelar->discord->getLoop()->addTimer($when-time(), function () use ($tutelar, $interaction) {
             if ($channel = $tutelar->discord->getChannel($interaction->channel_id)) $channel->sendMessage(\Discord\Builders\MessageBuilder::new()->setContent("{$interaction->user}, " . $interaction->data->options['message']->value)->setAllowedMentions(['users' => [$interaction->user->id]]));
         });

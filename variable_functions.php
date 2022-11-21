@@ -120,9 +120,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
         $tutelar->saveConfig();
         return $message->react("👍");
     }
-    if ($message_content_lower == 'setup') { //Provide current configurations
-        return $message->reply(\Discord\Builders\MessageBuilder::new()->addFileFromContent('discord_config.txt', json_encode($tutelar->discord_config[$message->guild_id], JSON_PRETTY_PRINT)));
-    }
+    if ($message_content_lower == 'setup') return $message->reply(\Discord\Builders\MessageBuilder::new()->addFileFromContent('discord_config.txt', json_encode($tutelar->discord_config[$message->guild_id], JSON_PRETTY_PRINT))); //Provide current configurations
     if (str_starts_with($message_content_lower, 'setup')) {
         $message_content = trim(substr($message_content, strlen('setup')));
         $message_content_lower = strtolower($message_content);
@@ -294,16 +292,13 @@ $moderator_message = function (\Tutelar\Tutelar $tutelar, $message, string $mess
 {
     if (str_starts_with($message_content_lower, 'timeout')) {
         if (empty($array = \GetMentions($message_content))) return $message->reply('You need to <@mention> at least one user to time out');
-        foreach ($array as $id) {
-            $member = $message->guild->members->get('id', $id);
-            $timeout($tutelar, $member/*, $duration = '6 hours', $reason*/);
-        }
+        foreach ($array as $id) $timeout($tutelar, $message->guild->members->get('id', $id)/*, $duration = '6 hours', $reason*/);
         return $message->react("🤐");
     }
     if (str_starts_with($message_content_lower, 'clear')) {
-        $message_content = trim(substr($message_content, strlen('clear')));
-        if (! $message_content) return $message->channel->limitDelete(100);
+        if (! $message_content = trim(substr($message_content, strlen('clear')))) return $message->channel->limitDelete(100);
         if (is_numeric($message_content)) return $message->channel->limitDelete($message_content);
+        return $message->reply ('Invalid parameter! Please include the nubmer of messages to delete');
     }
     //TwitchPHP
     if (str_starts_with($message_content_lower, 'join #')) if ($tutelar->twitch->joinChannel(trim(str_replace('join #', '', $message_content_lower)), $message->guild_id, $message->channel_id)) return $message->react("👍"); else return $message->react("👎");

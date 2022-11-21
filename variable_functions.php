@@ -121,7 +121,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
         return $message->react("👍");
     }
     if ($message_content_lower == 'setup') { //Provide current configurations
-        return $message->reply(\Discord\Builders\MessageBuilder::new()->addFileFromContent('discord_config.txt', var_export($tutelar->discord_config[$message->guild_id], true)));
+        return $message->reply(\Discord\Builders\MessageBuilder::new()->addFileFromContent('discord_config.txt', json_encode($tutelar->discord_config[$message->guild_id], JSON_PRETTY_PRINT)));
     }
     if (str_starts_with($message_content_lower, 'setup')) {
         $message_content = trim(substr($message_content, strlen('setup')));

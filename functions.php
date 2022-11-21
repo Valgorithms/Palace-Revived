@@ -106,7 +106,7 @@ function GetMentions(string $message_content)
     if (!$matches) return [];
     
     $id_array = [];
-    foreach($matches as $array) foreach ($array as $match)
+    foreach ($matches as $array) foreach ($array as $match)
     if (is_numeric($match) && ! in_array($match, $id_array)) $id_array[] = $match;
     
     return $id_array;

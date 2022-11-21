@@ -53,12 +53,12 @@ $status_changer = function (\Discord\Discord $discord, $activity, $state = 'onli
 };
 $status_changer_random = function (\Tutelar\Tutelar $tutelar) use ($status_changer)
 {
-    if (!$tutelar->files['statuslist']) return $tutelar->logger->warning('status is not defined'.PHP_EOL);
+    if (!$tutelar->files['statuslist']) return $tutelar->logger->warning('status is not defined');
     if ($status_array = file($tutelar->files['statuslist'], FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)) {
         list($status, $type, $state) = explode('; ', $status_array[array_rand($status_array)]);
         $type = (int) $type;
-    } else return $tutelar->logger->warning('unable to open file ' . $tutelar->files['statuslist'].PHP_EOL);
-    if (!$status) return $tutelar->logger->warning('unable to get status from ' . $tutelar->files['statuslist'].PHP_EOL);
+    } else return $tutelar->logger->warning("unable to open file `{$tutelar->files['statuslist']}`");
+    if (!$status) return $tutelar->logger->warning("unable to get status from `{$tutelar->files['statuslist']}`");
     
     $activity = new \Discord\Parts\User\Activity($tutelar->discord, [ //Discord status            
         'name' => $status,
@@ -67,11 +67,9 @@ $status_changer_random = function (\Tutelar\Tutelar $tutelar) use ($status_chang
     $status_changer($tutelar->discord, $activity, $state);
 };
 
-$perm_check = function (\Discord\Discord $discord, array $required_perms, $member, \Discord\Parts\Channel\Channel $channel = null): bool
+$perm_check = function (array $required_perms, $member, \Discord\Parts\Channel\Channel $channel = null): bool
 {
-    $perms = $member->getPermissions($channel); // @see https://github.com/discord-php/DiscordPHP/blob/master/src/Discord/Parts/Permissions/RolePermission.php
-    foreach ($required_perms as $perm)
-        if ($perms[$perm]) return true;
+    foreach ($required_perms as $perm) if ($member->getPermissions($channel)[$perm]) return true; // @see https://github.com/discord-php/DiscordPHP/blob/master/src/Discord/Parts/Permissions/RolePermission.php
     return false;
 };
 
@@ -123,7 +121,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
         return $message->react("👍");
     }
     if ($message_content_lower == 'setup') { //Provide current configurations
-        //$tutelar->discord_config[$message->guild_id];
+        return $message->reply(\Discord\Builders\MessageBuilder::new()->addFileFromContent('discord_config.txt', var_export($tutelar->discord_config[$message->guild_id], true)));
     }
     if (str_starts_with($message_content_lower, 'setup')) {
         $message_content = trim(substr($message_content, strlen('setup')));
@@ -145,11 +143,9 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                 $name = trim($name);
                 if (!$name) return $message->reply('Missing name parameter! Creating new custom roles should be done in the format of @' . $tutelar->discord->username . ' add role_name unicode_emoji');
                 $keys = array_keys($tutelar->discord_config[$message->guild_id]['reaction_roles']);
-                foreach ($keys as $key) if (str_starts_with($key, 'custom')) {
-                    foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'] as $k => $arr) {
+                foreach ($keys as $key) if (str_starts_with($key, 'custom'))
+                    foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'] as $k => $arr)
                         if ($arr['name'] == $name) return $message->reply("A custom role with the name `$name` already exists in the config");
-                    }
-                }
                 if (!$emoji) return $message->reply('Missing emoji parameter! Creating new custom roles should be done in the format of @' . $tutelar->discord->username . ' add role_name unicode_emoji');
                 $message->react($emoji)->done(
                     function ($reaction) use ($tutelar, $message, $name, $emoji) { //Unicode should be valid, so create the role
@@ -202,15 +198,13 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                 $name = trim(substr($message_content, strlen('remove')));
                 if (!$name) return $message->reply('Missing name parameter! Creating new custom roles should be done in the format of @' . $tutelar->discord->username . ' add role_name unicode_emoji');
                 $keys = array_keys($tutelar->discord_config[$message->guild_id]['reaction_roles']);
-                foreach ($keys as $key) if (str_starts_with($key, 'custom')) {
-                    foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'] as $k => $arr) {
+                foreach ($keys as $key) if (str_starts_with($key, 'custom'))
+                    foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'] as $k => $arr)
                         if ($arr['name'] == $name) {
                             unset($tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'][$k]);
                             $message->react("👍");
                             return $tutelar->saveConfig();
                         }
-                    }
-                }
                 return $message->reply("A custom role with the name of `$name` was not found in the config");
             }
         }
@@ -242,54 +236,52 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
             $message_content = trim(substr($message_content, strlen('message')));
             $target = $message_content_lower = strtolower($message_content);
             if (!isset($tutelar->discord_config[$message->guild_id]['reaction_roles'][$target])) return $message->reply('Invalid reaction role `' . $target . '`! Valid options are ' . implode(', ', array_keys($tutelar->discord_config[$message->guild_id]['reaction_roles'])));
-            foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles'] as $key => $value) {
-                if ($key == $target) {
-                    $emojis = [];
-                    $message_content = $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['message_content'];
-                    foreach($tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'] as $arr => $val) {
-                        if (!isset($val['emoji'])) continue;
-                        $emojis[] = $val['emoji'];
-                        $message_content .= PHP_EOL . $val['emoji'] . ' : ' . $val['name'];
-                        //Create roles for each emoji if they don't exist already, then add the reactions
-                        if (! $role = $message->guild->roles->get('name', $val['name'])) {
-                            $role_template = new \Discord\Parts\Guild\Role($tutelar->discord,
-                                [
-                                    'name' => $val['name'],
-                                    'color' => $val['color'] ?? $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['default_color'],
-                                    'hoist' => $val['hoist'],
-                                    'mentionable' => $val['mentionable'],
-                                    'permissions' => $val['permissions']
-                                ]
-                            );
-                            $message->guild->createRole($role_template->getUpdatableAttributes())->done(
-                                function ($role) use ($tutelar, $message, $key, $arr, $val) {
-                                    $tutelar->logger->info('Created new ' . $val['name'] . ' role id ' . $role->id);
-                                    $val['id'] = $role->id;
-                                    $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'][$arr] = $val;
-                                },
-                                function ($error) use ($tutelar) {
-                                    $tutelar->logger->warning('Error creating role! ' . $error->getMessage());
-                                }
-                            );
-                        } else {
-                            $tutelar->logger->info('Updated ' . $val['name'] . ' role id ' . $role->id);
-                            $val['id'] = $role->id;
-                            $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'][$arr] = $val;
-                        }
+            foreach (array_keys($tutelar->discord_config[$message->guild_id]['reaction_roles']) as $key) if ($key == $target) { //???
+                $emojis = [];
+                $message_content = $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['message_content'];
+                foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'] as $arr => $val) {
+                    if (!isset($val['emoji'])) continue;
+                    $emojis[] = $val['emoji'];
+                    $message_content .= PHP_EOL . $val['emoji'] . ' : ' . $val['name'];
+                    //Create roles for each emoji if they don't exist already, then add the reactions
+                    if (! $role = $message->guild->roles->get('name', $val['name'])) {
+                        $role_template = new \Discord\Parts\Guild\Role($tutelar->discord,
+                            [
+                                'name' => $val['name'],
+                                'color' => $val['color'] ?? $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['default_color'],
+                                'hoist' => $val['hoist'],
+                                'mentionable' => $val['mentionable'],
+                                'permissions' => $val['permissions']
+                            ]
+                        );
+                        $message->guild->createRole($role_template->getUpdatableAttributes())->done(
+                            function ($role) use ($tutelar, $message, $key, $arr, $val) {
+                                $tutelar->logger->info('Created new ' . $val['name'] . ' role id ' . $role->id);
+                                $val['id'] = $role->id;
+                                $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'][$arr] = $val;
+                            },
+                            function ($error) use ($tutelar) {
+                                $tutelar->logger->warning('Error creating role! ' . $error->getMessage());
+                            }
+                        );
+                    } else {
+                        $tutelar->logger->info('Updated ' . $val['name'] . ' role id ' . $role->id);
+                        $val['id'] = $role->id;
+                        $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'][$arr] = $val;
                     }
-                    $message->channel->sendMessage($message_content)->done( //Sending message not firing
-                        function ($new_message) use ($tutelar, $message, $emojis, $key) {
-                            $tutelar->reactionLoop($new_message, $emojis);
-                            $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['id'] = $new_message->id;
-                            $tutelar->saveConfig();
-                            $message->delete();
-                        },
-                        function ($error) use ($tutelar) {
-                            $tutelar->logger->warning('Error sending message: ' . $error->getMessage());
-                        }
-                    );
-                    return;
                 }
+                $message->channel->sendMessage($message_content)->done( //Sending message not firing
+                    function ($new_message) use ($tutelar, $message, $emojis, $key) {
+                        $tutelar->reactionLoop($new_message, $emojis);
+                        $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['id'] = $new_message->id;
+                        $tutelar->saveConfig();
+                        $message->delete();
+                    },
+                    function ($error) use ($tutelar) {
+                        $tutelar->logger->warning('Error sending message: ' . $error->getMessage());
+                    }
+                );
+                return;
             }
         }
     }
@@ -363,9 +355,9 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
         return;
     }
     if ($message->guild->owner_id == $message->user_id) $owner_message($tutelar, $message, $message_content, $message_content_lower);    
-    if ($perm_check($tutelar->discord, ['administrator', 'manage_guild'], $message->member)) $manager_message($tutelar, $message, $message_content, $message_content_lower);
-    if ($perm_check($tutelar->discord, ['administrator', 'ban_members'], $message->member)) $admin_message($tutelar, $message, $message_content, $message_content_lower);
-    if ($perm_check($tutelar->discord, ['administrator', 'moderate_members'], $message->member)) $moderator_message($tutelar, $message, $message_content, $message_content_lower);
+    if ($perm_check(['administrator', 'manage_guild'], $message->member)) $manager_message($tutelar, $message, $message_content, $message_content_lower);
+    if ($perm_check(['administrator', 'ban_members'], $message->member)) $admin_message($tutelar, $message, $message_content, $message_content_lower);
+    if ($perm_check(['administrator', 'moderate_members'], $message->member)) $moderator_message($tutelar, $message, $message_content, $message_content_lower);
 };
 $twitch_relay = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower): void
 {
@@ -406,7 +398,7 @@ $any_debug_message = function (\Tutelar\Tutelar $tutelar, $message, string $mess
         if (!is_numeric($id = explode(' ', str_replace('guild invite ', '', $message_content_lower))[0])) return $message->react("👎");
         if (!$guild = $tutelar->discord->guilds->get('id', $id)) return $message->react("👎");
         if ($guild->vanity_url_code) return $message->channel->sendMessage("{$guild->name} ({$guild->id}) https://discord.gg/{$guild->vanity_url_code}");
-        if (!$bot_member = $guild->members->get('id', $tutelar->discord->id) || ! $perm_check($tutelar->discord, ['administrator', 'manage_guild'], $guild->members->get('id', $tutelar->discord->id))) return;
+        if (!$guild->members->get('id', $tutelar->discord->id) || ! $perm_check(['administrator', 'manage_guild'], $guild->members->get('id', $tutelar->discord->id))) return;
         foreach ($guild->invites as $invite) if ($invite->code) return $message->channel->sendMessage("{$guild->name} ({$guild->id}) https://discord.gg/{$invite->code}");
         
         foreach ($guild->channels as $channel) if ($channel->type != 4) return $channel->createInvite([
@@ -445,7 +437,7 @@ $any_called_debug_message = function (\Tutelar\Tutelar $tutelar, $message, strin
     }
     if ($message_content_lower == 'debug guild names') {
         $guildstring = '';
-        foreach($tutelar->discord->guilds as $guild) $guildstring .= "[{$message->guild->name} ({$message->guild->id}) :".count($message->guild->members)." <@{$message->guild->owner_id}>] \n";
+        foreach ($tutelar->discord->guilds as $guild) $guildstring .= "[{$guild->name} ({$guild->id}) :".count($guild->members)." <@{$guild->owner_id}>]" . PHP_EOL;
         foreach (str_split($guildstring, 2000) as $piece) $message->reply($piece);
         return;
     }
@@ -487,14 +479,12 @@ $on_message = function (\Tutelar\Tutelar $tutelar, $message) use ($any_message, 
     $message_content_lower = strtolower($message->content);
     $called = false;
     //$tutelar->logger->debug('[MESSAGE] {' . $message->guild_id . '/' . $message->channel_id . '} ' . $message->author->displayname . ': ' . $message->content);
-    foreach($tutelar->command_symbol as $symbol) {
-        if (str_starts_with($message->content, $symbol)) {
-            $message_content = trim(substr($message_content, strlen($symbol)));
-            $message_content_lower = strtolower($message_content);
-            $called = true;
-            $tutelar->logger->debug($message->guild_id . ' - `' . $message_content . '`');
-            break;
-        }
+    foreach ($tutelar->command_symbol as $symbol) if (str_starts_with($message->content, $symbol)) {
+        $message_content = trim(substr($message_content, strlen($symbol)));
+        $message_content_lower = strtolower($message_content);
+        $called = true;
+        $tutelar->logger->debug("{$message->guild_id} - `$message_content`");
+        break;
     }
     
     //if ($message->guild->owner_id != $tutelar->owner_id) return; //Only process commands from a guild that Valithor owns

@@ -307,7 +307,7 @@ $ss13_on_message = function (\Tutelar\Tutelar $tutelar, $message) use ($ss13_any
     $message_content_lower = '';
     $called = false;
     //$tutelar->logger->debug('[MESSAGE] {' . $message->guild_id . '/' . $message->channel_id . '} ' . $message->author->displayname . ': ' . $message->content);
-    foreach($tutelar->command_symbol as $symbol) {
+    foreach ($tutelar->command_symbol as $symbol) {
         if (str_starts_with($message->content, $symbol)) {
             $message_content = trim(substr($message->content, strlen($symbol)));
             $message_content_lower = strtolower($message_content);

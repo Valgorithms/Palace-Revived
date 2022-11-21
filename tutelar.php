@@ -1029,8 +1029,8 @@ class Tutelar
     public function roleReactionAdd(\Discord\Parts\WebSockets\MessageReaction $reaction)
     {
         //if (!is_null($emoji_id)) return; //Only unicode emojis are supported by Tutelar right now
-        foreach($this->discord_config[$reaction->guild_id]['reaction_roles'] as $key => $array)
-        if ($reaction->message_id == $array['id']) foreach($array['roles'] as $k => $v) {
+        foreach ($this->discord_config[$reaction->guild_id]['reaction_roles'] as $key => $array)
+        if ($reaction->message_id == $array['id']) foreach ($array['roles'] as $k => $v) {
             if (!isset($v['emoji'])) continue;
             if ($reaction->emoji == $v['emoji']) {
                 if ($reaction->member->roles->get('name', $v['name']) ?? $reaction->member->roles->get('id', $v['id'])) return;
@@ -1046,8 +1046,8 @@ class Tutelar
     public function roleReactionRemove(\Discord\Parts\WebSockets\MessageReaction $reaction)
     {
         //if (!is_null($emoji_id)) return; //Only unicode emojis are supported by Tutelar right now
-        foreach($this->discord_config[$reaction->guild_id]['reaction_roles'] as $key => $array)
-        if ($reaction->message_id == $array['id']) foreach($array['roles'] as $k => $v) {
+        foreach ($this->discord_config[$reaction->guild_id]['reaction_roles'] as $key => $array)
+        if ($reaction->message_id == $array['id']) foreach ($array['roles'] as $k => $v) {
             if (!isset($v['emoji'])) continue;
             if ($reaction->emoji == $v['emoji']) {
                 if (! $reaction->member->roles->get('name', $v['name']) ?? $reaction->member->roles->get('id', $v['id'])) return;

@@ -114,7 +114,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
             unset($tutelar->discord_config[$message->guild_id]);
             $tutelar->SetConfigTemplate($message->guild, $tutelar->discord_config);
             return $message->react("👍");
-        } else return $message->reply('If you sure you want to reset the configurations for the entire server, please confirm by using the command: <@' . $tutelar->discord->id . '> reset ' . $message->guild_id);
+        } else return $message->reply("If you sure you want to reset the configurations for the entire server, please confirm by using the command: <@{$tutelar->discord->id}> reset {$message->guild_id}");
     }
     if (str_starts_with($message_content_lower, 'save')) {
         $tutelar->saveConfig();
@@ -139,12 +139,12 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                 $name = '';
                 for($x=0; $x<=sizeof($array)-2; $x++) $name .= $array[$x] . ' ';
                 $name = trim($name);
-                if (!$name) return $message->reply('Missing name parameter! Creating new custom roles should be done in the format of @' . $tutelar->discord->username . ' add role_name unicode_emoji');
+                if (!$name) return $message->reply("Missing name parameter! Creating new custom roles should be done in the format of @{$tutelar->discord->username} add role_name unicode_emoji");
                 $keys = array_keys($tutelar->discord_config[$message->guild_id]['reaction_roles']);
                 foreach ($keys as $key) if (str_starts_with($key, 'custom'))
                     foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'] as $k => $arr)
                         if ($arr['name'] == $name) return $message->reply("A custom role with the name `$name` already exists in the config");
-                if (!$emoji) return $message->reply('Missing emoji parameter! Creating new custom roles should be done in the format of @' . $tutelar->discord->username . ' add role_name unicode_emoji');
+                if (!$emoji) return $message->reply("Missing emoji parameter! Creating new custom roles should be done in the format of @{$tutelar->discord->username} add role_name unicode_emoji");
                 $message->react($emoji)->done(
                     function ($reaction) use ($tutelar, $message, $name, $emoji) { //Unicode should be valid, so create the role
                         $index = sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']['custom']['roles']);
@@ -191,7 +191,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
             }
             if (str_starts_with($message_content_lower, 'remove')) {
                 $name = trim(substr($message_content, strlen('remove')));
-                if (!$name) return $message->reply('Missing name parameter! Creating new custom roles should be done in the format of @' . $tutelar->discord->username . ' add role_name unicode_emoji');
+                if (!$name) return $message->reply("Missing name parameter! Creating new custom roles should be done in the format of @{$tutelar->discord->username} add role_name unicode_emoji");
                 $keys = array_keys($tutelar->discord_config[$message->guild_id]['reaction_roles']);
                 foreach ($keys as $key) if (str_starts_with($key, 'custom'))
                     foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'] as $k => $arr)
@@ -207,10 +207,10 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
         if (str_starts_with($message_content_lower, 'toggle')) {
             $message_content = trim(substr($message_content, strlen('toggle')));
             $message_content_lower = strtolower($message_content);
-            if (!$message_content_lower || is_null($tutelar->discord_config[$message->guild_id]['toggles'][$message_content_lower])) return $message->reply('Invalid toggle configuration `' . $message_content_lower . '`! Valid options are ' . implode(', ', array_keys($tutelar->discord_config[$message->guild_id]['toggles'])));
+            if (!$message_content_lower || is_null($tutelar->discord_config[$message->guild_id]['toggles'][$message_content_lower])) return $message->reply("Invalid toggle configuration `$message_content_lower`! Valid options are " . implode(', ', array_keys($tutelar->discord_config[$message->guild_id]['toggles'])));
             $tutelar->discord_config[$message->guild_id]['toggles'][$message_content_lower] = !($val = $tutelar->discord_config[$message->guild_id]['toggles'][$message_content_lower]);
-            $tutelar->logger->info('Toggled ' . $message_content_lower . ': ' . ($tutelar->discord_config[$message->guild_id]['toggles'][$message_content_lower] ? 'True' : 'False'));
-            $message->reply('Toggled ' .  $message_content_lower . ' ' . ($tutelar->discord_config[$message->guild_id]['toggles'][$message_content_lower] ? 'on' : 'off'));
+            $tutelar->logger->info("Toggled $message_content_lower: " . ($tutelar->discord_config[$message->guild_id]['toggles'][$message_content_lower] ? 'on' : 'off'));
+            $message->reply("Toggled $message_content_lower: " . ($tutelar->discord_config[$message->guild_id]['toggles'][$message_content_lower] ? 'on' : 'off'));
             return $tutelar->saveConfig();
         }
         
@@ -220,9 +220,9 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
             preg_match('/<#([0-9]*)>/', $message_content_lower, $matches);
             if (!isset($matches[1]) || !$message->guild->channels->get('id', $matches[1])) return $message->reply('Channel not found! Please mention the channel in the format of <#channel_id>');
             $message_content_lower = trim(substr($message_content_lower, strlen($matches[0])));
-            if (!isset($tutelar->discord_config[$message->guild_id]['channels'][$message_content_lower])) return $message->reply('Invalid channel configuration `' . $message_content_lower . '`! Valid options are ' . implode(', ', array_keys($tutelar->discord_config[$message->guild_id]['channels'])));
+            if (!isset($tutelar->discord_config[$message->guild_id]['channels'][$message_content_lower])) return $message->reply("Invalid channel configuration `$message_content_lower`! Valid options are " . implode(', ', array_keys($tutelar->discord_config[$message->guild_id]['channels'])));
             $tutelar->discord_config[$message->guild_id]['channels'][$message_content_lower] = $matches[1];
-            $tutelar->logger->info('Updated ' . $message_content_lower . ' channel id ' . $matches[1]);
+            $tutelar->logger->info("Updated $message_content_lower channel id {$matches[1]}");
             $message->react("👍");
             return $tutelar->saveConfig();
         }
@@ -230,14 +230,14 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
         if (str_starts_with($message_content_lower, 'message'))  {
             $message_content = trim(substr($message_content, strlen('message')));
             $target = $message_content_lower = strtolower($message_content);
-            if (!isset($tutelar->discord_config[$message->guild_id]['reaction_roles'][$target])) return $message->reply('Invalid reaction role `' . $target . '`! Valid options are ' . implode(', ', array_keys($tutelar->discord_config[$message->guild_id]['reaction_roles'])));
+            if (!isset($tutelar->discord_config[$message->guild_id]['reaction_roles'][$target])) return $message->reply("Invalid reaction role `$target`! Valid options are " . implode(', ', array_keys($tutelar->discord_config[$message->guild_id]['reaction_roles'])));
             foreach (array_keys($tutelar->discord_config[$message->guild_id]['reaction_roles']) as $key) if ($key == $target) { //???
                 $emojis = [];
                 $message_content = $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['message_content'];
                 foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'] as $arr => $val) {
                     if (!isset($val['emoji'])) continue;
                     $emojis[] = $val['emoji'];
-                    $message_content .= PHP_EOL . $val['emoji'] . ' : ' . $val['name'];
+                    $message_content .= PHP_EOL . "{$val['emoji']} : {$val['name']}";
                     //Create roles for each emoji if they don't exist already, then add the reactions
                     if (! $role = $message->guild->roles->get('name', $val['name'])) {
                         $role_template = new \Discord\Parts\Guild\Role($tutelar->discord,
@@ -251,16 +251,16 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                         );
                         $message->guild->createRole($role_template->getUpdatableAttributes())->done(
                             function ($role) use ($tutelar, $message, $key, $arr, $val) {
-                                $tutelar->logger->info('Created new ' . $val['name'] . ' role id ' . $role->id);
+                                $tutelar->logger->info("Created new {$val['name']} role id {$role->id}");
                                 $val['id'] = $role->id;
                                 $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'][$arr] = $val;
                             },
                             function ($error) use ($tutelar) {
-                                $tutelar->logger->warning('Error creating role! ' . $error->getMessage());
+                                $tutelar->logger->warning("Error creating role! {$error->getMessage()}");
                             }
                         );
                     } else {
-                        $tutelar->logger->info('Updated ' . $val['name'] . ' role id ' . $role->id);
+                        $tutelar->logger->info("Updated {$val['name']} role id {$role->id}");
                         $val['id'] = $role->id;
                         $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'][$arr] = $val;
                     }
@@ -273,7 +273,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                         $message->delete();
                     },
                     function ($error) use ($tutelar) {
-                        $tutelar->logger->warning('Error sending message: ' . $error->getMessage());
+                        $tutelar->logger->warning("Error sending message: {$error->getMessage()}");
                     }
                 );
                 return;
@@ -433,10 +433,6 @@ $any_called_debug_message = function (\Tutelar\Tutelar $tutelar, $message, strin
         foreach (str_split($guildstring, 2000) as $piece) $message->reply($piece);
         return;
     }
-    
-    //TwitchPHP
-    //if (str_starts_with($message_content_lower, 'join #')) if ($tutelar->twitch->joinChannel(trim(str_replace('join #', '', $message_content_lower)), $message->guild_id, $message->channel_id)) return $message->react("👍"); else return $message->react("👎");
-	//if (str_starts_with($message_content_lower, 'leave #')) if ($tutelar->twitch->leaveChannel(trim(str_replace('leave #', '', $message_content_lower)), $message->guild_id, $message->channel_id)) return $message->react("👍"); else return $message->react("👎");
 };
 $any_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($any_called_debug_message)
 {
@@ -646,7 +642,7 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
         if (time()-$when>0) $when = $when+86400+(86400*(floor((time()-$when)/86400))); //Set time to tomorrow
         $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent("Reminder added. {$interaction->data->options['message']->value}<t:" . $when-4 . ':R>')->setAllowedMentions(['users' => [$interaction->user->id]]));
         $tutelar->discord->getLoop()->addTimer($when-time(), function () use ($tutelar, $interaction) {
-            if ($channel = $tutelar->discord->getChannel($interaction->channel_id)) $channel->sendMessage(\Discord\Builders\MessageBuilder::new()->setContent("{$interaction->user}, " . $interaction->data->options['message']->value)->setAllowedMentions(['users' => [$interaction->user->id]]));
+            if ($channel = $tutelar->discord->getChannel($interaction->channel_id)) $channel->sendMessage(\Discord\Builders\MessageBuilder::new()->setContent("{$interaction->user}, {$interaction->data->options['message']->value}")->setAllowedMentions(['users' => [$interaction->user->id]]));
         });
     });
 };

@@ -151,35 +151,32 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                         $increment = '';
                         if ($index / 20 == 1) do {
                             $increment++;
-                            $index = sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles']);
+                            $index = sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles']);
                             $increment = floor($index);
                         } while ($index / 20 == 1);
                         if ($r = $message->guild->roles->get('name', $name)) {
-                            $found = false;
-                            foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'] as $rk => $vk) {
-                                if ($vk['name'] == $name) {
-                                    $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$rk]['id'] = $r->id;
-                                    $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$rk]['name'] = $name;
-                                    $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$rk]['emoji'] = $emoji;
-                                    return $tutelar->saveConfig();
-                                }
+                            foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'] as $rk => $vk) if ($vk['name'] == $name) {
+                                $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$rk]['id'] = $r->id;
+                                $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$rk]['name'] = $name;
+                                $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$rk]['emoji'] = $emoji;
+                                return $tutelar->saveConfig();
                             }
-                            $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$index]['id'] = $r->id;
-                            $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$index]['name'] = $name;
-                            $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$index]['emoji'] = $emoji;
+                            $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['id'] = $r->id;
+                            $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['name'] = $name;
+                            $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['emoji'] = $emoji;
                             return $tutelar->saveConfig();
                         }
-                        $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$index]['name'] = $name;
-                        $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$index]['emoji'] = $emoji;
-                        $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$index]['color'] = $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom']['default_color'];
-                        $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$index]['hoist'] = false;
-                        $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$index]['mentionable'] = false;
-                        $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$index]['permissions'] = 0;
-                        $role_template = new \Discord\Parts\Guild\Role($tutelar->discord, $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$index]);
+                        $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['name'] = $name;
+                        $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['emoji'] = $emoji;
+                        $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['color'] = $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom']['default_color'];
+                        $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['hoist'] = false;
+                        $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['mentionable'] = false;
+                        $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['permissions'] = 0;
+                        $role_template = new \Discord\Parts\Guild\Role($tutelar->discord, $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]);
                         $message->guild->createRole($role_template->getUpdatableAttributes())->done(
                             function ($role) use ($tutelar, $message, $index, $increment) {
                                 $tutelar->logger->info('Created new custom role id: ' . $role->id);
-                                $tutelar->discord_config[$message->guild_id]['reaction_roles']['custom' . $increment]['roles'][$index]['id'] = $role->id;
+                                $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['id'] = $role->id;
                                 $tutelar->saveConfig();
                             },
                             function ($error) use ($tutelar) {
@@ -187,7 +184,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                             }
                         );
                     }, function ($error) use ($tutelar, $message) { //Unicode isn't valid
-                        $tutelar->logger->warning('Error reacting to message: ' . $error->getMessage());
+                        $tutelar->logger->warning("Error reacting to message: {$error->getMessage()}");
                         $message->reply('The command must end in a unicode emoji');
                     }
                 );
@@ -432,7 +429,7 @@ $any_called_debug_message = function (\Tutelar\Tutelar $tutelar, $message, strin
     }
     if ($message_content_lower == 'debug guild names') { //Maybe upload as a file instead?
         $guildstring = '';
-        foreach ($tutelar->discord->guilds as $guild) $guildstring .= "[{$guild->name} ({$guild->id}) :".count($guild->members)." <@{$guild->owner_id}>]" . PHP_EOL;
+        foreach ($tutelar->discord->guilds as $guild) $guildstring .= "[{$guild->name} ({$guild->id}) :{count($guild->members)} <@{$guild->owner_id}>]" . PHP_EOL;
         foreach (str_split($guildstring, 2000) as $piece) $message->reply($piece);
         return;
     }
@@ -596,7 +593,7 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
                 $p = explode('player', $key); 
                 if (isset($p[1]) && is_numeric($p[1])) $players[] = str_replace(['.', '_', ' '], '', strtolower(urldecode($server[$key])));
             }
-            if (! empty($players)) $embed->addFieldValues('Players (' . count($players) . ')', implode(', ', $players), true);
+            if (! empty($players)) $embed->addFieldValues("Players ({{count($players)})", implode(', ', $players), true);
             if (isset($server['season'])) $embed->addFieldValues('Season', urldecode($server['season']), true);
         }
         if (isset($tutelar->owner_id) && $owner = $tutelar->discord->users->get('id', $tutelar->owner_id)) $embed->setFooter(($tutelar->github ?  "{$tutelar->github}" . PHP_EOL : '') . "{$tutelar->discord->username} by {$owner->displayname}");

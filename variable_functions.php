@@ -430,7 +430,7 @@ $any_called_debug_message = function (\Tutelar\Tutelar $tutelar, $message, strin
         });
         return;
     }
-    if ($message_content_lower == 'debug guild names') {
+    if ($message_content_lower == 'debug guild names') { //Maybe upload as a file instead?
         $guildstring = '';
         foreach ($tutelar->discord->guilds as $guild) $guildstring .= "[{$guild->name} ({$guild->id}) :".count($guild->members)." <@{$guild->owner_id}>]" . PHP_EOL;
         foreach (str_split($guildstring, 2000) as $piece) $message->reply($piece);

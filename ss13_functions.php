@@ -144,7 +144,7 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
         if ($tutelar->discord_config[$message->guild_id]['channels']['tip_approved']) {
             if (str_starts_with($message_content_lower, 'approve')) {
                 if (is_int($id = trim(substr($message_content, strlen('approve'))))) {
-                    if (! $perm_check($tutelar->discord, ['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
+                    if (! $perm_check(['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
                     if (! $tip = $tutelar->tips[$id]) return $message->reply('Tip does not exist');
                     if (! $channel = $tutelar->discord->getChannel($tutelar->discord_config[$message->guild_id]['channels']['tip_approved'])) return $message->reply('Unable to locate tip approved channel');
                     //return $this->VarSave('tips.json', $this->tips);
@@ -152,7 +152,7 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
             }
             if (str_starts_with($message_content_lower, 'deny')) {
                 if (is_int($id = trim(substr($message_content, strlen('deny'))))) {
-                    if (! $perm_check($tutelar->discord, ['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
+                    if (! $perm_check(['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
                     if (! $tip = $tutelar->tips[$id]) return $message->reply('Tip does not exist');
                     //
                 }
@@ -170,19 +170,19 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
         if (!$message_content_lower) return;
         
         if ($message_content_lower == 'pending') {
-            if (! $perm_check($tutelar->discord, ['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
+            if (! $perm_check(['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
             $builder = new \Discord\Builders\MessageBuilder();
             $builder->addFileFromContent('pending.txt', var_export($tutelar->suggestions[$message->guild_id]['pending'], true));
             return $message->reply($builder);
         }
         if ($message_content_lower == 'approved') {
-            if (! $perm_check($tutelar->discord, ['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
+            if (! $perm_check(['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
             $builder = new \Discord\Builders\MessageBuilder();
             $builder->addFileFromContent('approved.txt', var_export($tutelar->suggestions[$message->guild_id]['approved'], true));
             return $message->reply($builder);
         }
         if ($message_content_lower == 'denied') {
-            if (! $perm_check($tutelar->discord, ['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
+            if (! $perm_check(['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
             $builder = new \Discord\Builders\MessageBuilder();
             $builder->addFileFromContent('denied.txt', var_export($tutelar->suggestions[$message->guild_id]['denied'], true));
             return $message->reply($builder);
@@ -190,7 +190,7 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
         
         if (str_starts_with($message_content_lower, 'approve')) {
             if (! $suggestion = $tutelar->suggestions[$message->guild_id]['pending'][$id = trim(substr($message_content, strlen('approve')))]) return $message->reply('Suggestion does not exist');
-            if (! $perm_check($tutelar->discord, ['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
+            if (! $perm_check(['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
             if (! $channel = $tutelar->discord->getChannel($tutelar->discord_config[$message->guild_id]['channels']['suggestion_approved'])) return $message->reply('Unable to locate suggestion approved channel');
             $tutelar->suggestions[$message->guild_id]['approved'][$id] = $suggestion;
             unset($tutelar->suggestions[$message->guild_id]['pending'][$id]);
@@ -216,7 +216,7 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
         }
         if (str_starts_with($message_content_lower, 'deny')) {
             if (! $suggestion = $tutelar->suggestions[$message->guild_id]['pending'][$id = trim(substr($message_content, strlen('deny')))]) return $message->reply('Suggestion does not exist');
-            if (! $perm_check($tutelar->discord, ['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
+            if (! $perm_check(['administrator', 'manage_server', 'ban_members', 'moderate_members'], $message->member)) return $message->reply('You do not have permission to use this command');
             $tutelar->suggestions[$message->guild_id]['denied'][$id] = $suggestion;
             unset($tutelar->suggestions[$message->guild_id]['pending'][$id]);
             if ($m = $message->guild->channels->get('id' , $tutelar->discord_config[$message->guild_id]['channels']['suggestion_pending'])->messages->get('id', $suggestion['message_id'])) $m->delete(); 
@@ -295,9 +295,9 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
         return;
     }
     if ($message->guild->owner_id == $message->user_id) $ss13_owner_message($tutelar, $message, $message_content, $message_content_lower);    
-    if ($perm_check($tutelar->discord, ['administrator', 'manage_server'], $message->member)) $ss13_manager_message($tutelar, $message, $message_content, $message_content_lower);
-    if ($perm_check($tutelar->discord, ['administrator', 'ban_members'], $message->member)) $ss13_admin_message($tutelar, $message, $message_content, $message_content_lower);
-    if ($perm_check($tutelar->discord, ['administrator', 'moderate_members'], $message->member)) $ss13_moderator_message($tutelar, $message, $message_content, $message_content_lower);
+    if ($perm_check(['administrator', 'manage_server'], $message->member)) $ss13_manager_message($tutelar, $message, $message_content, $message_content_lower);
+    if ($perm_check(['administrator', 'ban_members'], $message->member)) $ss13_admin_message($tutelar, $message, $message_content, $message_content_lower);
+    if ($perm_check(['administrator', 'moderate_members'], $message->member)) $ss13_moderator_message($tutelar, $message, $message_content, $message_content_lower);
     //if (str_starts_with($message_content_lower, 'tip '))
 };
 $ss13_on_message = function (\Tutelar\Tutelar $tutelar, $message) use ($ss13_any_message, $ss13_direct_message, $ss13_guild_message, $ss13_any_called_message, $ss13_guild_called_message)

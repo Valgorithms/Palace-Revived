@@ -653,6 +653,5 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
 
 $on_ready = function (\Tutelar\Tutelar $tutelar)
 {
-    $tutelar->logger->info("logged in as {$tutelar->discord->user->displayname} ({$tutelar->discord->id})");
-    $tutelar->logger->info('------');
+    $tutelar->logger->info("Logged in as {$tutelar->discord->user->displayname} ({$tutelar->discord->id})" . PHP_EOL . '------');
 };

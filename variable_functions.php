@@ -17,7 +17,7 @@ function dbInsert(\Tutelar\Tutelar $tutelar, string $table, array $data)
     $data_clean = [];
     foreach ($data as $d) $data_clean[] = mysqli_real_escape_string($db, $d);
     
-    $sql = 'INSERT INTO `' . $table . '` (`' . implode('`, `', array_keys($data_clean)) . '`) VALUES (';
+    $sql ="'INSERT INTO `$table` (`" . implode('`, `', array_keys($data_clean)) . '`) VALUES (';
     $sql .= substr(str_repeat('?,', count($data_clean)), 0, -1) . ')';
 
     $stmt = $db->prepare($sql);
@@ -137,7 +137,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                 $array = explode (' ', $message_content);
                 $emoji = $array[sizeof($array)-1];
                 $name = '';
-                for($x=0; $x<=sizeof($array)-2; $x++) $name .= $array[$x] . ' ';
+                for($x=0; $x<=sizeof($array)-2; $x++) $name .= "{$array[$x]} ";
                 $name = trim($name);
                 if (!$name) return $message->reply("Missing name parameter! Creating new custom roles should be done in the format of @{$tutelar->discord->username} add role_name unicode_emoji");
                 $keys = array_keys($tutelar->discord_config[$message->guild_id]['reaction_roles']);
@@ -175,7 +175,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                         $role_template = new \Discord\Parts\Guild\Role($tutelar->discord, $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]);
                         $message->guild->createRole($role_template->getUpdatableAttributes())->done(
                             function ($role) use ($tutelar, $message, $index, $increment) {
-                                $tutelar->logger->info('Created new custom role id: ' . $role->id);
+                                $tutelar->logger->info("Created new custom role id: {$role->id}");
                                 $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['id'] = $role->id;
                                 $tutelar->saveConfig();
                             },
@@ -422,14 +422,14 @@ $any_called_debug_message = function (\Tutelar\Tutelar $tutelar, $message, strin
             'max_age' => 60, // 1 minute
             'max_uses' => 5, // 5 uses
         ])->done(function ($invite) use ($message) {
-            $url = 'https://discord.gg/' . $invite->code;
+            $url = "https://discord.gg/{$invite->code}";
             $message->reply("Invite URL: $url");
         });
         return;
     }
     if ($message_content_lower == 'debug guild names') { //Maybe upload as a file instead?
         $guildstring = '';
-        foreach ($tutelar->discord->guilds as $guild) $guildstring .= "[{$guild->name} ({$guild->id}) :{count($guild->members)} <@{$guild->owner_id}>]" . PHP_EOL;
+        foreach ($tutelar->discord->guilds as $guild) $guildstring .= "[{$guild->name} ({$guild->id}) :".count($guild->members)." <@{$guild->owner_id}>]" . PHP_EOL;
         foreach (str_split($guildstring, 2000) as $piece) $message->reply($piece);
         return;
     }
@@ -589,7 +589,7 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
                 $p = explode('player', $key); 
                 if (isset($p[1]) && is_numeric($p[1])) $players[] = str_replace(['.', '_', ' '], '', strtolower(urldecode($server[$key])));
             }
-            if (! empty($players)) $embed->addFieldValues("Players ({{count($players)})", implode(', ', $players), true);
+            if (! empty($players)) $embed->addFieldValues('Players ('.count($players).')', implode(', ', $players), true);
             if (isset($server['season'])) $embed->addFieldValues('Season', urldecode($server['season']), true);
         }
         if (isset($tutelar->owner_id) && $owner = $tutelar->discord->users->get('id', $tutelar->owner_id)) $embed->setFooter(($tutelar->github ?  "{$tutelar->github}" . PHP_EOL : '') . "{$tutelar->discord->username} by {$owner->displayname}");
@@ -639,11 +639,12 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
     }
     $tutelar->discord->listenCommand('reminder', function ($interaction) use ($tutelar) {
         if (! $when = strtotime($interaction->data->options['time']->value)) return $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('Invalid time specified'), true);
-        if (time()-$when>0) $when = $when+86400+(86400*(floor((time()-$when)/86400))); //Set time to tomorrow
-        $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent("Reminder added. {$interaction->data->options['message']->value}<t:" . $when-4 . ':R>')->setAllowedMentions(['users' => [$interaction->user->id]]));
+        if (time()-$when>0) $when = 86400+(floor((time()))); //Set time to tomorrow
         $tutelar->discord->getLoop()->addTimer($when-time(), function () use ($tutelar, $interaction) {
             if ($channel = $tutelar->discord->getChannel($interaction->channel_id)) $channel->sendMessage(\Discord\Builders\MessageBuilder::new()->setContent("{$interaction->user}, {$interaction->data->options['message']->value}")->setAllowedMentions(['users' => [$interaction->user->id]]));
         });
+        $when+=4;
+        $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent("Reminder added. {$interaction->data->options['message']->value}<t:$when:R>")->setAllowedMentions(['users' => [$interaction->user->id]]));
     });
 };
 

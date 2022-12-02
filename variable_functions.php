@@ -41,7 +41,6 @@ $set_ips = function (\Tutelar\Tutelar $tutelar)
     $tutelar->ports = [
         'nomads' => '1715',
         'tdm' => '1714',
-        'persistence' => '7777',
         'bc' => '1717', 
         'df13' => '7778',
     ];
@@ -562,9 +561,8 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
         if (!$data_json = json_decode(file_get_contents($tutelar->files['serverinfo']), true)) return $interaction->respondWithMessage('Unable to fetch serverinfo.json, webserver might be down');
         $server_info[0] = ['name' => 'TDM', 'host' => 'Taislin', 'link' => "<byond://{$tutelar->ips['tdm']}:{$tutelar->ports['tdm']}>"];
         $server_info[1] = ['name' => 'Nomads', 'host' => 'Taislin', 'link' => "<byond://{$tutelar->ips['nomads']}:{$tutelar->ports['nomads']}>"];
-        $server_info[2] = ['name' => 'Persistence', 'host' => 'ValZarGaming', 'link' => "<byond://{$tutelar->ips['vzg']}:{$tutelar->ports['persistence']}>"];
-        $server_info[3] = ['name' => 'Blue Colony', 'host' => 'ValZarGaming', 'link' => "<byond://{$tutelar->ips['vzg']}:{$tutelar->ports['bc']}>"];
-        $server_info[4] = ['name' => 'Pocket Stronghold 13', 'host' => 'ValZarGaming', 'link' => "<byond://{$tutelar->ips['vzg']}:{$tutelar->ports['df13']}>"];
+        $server_info[2] = ['name' => 'Blue Colony', 'host' => 'ValZarGaming', 'link' => "<byond://{$tutelar->ips['vzg']}:{$tutelar->ports['bc']}>"];
+        $server_info[3] = ['name' => 'Pocket Stronghold 13', 'host' => 'ValZarGaming', 'link' => "<byond://{$tutelar->ips['vzg']}:{$tutelar->ports['df13']}>"];
         
         $embed = new \Discord\Parts\Embed\Embed($tutelar->discord);
         foreach ($data_json as $server) {

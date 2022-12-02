@@ -115,20 +115,16 @@ class Tutelar
                 if (! $discord_config = $this->VarLoad('discord_config.json')) $discord_config = [];
                 foreach ($this->discord->guilds as $guild) if (!isset($discord_config[$guild->id])) $this->SetConfigTemplate($guild, $discord_config);
                 $this->discord_config = $discord_config;
-                register_shutdown_function([$this, "VarSave"], 'discord_config.json', $this->discord_config);
                 
                 if (! $suggestions = $this->VarLoad('suggestions.json')) $suggestions = [];
                 foreach ($this->discord->guilds as $guild) if (!isset($suggestions[$guild->id])) $suggestions[$guild->id] = ['pending' => [], 'approved' => [], 'denied' => []];
                 $this->suggestions = $suggestions;
-                register_shutdown_function([$this, "VarSave"], 'suggestions.json', $this->suggestions);
                 
                 if (! $tips = $this->VarLoad('tips.json')) $tips = [];
                 $this->tips = $tips;
-                register_shutdown_function([$this, "VarSave"], 'tips.json', $this->tips);
                 
                 if (! $tests = $this->VarLoad('tests.json')) $tests = [];
                 $this->tests = $tests;
-                register_shutdown_function([$this, "VarSave"], 'tests.json', $this->tests);
                 
                 $this->command_symbol[] = '<@'.$this->discord->id.'>';
                 $this->command_symbol[] = '<@!'.$this->discord->id.'>';

@@ -21,8 +21,7 @@ $logger->pushHandler(new Monolog\Handler\StreamHandler('php://stdout'));
 $discord = new \Discord\Discord([
     'loop' => $loop,
     'logger' => $logger,
-    'cacheInterface' => new WyriHaximus\React\Cache\Redis((new Clue\React\Redis\Factory($loop))->createLazyClient('127.0.0.1:6379'), 'dphp:cache:'),
-    'cacheSweep' => false, //Don't periodically wipe the in-memory cache in case something happens to Redis
+    'cache' => new \Discord\Helpers\CacheConfig($interface = new WyriHaximus\React\Cache\Redis((new Clue\React\Redis\Factory($loop))->createLazyClient('127.0.0.1:6379'), 'dphp:cache:'), $compress = true, $sweep = false),
     /*'socket_options' => [
         'dns' => '8.8.8.8', // can change dns
     ],*/

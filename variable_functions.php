@@ -535,19 +535,21 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
     // Creates commands if they don't already exist
     $tutelar->discord->guilds->get('id', '468979034571931648')->commands->freshen()->done(
         function ($commands) use ($tutelar) {
-            //if ($command = $commands->get('name', 'players')) $commands->delete($command->id);
+            /* Deprecated
+            if ($command = $commands->get('name', 'players')) $commands->delete($command->id);
             if (! $commands->get('name', 'players')) {
                 $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
                     'name' => 'players',
                     'description' => 'Show Space Station 13 server information'
                 ]);
                 $commands->save($command);
-            }
+            }*/
         }
     );
     $tutelar->discord->guilds->get('id', '807759102624792576')->commands->freshen()->done(
         function ($commands) use ($tutelar) {
-            //if ($command = $commands->get('name', 'players')) $commands->delete($command->id);
+            /* Deprecated
+            if ($command = $commands->get('name', 'players')) $commands->delete($command->id);
             if (! $commands->get('name', 'players')) {
                 $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
                     'name' => 'players',
@@ -555,6 +557,7 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
                 ]);
                 $commands->save($command);
             }
+            */
         }
     );
     $tutelar->discord->listenCommand('players', function ($interaction) use ($tutelar) {

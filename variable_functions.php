@@ -41,7 +41,7 @@ $set_ips = function (\Tutelar\Tutelar $tutelar)
     $tutelar->ports = [
         'nomads' => '1715',
         'tdm' => '1714',
-        'bc' => '1717', 
+        'bc' => '7777', 
         'df13' => '7778',
     ];
 };

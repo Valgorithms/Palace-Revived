@@ -32,6 +32,7 @@ class Tutelar
     public $command_symbol = [];
     public $owner_id = '116927250145869826';
     public $owner_guild_id = '923969098185068594';
+    public $github = 'https://github.com/VZGCoders/Palace-Revived';
     
     public $files = [];
     public $ips = [];
@@ -904,6 +905,739 @@ class Tutelar
             'id' => '',
             'roles' => []
         ];
+
+        $discord_config[$guild->id]['reaction_roles']['genres'] = [
+            'default_color' => 1752220,
+            'message_content' => 'Genres',
+            'id' => '',
+            'roles' => [
+                [
+                    'name' => 'Action',
+                    'emoji' => '💥',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Adventure',
+                    'emoji' => '🏹',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'MMO',
+                    'emoji' => '🤼',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Puzzle',
+                    'emoji' => '🧩',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'RPG',
+                    'emoji' => '🎭',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Simulation',
+                    'emoji' => '🎢',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Sports',
+                    'emoji' => '🏈',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Strategy',
+                    'emoji' => '♟',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Tabletop',
+                    'emoji' => '📝',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Niche/Misc',
+                    'emoji' => '❄',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+            ]
+        ];
+        $discord_config[$guild->id]['reaction_roles']['action'] = [
+            'default_color' => 1752220,
+            'message_content' => 'Action',
+            'id' => '',
+            'roles' => [
+                [
+                    'name' => 'Battle Royale',
+                    'emoji' => '🚌',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => "Beat 'em up",
+                    'emoji' => '🤜',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                
+                [
+                    'name' => 'Fighting',
+                    'emoji' => '🥋',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Platformer',
+                    'emoji' => '👟',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Rhythm',
+                    'emoji' => '🎶',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Shooter',
+                    'emoji' => '🔫',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Survival',
+                    'emoji' => '🛡',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+            ],
+        ];
+        $discord_config[$guild->id]['reaction_roles']['action-adventure'] = [
+            'default_color' => 1752220,
+            'message_content' => 'Action-Adventure',
+            'id' => '',
+            'roles' => [
+                [
+                    'name' => 'Survival horror',
+                    'emoji' => '😱',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+            ],
+            'roles' => [
+                [
+                    'name' => 'Metroidvania',
+                    'emoji' => '👾',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+            ],
+        ];
+        $discord_config[$guild->id]['reaction_roles']['adventure'] = [
+            'default_color' => 1752220,
+            'message_content' => 'Adventure',
+            'id' => '',
+            'roles' => [
+                [
+                    'name' => 'Text adventure',
+                    'emoji' => '⌨',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Graphic adventure',
+                    'emoji' => '👀',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Visual novels (game)',
+                    'emoji' => '📚',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Interactive movie',
+                    'emoji' => '🎥',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Real-time 3D Adventure',
+                    'emoji' => '😎',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+            ],
+        ];
+        $discord_config[$guild->id]['reaction_roles']['puzzle'] = [
+            'default_color' => 1752220,
+            'message_content' => 'Puzzle',
+            'id' => '',
+            'roles' => [
+                [
+                    'name' => 'Breakout',
+                    'emoji' => '🧱',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Logic (Puzzle)',
+                    'emoji' => '🧠',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Trial and error',
+                    'emoji' => '🤔',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Hidden object',
+                    'emoji' => '🔎',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Reveal the picture',
+                    'emoji' => '📷',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Tile-matching',
+                    'emoji' => '🖼',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Traditional (Puzzle)',
+                    'emoji' => '🧩',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Puzzle-platform',
+                    'emoji' => '🦘',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+            ],
+        ];
+        $discord_config[$guild->id]['reaction_roles']['rpg'] = [
+            'default_color' => 1752220,
+            'message_content' => 'RPG',
+            'id' => '',
+            'roles' => [
+                [
+                    'name' => 'Action RPG',
+                    'emoji' => '⚔',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Dungeon RPG',
+                    'emoji' => '🎒',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'MMORPG',
+                    'emoji' => '📡',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Roguelikes',
+                    'emoji' => '🎲',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Tactical RPG',
+                    'emoji' => '🌐',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Sandbox RPG',
+                    'emoji' => '☯',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Monster Tamer',
+                    'emoji' => '🦁',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+            ],
+        ];
+        $discord_config[$guild->id]['reaction_roles']['simulation'] = [
+            'default_color' => 1752220,
+            'message_content' => 'Simulation',
+            'id' => '',
+            'roles' => [
+                [
+                    'name' => 'CMS',
+                    'emoji' => '🧱',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Life',
+                    'emoji' => '🦺',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Vehicle',
+                    'emoji' => '🚗',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+            ],
+        ];
+        $discord_config[$guild->id]['reaction_roles']['strategy'] = [
+            'default_color' => 1752220,
+            'message_content' => 'Strategy',
+            'id' => '',
+            'roles' => [
+                [
+                    'name' => '4X',
+                    'emoji' => '👑',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Artillery',
+                    'emoji' => '💣',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Auto battler',
+                    'emoji' => '🤖',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'MOBA/ARTS',
+                    'emoji' => '🦸‍♂️',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'RTS',
+                    'emoji' => '⚔',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'RTT',
+                    'emoji' => '🤺',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Tower defense',
+                    'emoji' => '🏰',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'TBS',
+                    'emoji' => '📝',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'TBT',
+                    'emoji' => '🔔',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Wargame',
+                    'emoji' => '🔫',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Grand Strategy',
+                    'emoji' => '✊',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+            ],
+        ];
+        $discord_config[$guild->id]['reaction_roles']['sports'] = [
+            'default_color' => 1752220,
+            'message_content' => 'Sports',
+            'id' => '',
+            'roles' => [
+                [
+                    'name' => 'Racing',
+                    'emoji' => '🏎',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Traditional Sports',
+                    'emoji' => '⚾',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Competitive',
+                    'emoji' => '🤼',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Fighting Sports',
+                    'emoji' => '🥊',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+            ],
+        ];
+        $discord_config[$guild->id]['reaction_roles']['niche'] = [
+            'default_color' => 1752220,
+            'message_content' => 'Niche/Misc',
+            'id' => '',
+            'roles' => [
+                [
+                    'name' => 'Art (game)',
+                    'emoji' => '🎨',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Casino',
+                    'emoji' => '🎲',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Casual',
+                    'emoji' => '🪀',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Educational',
+                    'emoji' => '🎓',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Food/Cooking',
+                    'emoji' => '🥪',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                
+                [
+                    'name' => 'Gacha',
+                    'emoji' => '🎊',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Horror',
+                    'emoji' => '👻',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Idle',
+                    'emoji' => '🛌',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Logic',
+                    'emoji' => '🧠',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Party',
+                    'emoji' => '🎉',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Photography',
+                    'emoji' => '📷',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Programming (game)',
+                    'emoji' => '🧠',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Sandbox/Open World',
+                    'emoji' => '🗺',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Social Deduction',
+                    'emoji' => '👮‍♂️',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Trivia',
+                    'emoji' => '❓',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Typing',
+                    'emoji' => '⌨',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+            ],
+        ];
+
         if ($this->VarSave('discord_config.json', $discord_config)) $this->logger->info("Created new config for guild {$guild->name}");
         else $this->logger->warning("Failed top creat new config for guild {$guild->name}");
     }

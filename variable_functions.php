@@ -353,8 +353,8 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
 $twitch_relay = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower): void
 {
     if ($message->user_id == $tutelar->discord->id && str_starts_with($message_content, '[MSG] #')) {
-        if (isset($twitch_options['channels'][$streamer = substr($message_content, 7, ($strpos = strpos($message_content, '-'))-9)][$message->guild_id]))
-            if ($message->channel_id == $twitch_options['channels'][$streamer][$message->guild_id]) {
+        if (isset($tutelar->twitch_options['channels'][$streamer = substr($message_content, 7, ($strpos = strpos($message_content, '-'))-9)][$message->guild_id]))
+            if ($message->channel_id == $tutelar->twitch_options['channels'][$streamer][$message->guild_id]) {
                 $chatter = substr($message_content, $strpos+3, strpos($message_content, ':')-$strpos-3);
                 //Increment and log the message count for the streamer's chatter
                 //Save log to file

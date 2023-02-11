@@ -1088,8 +1088,6 @@ class Tutelar
                     'permissions' => 0,
                     'id' => ''
                 ],
-            ],
-            'roles' => [
                 [
                     'name' => 'Metroidvania',
                     'emoji' => '👾',

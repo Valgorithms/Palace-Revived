@@ -1325,6 +1325,49 @@ class Tutelar
                 ],
             ],
         ];
+        $discord_config[$guild->id]['reaction_roles']['sports'] = [
+            'default_color' => 1752220,
+            'message_content' => 'Sports',
+            'id' => '',
+            'roles' => [
+                [
+                    'name' => 'Racing',
+                    'emoji' => '🏎',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Traditional (Sports)',
+                    'emoji' => '⚾',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Competitive',
+                    'emoji' => '🤼',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+                [
+                    'name' => 'Fighting (Sports)',
+                    'emoji' => '🥊',
+                    'color' => null,
+                    'hoist' => false,
+                    'mentionable' => false,
+                    'permissions' => 0,
+                    'id' => ''
+                ],
+            ],
+        ];
         $discord_config[$guild->id]['reaction_roles']['strategy'] = [
             'default_color' => 1752220,
             'message_content' => 'Strategy',
@@ -1423,49 +1466,6 @@ class Tutelar
                 [
                     'name' => 'Grand Strategy',
                     'emoji' => '✊',
-                    'color' => null,
-                    'hoist' => false,
-                    'mentionable' => false,
-                    'permissions' => 0,
-                    'id' => ''
-                ],
-            ],
-        ];
-        $discord_config[$guild->id]['reaction_roles']['sports'] = [
-            'default_color' => 1752220,
-            'message_content' => 'Sports',
-            'id' => '',
-            'roles' => [
-                [
-                    'name' => 'Racing',
-                    'emoji' => '🏎',
-                    'color' => null,
-                    'hoist' => false,
-                    'mentionable' => false,
-                    'permissions' => 0,
-                    'id' => ''
-                ],
-                [
-                    'name' => 'Traditional Sports',
-                    'emoji' => '⚾',
-                    'color' => null,
-                    'hoist' => false,
-                    'mentionable' => false,
-                    'permissions' => 0,
-                    'id' => ''
-                ],
-                [
-                    'name' => 'Competitive',
-                    'emoji' => '🤼',
-                    'color' => null,
-                    'hoist' => false,
-                    'mentionable' => false,
-                    'permissions' => 0,
-                    'id' => ''
-                ],
-                [
-                    'name' => 'Fighting Sports',
-                    'emoji' => '🥊',
                     'color' => null,
                     'hoist' => false,
                     'mentionable' => false,

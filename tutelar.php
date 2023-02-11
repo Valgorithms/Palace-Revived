@@ -13,6 +13,7 @@ class Tutelar
     public $loop;
     public $discord;
     public $twitch;
+    public readonly array $twitch_options;
     public $browser;
     public $logger;
     public $stats;
@@ -98,7 +99,10 @@ class Tutelar
         if (isset($options['discord'])) $this->discord = $options['discord'];
         elseif (isset($options['discord_options'])) $this->discord = new \Discord\Discord($options['discord_options']);
         if (isset($options['twitch']) && $options['twitch'] instanceof \Twitch\Twitch) $this->twitch = $options['twitch'];
-        elseif (isset($options['twitch_options'])) $this->twitch = new \Twitch\Twitch($options['twitch_options']);
+        elseif (isset($options['twitch_options'])) {
+            $this->twitch_options = $options['twitch_options'];
+            $this->twitch = new \Twitch\Twitch($options['twitch_options']);
+        }
         
         if (isset($options['functions'])) foreach ($options['functions'] as $key1 => $key2) foreach ($options['functions'][$key1] as $key3 => $func) $this->functions[$key1][$key3] = $func;
         else $this->logger->warning('No functions passed in options!');

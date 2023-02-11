@@ -121,6 +121,8 @@ $twitch_options = array(
 	*/
 );
 //Discord servers to relay chat for
+//Syntax: $twitch_options['channels']['twitch_channel_name']['discord_guild_id'] = 'discord_channel_id';
+
 //$twitch_options['channels']['shriekingechodanica']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['shriekingechodanica']['999053951670423643'] = '1014429625826414642';
 

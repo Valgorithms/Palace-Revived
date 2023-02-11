@@ -8,7 +8,7 @@
 
 /*
  *
- * Ready Event
+ * Init Event
  *
 */
 function dbInsert(\Tutelar\Tutelar $tutelar, string $table, array $data)
@@ -352,7 +352,14 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
 };
 $twitch_relay = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower): void
 {
-    if ($channels = $tutelar->twitch->getChannels()) foreach ($channels as $twitch_channel => $arr) foreach ($arr as $guild_id => $channel_id) {
+    if ($message->user_id == $tutelar->discord->id && str_starts_with($message_content, '[MSG] #')) {
+        if (isset($twitch_options['channels'][$streamer = substr($message_content, 7, ($strpos = strpos($message_content, '-'))-9)][$message->guild_id]))
+            if ($message->channel_id == $twitch_options['channels'][$streamer][$message->guild_id]) {
+                $chatter = substr($message_content, $strpos+3, strpos($message_content, ':')-$strpos-3);
+                //Increment and log the message count for the streamer's chatter
+                //Save log to file
+            }
+    } elseif ($channels = $tutelar->twitch->getChannels()) foreach ($channels as $twitch_channel => $arr) foreach ($arr as $guild_id => $channel_id) {
         if (!($message->guild_id == $guild_id && $message->channel_id == $channel_id)) continue;
         $channel = '';
         if (str_starts_with($message_content_lower, "#$twitch_channel")) {
@@ -368,8 +375,7 @@ $guild_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_
 {
     echo '[GUILD_MESSAGE]' . PHP_EOL;
     if ($message->guild_id == $tutelar->owner_guild_id && $message->channel->type == 5) $message->crosspost();
-    
-    if ($message->user_id != $tutelar->discord->id) $twitch_relay($tutelar, $message, $message_content, $message_content_lower);
+    $twitch_relay($tutelar, $message, $message_content, $message_content_lower);
 };
 
 $any_debug_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($perm_check)
@@ -649,7 +655,7 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
     });
 };
 
-$on_ready = function (\Tutelar\Tutelar $tutelar)
+$on_init = function (\Tutelar\Tutelar $tutelar)
 {
     $tutelar->logger->info("Logged in as {$tutelar->discord->user->displayname} ({$tutelar->discord->id})" . PHP_EOL . '------');
 };

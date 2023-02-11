@@ -181,12 +181,12 @@ $options = array(
         ],
     ],
     'functions' => [
-        'ready' => [
-            'on_ready' => $on_ready,
+        'init' => [
+            'on_init' => $on_init,
             'status_changer_random' => $status_changer_random,
             'set_ips' => $set_ips,
         ],
-        'ready_slash' => [
+        'init_slash' => [
             'slash_init' => $slash_init,
         ],
         'message' => [            
@@ -260,7 +260,7 @@ if (include 'log_functions.php') {
 }
 if (include 'ss13_functions.php') {
     echo 'Included ss13 functions' . PHP_EOL;
-    $options['functions']['ready_slash']['ss13_slash_init'] = $ss13_slash_init;
+    $options['functions']['init_slash']['ss13_slash_init'] = $ss13_slash_init;
     $options['functions']['message']['ss13_on_message'] = $ss13_on_message;
     $options['functions']['misc']['discord2ckey'] = $discord2ckey;
 }

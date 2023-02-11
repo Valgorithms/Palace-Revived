@@ -115,7 +115,7 @@ class Tutelar
     {
         
         if (isset($this->discord)) {
-            $this->discord->once('ready', function () {
+            $this->discord->once('init', function () {
                 //Initialize configurations
                 if (! $discord_config = $this->VarLoad('discord_config.json')) $discord_config = [];
                 foreach ($this->discord->guilds as $guild) if (!isset($discord_config[$guild->id])) $this->SetConfigTemplate($guild, $discord_config);
@@ -134,12 +134,12 @@ class Tutelar
                 $this->command_symbol[] = '<@'.$this->discord->id.'>';
                 $this->command_symbol[] = '<@!'.$this->discord->id.'>';
                 
-                if (!empty($this->functions['ready'])) foreach ($this->functions['ready'] as $key => $func) $func($this);
-                else $this->logger->debug('No ready functions found!');
+                if (!empty($this->functions['init'])) foreach ($this->functions['init'] as $key => $func) $func($this);
+                else $this->logger->debug('No init functions found!');
                 
                 $this->discord->application->commands->freshen()->done(function ($commands) {
-                    if (!empty($this->functions['ready_slash'])) foreach ($this->functions['ready_slash'] as $key => $func) $func($this, $commands);
-                    else $this->logger->debug('No ready slash functions found!');
+                    if (!empty($this->functions['init_slash'])) foreach ($this->functions['init_slash'] as $key => $func) $func($this, $commands);
+                    else $this->logger->debug('No init slash functions found!');
                 });
                 
                 //Initialize event listeners
@@ -1637,7 +1637,7 @@ class Tutelar
 
     public function InitializeListeners(): void
     {
-        //Finish ready and bot initialization
+        //Finish init and bot initialization
         $this->discord->on('GUILD_CREATE', function (\Discord\Parts\Guild\Guild $guild)
         {
             foreach ($this->discord->guilds as $guild) if (!isset($this->discord_config[$guild->id])) $this->SetConfigTemplate($guild, $this->discord_config);

@@ -930,15 +930,6 @@ class Tutelar
                     'id' => ''
                 ],
                 [
-                    'name' => 'MMO',
-                    'emoji' => '🤼',
-                    'color' => null,
-                    'hoist' => false,
-                    'mentionable' => false,
-                    'permissions' => 0,
-                    'id' => ''
-                ],
-                [
                     'name' => 'Puzzle',
                     'emoji' => '🧩',
                     'color' => null,

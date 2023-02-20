@@ -125,10 +125,11 @@ $twitch_options = array(
 
 //$twitch_options['channels']['shriekingechodanica']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['shriekingechodanica']['999053951670423643'] = '1014429625826414642';
-
-$twitch_options['channels'][strtolower($nick)]['923969098185068594'] = '924019611534503996';
+$twitch_options['channels']['valzargaming']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['rattlesire']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['silentwingsstudio']['923969098185068594'] = '924019611534503996';
+
+$twitch_options['channels']['valzargaming']['1077144430588469349'] = '1077144433096654934';
 //$twitch_options['channels']['seigiva']['923969098185068594'] = '924019611534503996';
 //strtolower($nick), // Your channel
 //'smalltowngamingtv', // (Optional) Additional channels

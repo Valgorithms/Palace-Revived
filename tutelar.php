@@ -42,6 +42,7 @@ class Tutelar
     public $role_ids = [];
     
     public $discord_config = [];
+    public $twitch_log = [];
     public $suggestions = [];
     public $tips = [];
     public $tests = [];
@@ -120,6 +121,9 @@ class Tutelar
                 if (! $discord_config = $this->VarLoad('discord_config.json')) $discord_config = [];
                 foreach ($this->discord->guilds as $guild) if (!isset($discord_config[$guild->id])) $this->SetConfigTemplate($guild, $discord_config);
                 $this->discord_config = $discord_config;
+
+                if (! $twitch_log = $this->VarLoad('twitch_log.json')) $twitch_log = [];
+                $this->twitch_log = $twitch_log;
                 
                 if (! $suggestions = $this->VarLoad('suggestions.json')) $suggestions = [];
                 foreach ($this->discord->guilds as $guild) if (!isset($suggestions[$guild->id])) $suggestions[$guild->id] = ['pending' => [], 'approved' => [], 'denied' => []];
@@ -1786,5 +1790,22 @@ class Tutelar
     public function saveConfig() : bool
     {
         return $this->VarSave('discord_config.json', $this->discord_config);
+    }
+
+    public function twitchLogChatter($streamer, $chatter) : void
+    {
+        $this->logger->info("[TwitchLogChatter] [$streamer] [$chatter]");
+        $this->twitch_log[$streamer][$chatter]++;
+        $this->saveTwitchLog();
+    }
+    
+    public function loadTwitchLog() : false|array
+    {
+        return $this->twitch_log = $this->VarLoad('twitch_log.json');
+    }
+
+    public function saveTwitchLog() : bool
+    {
+        return $this->VarSave('twitch_log.json', $this->twitch_log);
     }
 }

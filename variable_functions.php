@@ -350,12 +350,12 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
     if ($perm_check(['administrator', 'ban_members'], $message->member)) $admin_message($tutelar, $message, $message_content, $message_content_lower);
     if ($perm_check(['administrator', 'moderate_members'], $message->member)) $moderator_message($tutelar, $message, $message_content, $message_content_lower);
 };
-$twitch_relay = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower): void
+$twitch_relay = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower)//: void
 {
     if ($message->user_id == $tutelar->discord->id && str_starts_with($message_content, '[MSG] #')) {
-        if (isset($tutelar->twitch_options['channels'][$streamer = substr($message_content, 7, ($strpos = strpos($message_content, '-'))-9)][$message->guild_id]))
-            if ($message->channel_id == $tutelar->twitch_options['channels'][$streamer][$message->guild_id])
-                $tutelar->twitchLogChatter($streamer, $chatter = substr($message_content, $strpos+3, strpos($message_content, ':')-$strpos-3)); //Increment and log the message count for the streamer's chatter
+        $tokens = explode(' ', $message_content);
+        if (isset($tutelar->twitch_options['channels'][$streamer = substr($tokens[1], 1)][$message->guild_id]))
+            if ($message->channel_id == $tutelar->twitch_options['channels'][$streamer][$message->guild_id]) $tutelar->twitchLogChatter($streamer, $chatter = substr($tokens[3], 0, strlen($tokens[3])-1));
     } elseif ($channels = $tutelar->twitch->getChannels()) foreach ($channels as $twitch_channel => $arr) foreach ($arr as $guild_id => $channel_id) {
         if (!($message->guild_id == $guild_id && $message->channel_id == $channel_id)) continue;
         $channel = '';
@@ -370,7 +370,6 @@ $twitch_relay = function (\Tutelar\Tutelar $tutelar, $message, string $message_c
 };
 $guild_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($twitch_relay)
 {
-    echo '[GUILD_MESSAGE]' . PHP_EOL;
     if ($message->guild_id == $tutelar->owner_guild_id && $message->channel->type == 5) $message->crosspost();
     $twitch_relay($tutelar, $message, $message_content, $message_content_lower);
 };

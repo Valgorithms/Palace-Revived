@@ -1794,12 +1794,11 @@ class Tutelar
 
     public function twitchLogChatter($streamer, $chatter) : void
     {
-        $this->logger->info("[TwitchLogChatter] [$streamer] [$chatter]");
         $this->twitch_log[$streamer][$chatter]++; //This produces a PHP warning that can be ignored if the user hasn't been seen before in the channel
         $this->saveTwitchLog();
     }
     
-    public function loadTwitchLog() : false|array
+    public function refreshTwitchLog() : false|array
     {
         return $this->twitch_log = $this->VarLoad('twitch_log.json');
     }

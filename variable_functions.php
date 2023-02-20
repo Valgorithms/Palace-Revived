@@ -278,6 +278,15 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                 return;
             }
         }
+
+        if (str_starts_with($message_content_lower, 'verified')) {
+            preg_match('!\d+!', $message_content, $matches);
+            if (!$matches[0] || !$message->guild->roles->get('id', $matches[0])) return $message->reply('Role not found! Please mention the role in the format of <@role_id>');
+            $tutelar->discord_config[$message->guild_id]['roles']['verified'] = $matches[0];
+            $tutelar->logger->info("Updated verified role id {$matches[0]}");
+            $message->react("👍");
+            return $tutelar->saveConfig();
+        }
     }
 };
 $admin_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower)

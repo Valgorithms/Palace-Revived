@@ -142,13 +142,14 @@ $twitch_options['responses']['social'] = 'Come follow the magick through several
 $twitch_options['responses']['tip'] = 'Wanna help fund the magick?  PayPal - '.$twitch_options['tip']['paypal'];
 $twitch_options['responses']['discord'] = $twitch_options['social']['discord'];
 
-$twitch = new Twitch\Twitch($twitch_options);
+//$twitch = new Twitch\Twitch($twitch_options);
 
 include 'db.php'; //$mysqli[$mysqli1, $mysqli2, $mysqli3], //$pdo[$pdo1, $pdo2, $pdo3]
 $options = array(
     'loop' => $loop,
     'discord' => $discord,
-    'twitch' => $twitch,
+    //'twitch' => $twitch,
+    'twitch_options' => $twitch_options,
     'browser' => $browser,
     'logger' => $logger,
     'stats' => $stats,

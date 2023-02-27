@@ -1792,9 +1792,9 @@ class Tutelar
         return $this->VarSave('discord_config.json', $this->discord_config);
     }
 
-    public function twitchLogChatter($streamer, $chatter) : void
+    public function twitchLogChatter($guild_id, $streamer, $chatter) : void
     {
-        $this->twitch_log[$streamer][$chatter]++; //This produces a PHP warning that can be ignored if the user hasn't been seen before in the channel
+        $this->twitch_log[$guild_id][$streamer][$chatter]++; //This produces a PHP warning that can be ignored if the user hasn't been seen before in the channel
         $this->saveTwitchLog();
     }
     

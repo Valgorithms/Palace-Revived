@@ -364,7 +364,7 @@ $twitch_relay = function (\Tutelar\Tutelar $tutelar, $message, string $message_c
     if ($message->user_id == $tutelar->discord->id && str_starts_with($message_content, '[MSG] #')) {
         $tokens = explode(' ', $message_content);
         if (isset($tutelar->twitch_options['channels'][$streamer = substr($tokens[1], 1)][$message->guild_id]))
-            if ($message->channel_id == $tutelar->twitch_options['channels'][$streamer][$message->guild_id]) $tutelar->twitchLogChatter($streamer, $chatter = substr($tokens[3], 0, strlen($tokens[3])-1));
+            if ($message->channel_id == $tutelar->twitch_options['channels'][$streamer][$message->guild_id]) $tutelar->twitchLogChatter($message->guild_id, $streamer, $chatter = substr($tokens[3], 0, strlen($tokens[3])-1));
     } elseif ($channels = $tutelar->twitch->getChannels()) foreach ($channels as $twitch_channel => $arr) foreach ($arr as $guild_id => $channel_id) {
         if (!($message->guild_id == $guild_id && $message->channel_id == $channel_id)) continue;
         $channel = '';

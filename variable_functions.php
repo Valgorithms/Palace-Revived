@@ -658,7 +658,6 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
                 elseif ($channel = $tutelar->discord->getChannel($interaction->channel_id)) $channel->sendMessage(\Discord\Builders\MessageBuilder::new()->setContent("{$interaction->user}, {$interaction->data->options['message']->value}")->setAllowedMentions(['users' => [$interaction->user->id]]));
             });
         });
-        $when+=4;
         $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent("Reminder <t:$when:R>: {$interaction->data->options['message']->value}")->setAllowedMentions(['users' => [$interaction->user->id]]));
     });
 };

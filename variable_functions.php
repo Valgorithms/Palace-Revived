@@ -651,12 +651,15 @@ $slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($whois)
     }
     $tutelar->discord->listenCommand('reminder', function ($interaction) use ($tutelar) {
         if (! $when = strtotime($interaction->data->options['time']->value)) return $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('Invalid time specified'), true);
-        if (time()-$when>0) $when = 86400+(floor((time()))); //Set time to tomorrow
+        if (time()-$when>0) $when = 86400+(floor((time()))); //Set time to tomorrow if time is in the past
         $tutelar->discord->getLoop()->addTimer($when-time(), function () use ($tutelar, $interaction) {
-            if ($channel = $tutelar->discord->getChannel($interaction->channel_id)) $channel->sendMessage(\Discord\Builders\MessageBuilder::new()->setContent("{$interaction->user}, {$interaction->data->options['message']->value}")->setAllowedMentions(['users' => [$interaction->user->id]]));
+            $interaction->getOriginalResponse()->then(function ($message) use ($tutelar, $interaction) {
+                if ($message) $message->reply(\Discord\Builders\MessageBuilder::new()->setContent("{$interaction->user}, {$interaction->data->options['message']->value}")->setAllowedMentions(['users' => [$interaction->user->id]]));
+                elseif ($channel = $tutelar->discord->getChannel($interaction->channel_id)) $channel->sendMessage(\Discord\Builders\MessageBuilder::new()->setContent("{$interaction->user}, {$interaction->data->options['message']->value}")->setAllowedMentions(['users' => [$interaction->user->id]]));
+            });
         });
         $when+=4;
-        $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent("Reminder added. {$interaction->data->options['message']->value}<t:$when:R>")->setAllowedMentions(['users' => [$interaction->user->id]]));
+        $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent("Reminder <t:$when:R>: {$interaction->data->options['message']->value}")->setAllowedMentions(['users' => [$interaction->user->id]]));
     });
 };
 

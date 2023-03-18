@@ -303,7 +303,7 @@ $moderator_message = function (\Tutelar\Tutelar $tutelar, $message, string $mess
     if (str_starts_with($message_content_lower, 'clear')) {
         if (! $message_content = trim(substr($message_content, strlen('clear')))) return $message->channel->limitDelete(100);
         if (is_numeric($message_content)) return $message->channel->limitDelete($message_content);
-        return $message->reply ('Invalid parameter! Please include the nubmer of messages to delete');
+        return $message->reply('Invalid parameter! Please include the nubmer of messages to delete');
     }
     //TwitchPHP
     if (str_starts_with($message_content_lower, 'join #')) if ($tutelar->twitch->joinChannel(trim(str_replace('join #', '', $message_content_lower)), $message->guild_id, $message->channel_id)) return $message->react("👍"); else return $message->react("👎");

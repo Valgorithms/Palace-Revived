@@ -1746,7 +1746,7 @@ class Tutelar
     public function reactionLoop($message, array $emojis) : void
     {
         $add = function ($message, $emojis) use (&$add) {
-            if (count($emojis) != 0) $message->react(array_shift($emojis))->done(function () use ($add, $emojis, $message) {
+            if (count($emojis) !== 0) $message->react(array_shift($emojis))->done(function () use ($add, $emojis, $message) {
                 $add($message, $emojis);
             });
         };

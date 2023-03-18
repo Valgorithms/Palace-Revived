@@ -240,7 +240,6 @@ $webapi = new \React\Http\Server($loop, function (\Psr\Http\Message\ServerReques
               $results[$user->id] = $user->avatar;
             });
             for ($i = 1; $i < count($idarray); $i++) {
-                $discord = $tutelar->discord;
                 $promise->then(function () use (&$results, $idarray, $i, $tutelar) {
                 return $tutelar->discord->users->fetch($idarray[$i])->then(function ($user) use (&$results) {
                     $results[$user->id] = $user->avatar;

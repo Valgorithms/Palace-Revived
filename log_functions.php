@@ -107,14 +107,14 @@ $log_MESSAGE_UPDATE = function (\Tutelar\Tutelar $tutelar, $message, $message_ol
     if ($message->webhook_id) return; // Ignore messages sent by webhooks
     if (isset($message->user) && $message->user->bot) return; //Don't log messages made by bots
     if ($message->guild_id && $channel = $tutelar->discord->getChannel($tutelar->discord_config[$message->guild_id]['channels']['log'])) {
-        $builder = $log_builder($tutelar, $message, 'Message Updated', null, $message_old);
-        $channel->sendMessage($builder)->done(
-            function ($mnew_essage) use ($tutelar, $message) {
-                $tutelar->logger->info('Logged updated message: ' . $message->id);
-            }, function ($error) use ($tutelar) {
-                $tutelar->logger->warning('Error logging updated message: ' . $error->getMessage());
-            }
-        );
+        if ($builder = $log_builder($tutelar, $message, 'Message Updated', null, $message_old))
+            $channel->sendMessage($builder)->done(
+                function ($new_message) use ($tutelar, $message) {
+                    $tutelar->logger->info('Logged updated message: ' . $message->id);
+                }, function ($error) use ($tutelar) {
+                    $tutelar->logger->warning('Error logging updated message: ' . $error->getMessage());
+                }
+            );
     }
 };
 
@@ -127,14 +127,14 @@ $log_MESSAGE_DELETE = function (\Tutelar\Tutelar $tutelar, $message) use ($log_b
     if ($message->channel_id == $tutelar->discord_config[$message->guild_id]['channels']['log']) return; //Don't log deleted logs
     if (isset($message->user) && $message->user->bot) return; //Don't log messages made by bots
     if ($message->guild_id && $channel = $tutelar->discord->getChannel($tutelar->discord_config[$message->guild_id]['channels']['log'])) {
-        $builder = $log_builder($tutelar, $message, 'Message Deleted');
-        $channel->sendMessage($builder)->done(
-            function ($new_message) use ($tutelar, $message) {
-                $tutelar->logger->info('Logged deleted message: ' . $message->id);
-            }, function ($error) use ($tutelar) {
-                $tutelar->logger->warning('Error logging deleted message: ' . $error->getMessage());
-            }
-        );
+        if ($builder = $log_builder($tutelar, $message, 'Message Deleted'))
+            $channel->sendMessage($builder)->done(
+                function ($new_message) use ($tutelar, $message) {
+                    $tutelar->logger->info('Logged deleted message: ' . $message->id);
+                }, function ($error) use ($tutelar) {
+                    $tutelar->logger->warning('Error logging deleted message: ' . $error->getMessage());
+                }
+            );
     }
 };
 
@@ -146,28 +146,28 @@ $log_MESSAGE_DELETE_BULK = function (\Tutelar\Tutelar $tutelar, $messages) use (
 $log_GUILD_MEMBER_ADD = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\Member $member) use ($log_builder)
 {
     if ($channel = $tutelar->discord->getChannel($tutelar->discord_config[$member->guild_id]['channels']['welcomelog'] ?? $tutelar->discord_config[$member->guild_id]['channels']['log'])) {
-        $builder = $log_builder($tutelar, $member, 'Member Joined', $member);
-        $channel->sendMessage($builder)->done(
-            function ($message) use ($tutelar, $member) {
-                $tutelar->logger->info('Logged added member: ' . $member->id);
-            }, function ($error) use ($tutelar) {
-                $tutelar->logger->warning('Error logging added member: ' . $error->getMessage());
-            }
-        );
+        if ($builder = $log_builder($tutelar, $member, 'Member Joined', $member))
+            $channel->sendMessage($builder)->done(
+                function ($message) use ($tutelar, $member) {
+                    $tutelar->logger->info('Logged added member: ' . $member->id);
+                }, function ($error) use ($tutelar) {
+                    $tutelar->logger->warning('Error logging added member: ' . $error->getMessage());
+                }
+            );
     }
 };
 
 $log_GUILD_MEMBER_REMOVE = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\Member $member) use ($log_builder)
 {
     if ($channel = $tutelar->discord->getChannel($tutelar->discord_config[$member->guild_id]['channels']['welcomelog'] ?? $tutelar->discord_config[$member->guild_id]['channels']['log'])) {
-        $builder = $log_builder($tutelar, $member, 'Member Left', $member);
-        $channel->sendMessage($builder)->done(
-            function ($message) use ($tutelar, $member) {
-                $tutelar->logger->info('Logged removed member: ' . $member->id);
-            }, function ($error) use ($tutelar) {
-                $tutelar->logger->warning('Error logging removed member: ' . $error->getMessage());
-            }
-        );
+        if ($builder = $log_builder($tutelar, $member, 'Member Left', $member))
+            $channel->sendMessage($builder)->done(
+                function ($message) use ($tutelar, $member) {
+                    $tutelar->logger->info('Logged removed member: ' . $member->id);
+                }, function ($error) use ($tutelar) {
+                    $tutelar->logger->warning('Error logging removed member: ' . $error->getMessage());
+                }
+            );
     }
 };
 
@@ -175,55 +175,55 @@ $log_GUILD_MEMBER_UPDATE = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\U
 {
     if ($channel = $tutelar->discord->getChannel($tutelar->discord_config[$member->guild_id]['channels']['log'])) {
         if ($builder = $log_builder($tutelar, $member, 'Member Updated', $member, $member_old))
-        $channel->sendMessage($builder)->done(
-            function ($message) use ($tutelar, $member) {
-                $tutelar->logger->info('Logged updated member: ' . $member->id);
-            }, function ($error) use ($tutelar) {
-                $tutelar->logger->warning('Error logging updated member: ' . $error->getMessage());
-            }
-        );
+            $channel->sendMessage($builder)->done(
+                function ($message) use ($tutelar, $member) {
+                    $tutelar->logger->info('Logged updated member: ' . $member->id);
+                }, function ($error) use ($tutelar) {
+                    $tutelar->logger->warning('Error logging updated member: ' . $error->getMessage());
+                }
+            );
     }
 };
 
 $log_GUILD_BAN_ADD = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\Guild\Ban $ban) use ($log_builder)
 {
     if ($channel = $tutelar->discord->getChannel($tutelar->discord_config[$ban->guild_id]['channels']['log'])) {
-        $builder = $log_builder($tutelar, $ban, 'Member Banned', $ban->user);
-        $channel->sendMessage($builder)->done(
-            function ($message) use ($tutelar, $ban) {
-                $tutelar->logger->info('Logged banned member: ' . $ban->user);
-            }, function ($error) use ($tutelar) {
-                $tutelar->logger->warning('Error logging banned member: ' . $error->getMessage());
-            }
-        );
+        if ($builder = $log_builder($tutelar, $ban, 'Member Banned', $ban->user))
+            $channel->sendMessage($builder)->done(
+                function ($message) use ($tutelar, $ban) {
+                    $tutelar->logger->info('Logged banned member: ' . $ban->user);
+                }, function ($error) use ($tutelar) {
+                    $tutelar->logger->warning('Error logging banned member: ' . $error->getMessage());
+                }
+            );
     }
 };
 
 $log_GUILD_BAN_REMOVE = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\Guild\Ban $ban) use ($log_builder)
 {
     if ($channel = $tutelar->discord->getChannel($tutelar->discord_config[$ban->guild_id]['channels']['log'])) {
-        $builder = $log_builder($tutelar, $ban, 'Member Unbanned', $ban->user);
-        $channel->sendMessage($builder)->done(
-            function ($message) use ($tutelar, $ban) {
-                $tutelar->logger->info('Logged unbanned member: ' . $ban->user);
-            }, function ($error) use ($tutelar) {
-                $tutelar->logger->warning('Error logging unbanned member: ' . $error->getMessage());
-            }
-        );
+        if ($builder = $log_builder($tutelar, $ban, 'Member Unbanned', $ban->user))
+            $channel->sendMessage($builder)->done(
+                function ($message) use ($tutelar, $ban) {
+                    $tutelar->logger->info('Logged unbanned member: ' . $ban->user);
+                }, function ($error) use ($tutelar) {
+                    $tutelar->logger->warning('Error logging unbanned member: ' . $error->getMessage());
+                }
+            );
     }
 };
 
 $log_userUpdate = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\User $user, ?\Discord\Parts\User\User $user_old = null) use ($log_builder)
 {
     if ($user->id == $tutelar->discord->id) return; // Ignore user updates by this bot
-    $builder = $log_builder($tutelar, $user, 'User Updated', $user, $user_old);
-    foreach ($tutelar->guilds as $guild) if ($member = $guild->members->get('id', $user->id) && $channel = $tutelar->discord->getChannel($tutelar->discord_config[$guild->id]['channels']['log'])) {
-        $channel->sendMessage($builder)->done(
-            function ($message) use ($tutelar, $user) {
-                $tutelar->logger->info('Logged updated user: ' . $user->id);
-            }, function ($error) use ($tutelar) {
-                $tutelar->logger->warning('Error logging updated user: ' . $error->getMessage());
-            }
-        );
-    }
+    if ($builder = $log_builder($tutelar, $user, 'User Updated', $user, $user_old))
+        foreach ($tutelar->discord->guilds as $guild) if ($member = $guild->members->get('id', $user->id) && $channel = $tutelar->discord->getChannel($tutelar->discord_config[$guild->id]['channels']['log'])) {
+            $channel->sendMessage($builder)->done(
+                function ($message) use ($tutelar, $user) {
+                    $tutelar->logger->info('Logged updated user: ' . $user->id);
+                }, function ($error) use ($tutelar) {
+                    $tutelar->logger->warning('Error logging updated user: ' . $error->getMessage());
+                }
+            );
+        }
 };

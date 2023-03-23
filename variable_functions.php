@@ -311,7 +311,7 @@ $moderator_message = function (\Tutelar\Tutelar $tutelar, $message, string $mess
 };
 $debug_guild_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower)
 {
-  if ($message_content_lower == 'save') return $tutelar->saveConfig() ? $message->react("👍") : $message->react("👎");
+  //
 };
 
 $whois = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\User $user, $guild_id = null)
@@ -411,6 +411,7 @@ $any_debug_message = function (\Tutelar\Tutelar $tutelar, $message, string $mess
             function () use ($message) { $message->react("❌"); }
         );
     }
+    if ($message_content_lower == 'save') return $tutelar->saveConfig() ? $message->react("👍") : $message->react("👎");
 };
 $any_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($any_debug_message)
 {
@@ -422,20 +423,18 @@ $any_called_debug_message = function (\Tutelar\Tutelar $tutelar, $message, strin
     //Tutelar
      if ($message_content_lower == 'restart') {
         \restart();
-        $tutelar->discord->close();
-        return;
+        return $tutelar->discord->close();
     }
     
     //DiscordPHP
     if ($message_content_lower == 'debug channel invite') {
-        $message->channel->createInvite([
+        return $message->channel->createInvite([
             'max_age' => 60, // 1 minute
             'max_uses' => 5, // 5 uses
         ])->done(function ($invite) use ($message) {
             $url = "https://discord.gg/{$invite->code}";
             $message->reply("Invite URL: $url");
         });
-        return;
     }
     if ($message_content_lower == 'debug guild names') { //Maybe upload as a file instead?
         $guildstring = '';
@@ -455,17 +454,15 @@ $any_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $mes
     if (str_starts_with($message_content_lower, 'avatar')) {
         $message_content_lower = trim(str_replace(['<@!', '<@', '>'], '', substr($message_content_lower, strlen('avatar'))));
         if (! $message_content_lower) return $message->reply($message->user->avatar);
-        if (is_numeric($message_content_lower)) {
-            return $tutelar->discord->users->fetch($message_content_lower)->done(
-                function ($user) use ($message) {
-                    return $message->reply($user->avatar);
-                },
-                function ($error) use ($message) {
-                    return $message->reply('Unable to locate user!');
-                }
-            );
-        }
-        return $message->reply('Invalid parameter! Please include the ID of the user you want to see the avatar of.');
+        if (! is_numeric($message_content_lower)) return $message->reply('Invalid parameter! Please include the ID of the user you want to see the avatar of.');
+        return $tutelar->discord->users->fetch($message_content_lower)->done(
+            function ($user) use ($message) {
+                return $message->reply($user->avatar);
+            },
+            function ($error) use ($message) {
+                return $message->reply('Unable to locate user!');
+            }
+        );
     }
 };
 

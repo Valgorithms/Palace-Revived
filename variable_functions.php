@@ -146,12 +146,12 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                 if (!$emoji) return $message->reply("Missing emoji parameter! Creating new custom roles should be done in the format of @{$tutelar->discord->username} add role_name unicode_emoji");
                 $message->react($emoji)->done(
                     function ($reaction) use ($tutelar, $message, $name, $emoji) { //Unicode should be valid, so create the role
-                        $index = isset($tutelar->discord_config[$message->guild_id]['reaction_roles']['custom']['roles']) ? sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']['custom']['roles']) : 0;
+                        $index = isset($tutelar->discord_config[$message->guild_id]['reaction_roles']['custom']['roles']) ? sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']['custom']['roles'])+1 : 0;
                         $increment = '';
                         if ($index >= 20) {
                             do {
                                 $increment++;
-                                $newIndex = isset($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles']) ? sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles']) : 0;
+                                $newIndex = isset($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles']) ? sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'])+1 : 0;
                             } while ($newIndex >= 20);
                             if ($newIndex >= 20) {
                                 $increment++;
@@ -183,8 +183,15 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                                 $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['id'] = $role->id;
                                 $tutelar->saveConfig();
                             },
-                            function ($error) use ($tutelar) {
+                            function ($error) use ($tutelar, $message, $increment, $index) {
                                 $tutelar->logger->warning('Error creating custom role: ' . $error->getMessage());
+                                //Unset the new role we couldn't save
+                                unset($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['name']);
+                                unset($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['emoji']);
+                                unset($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['color']);
+                                unset($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['hoist']);
+                                unset($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['mentionable']);
+                                unset($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['permissions']);
                             }
                         );
                     }, function ($error) use ($tutelar, $message) { //Unicode isn't valid

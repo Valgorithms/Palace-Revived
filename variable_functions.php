@@ -150,8 +150,8 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                         $increment = '';
                         if ($index / 20 == 1) do {
                             $increment++;
-                            $index = sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles']);
-                            $increment = floor($index);
+                            $index = isset($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles']) ? sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles']) : 0;
+                            //$increment = floor($index); //what?
                         } while ($index / 20 == 1);
                         if ($r = $message->guild->roles->get('name', $name)) {
                             foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'] as $rk => $vk) if ($vk['name'] == $name) {

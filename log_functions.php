@@ -102,11 +102,11 @@ $log_message = function (\Tutelar\Tutelar $tutelar, $message) use ($log_builder)
 
 $log_MESSAGE_UPDATE = function (\Tutelar\Tutelar $tutelar, $message, $message_old = null) use ($log_builder)
 {
-    if (is_null($message) || is_null($message->author) || is_null($message->edited_timestamp)) return;
+    if (is_null($message) || (! isset($message->author) || is_null($message->author) ) || (! isset($message->edited_timestamp) || is_null($message->edited_timestamp)) ) return;
     if ($message->user_id == $tutelar->discord->id) return; // Ignore messages sent by this bot
     if ($message->webhook_id) return; // Ignore messages sent by webhooks
     if (isset($message->user) && $message->user->bot) return; //Don't log messages made by bots
-    if ($message->guild_id && $channel = $tutelar->discord->getChannel($tutelar->discord_config[$message->guild_id]['channels']['log'])) {
+    if ($message->guild_id && isset($tutelar->discord_config[$message->guild_id]['channels']['log']) && $channel = $tutelar->discord->getChannel($tutelar->discord_config[$message->guild_id]['channels']['log'])) {
         if ($builder = $log_builder($tutelar, $message, 'Message Updated', null, $message_old))
             $channel->sendMessage($builder)->done(
                 function ($new_message) use ($tutelar, $message) {

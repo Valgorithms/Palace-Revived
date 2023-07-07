@@ -136,8 +136,8 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                 $array = explode (' ', $message_content);
                 $emoji = $array[sizeof($array)-1];
                 $name = '';
-                for($x=0; $x<=sizeof($array)-2; $x++) $name .= "{$array[$x]} ";
-                $name = trim($name);
+                $name = implode(' ', array_slice($array, 0, -1));
+                $name = substr($name, 0, 100);
                 if (!$name) return $message->reply("Missing name parameter! Creating new custom roles should be done in the format of @{$tutelar->discord->username} add role_name unicode_emoji");
                 $keys = array_keys($tutelar->discord_config[$message->guild_id]['reaction_roles']);
                 foreach ($keys as $key) if (str_starts_with($key, 'custom'))

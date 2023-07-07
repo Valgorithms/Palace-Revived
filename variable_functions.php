@@ -146,13 +146,18 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                 if (!$emoji) return $message->reply("Missing emoji parameter! Creating new custom roles should be done in the format of @{$tutelar->discord->username} add role_name unicode_emoji");
                 $message->react($emoji)->done(
                     function ($reaction) use ($tutelar, $message, $name, $emoji) { //Unicode should be valid, so create the role
-                        $index = sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']['custom']['roles']);
+                        $index = isset($tutelar->discord_config[$message->guild_id]['reaction_roles']['custom']['roles']) ? sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']['custom']['roles']) : 0;
                         $increment = '';
-                        if ($index / 20 == 1) do {
-                            $increment++;
-                            $index = isset($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles']) ? sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles']) : 0;
-                            $increment = floor($index / 20); //what?
-                        } while ($index / 20 == 1);
+                        if ($index >= 20) {
+                            do {
+                                $increment++;
+                                $newIndex = isset($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles']) ? sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles']) : 0;
+                            } while ($newIndex >= 20);
+                            if ($newIndex >= 20) {
+                                $increment++;
+                                $index = 0;
+                            } else $index = $newIndex;
+                        }
                         if ($r = $message->guild->roles->get('name', $name)) {
                             foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'] as $rk => $vk) if ($vk['name'] == $name) {
                                 $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$rk]['id'] = $r->id;

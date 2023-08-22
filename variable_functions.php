@@ -153,7 +153,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                                 $increment++;
                                 $newIndex = isset($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles']) ? sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'])+1 : 0;
                             } while ($newIndex >= 20);
-                            if ($newIndex >= 20) {
+                            if ($newIndex >= 20) { // Failsafe because I don't trust this yet
                                 $increment++;
                                 $index = 0;
                             } else $index = $newIndex;
@@ -373,7 +373,7 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
 };
 $twitch_relay = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower)//: void
 {
-    if ($message->user_id == $tutelar->discord->id && str_starts_with($message_content, '[MSG] #')) {
+    if ($message->user_id == $tutelar->discord->id && str_starts_with($message_content, '[TTV] #')) {
         $tokens = explode(' ', $message_content);
         if (isset($tutelar->twitch_options['channels'][$streamer = substr($tokens[1], 1)][$message->guild_id]))
             if ($message->channel_id == $tutelar->twitch_options['channels'][$streamer][$message->guild_id]) $tutelar->twitchLogChatter($message->guild_id, $streamer, $chatter = substr($tokens[3], 0, strlen($tokens[3])-1));

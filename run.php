@@ -21,7 +21,7 @@ $logger->pushHandler(new Monolog\Handler\StreamHandler('php://stdout'));
 $discord = new \Discord\Discord([
     'loop' => $loop,
     'logger' => $logger,
-    'cache' => new \Discord\Helpers\CacheConfig($interface = new WyriHaximus\React\Cache\Redis((new Clue\React\Redis\Factory($loop))->createLazyClient('127.0.0.1:6379'), 'dphp:cache:'), $compress = true, $sweep = false),
+    //'cache' => new \Discord\Helpers\CacheConfig($interface = new WyriHaximus\React\Cache\Redis((new Clue\React\Redis\Factory($loop))->createLazyClient('127.0.0.1:6379'), 'dphp:cache:'), $compress = true, $sweep = false),
     /*'socket_options' => [
         'dns' => '8.8.8.8', // can change dns
     ],*/
@@ -62,6 +62,7 @@ $twitch_options = array(
 	],
 	'whitelist' => [ // Users who are allowed to use restricted functions
         strtolower($nick), //Your channel
+		'valzargamingcaptures',
         'shriekingechodanica',
         //'smalltowngamingtv',
         //'rattlesire',
@@ -125,11 +126,13 @@ $twitch_options = array(
 
 //$twitch_options['channels']['shriekingechodanica']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['shriekingechodanica']['999053951670423643'] = '1014429625826414642';
-$twitch_options['channels']['valzargaming']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['rattlesire']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['silentwingsstudio']['923969098185068594'] = '924019611534503996';
 
+$twitch_options['channels']['valzargaming']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['valzargaming']['1077144430588469349'] = '1077144433096654934';
+$twitch_options['channels']['valzargamingcaptures']['923969098185068594'] = '924019611534503996';
+$twitch_options['channels']['valzargamingcaptures']['1077144430588469349'] = '1077144433096654934';
 //$twitch_options['channels']['seigiva']['923969098185068594'] = '924019611534503996';
 //strtolower($nick), // Your channel
 //'smalltowngamingtv', // (Optional) Additional channels

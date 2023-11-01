@@ -46,7 +46,8 @@ $ss13_slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($discord
             $commands->save($command);
         }
     });
-    $tutelar->discord->guilds->get('id', '807759102624792576')->commands->freshen()->done( function ($commands) use ($tutelar) {
+    /* Blue Colony
+	$tutelar->discord->guilds->get('id', '807759102624792576')->commands->freshen()->done( function ($commands) use ($tutelar) {
         //if ($command = $commands->get('name', 'ckey')) $commands->delete($command->id);
         if (! $commands->get('name', 'ckey')) {
             $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
@@ -57,7 +58,7 @@ $ss13_slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($discord
             ]);
             $commands->save($command);
         }
-    });
+    });*/
     
     $tutelar->discord->listenCommand('ckey', function ($interaction) use ($tutelar, $discord2ckey) {
         if (!$response = $discord2ckey($tutelar, $interaction->data->target_id)) return $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('There was an error retrieving data'));

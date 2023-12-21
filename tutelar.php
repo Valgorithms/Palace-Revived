@@ -51,7 +51,7 @@ class Tutelar
      * Creates a Tutelar client instance.
      *
      * @param  array           $options Array of options.
-     * @throws IntentException
+     * @throws \Exception
      */
     public function __construct(array $options = [])
     {

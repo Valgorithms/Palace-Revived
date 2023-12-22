@@ -184,7 +184,7 @@ class Tutelar
         if ((isset($this->discord))) $this->discord->stop();
     }
     
-    public function setWebAPI(\React\Http\Server $webapi): void
+    public function setWebAPI(\React\Http\HttpServer $webapi): void
     {
         $this->webapi = $webapi;
     }

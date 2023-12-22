@@ -20,7 +20,7 @@ $vzg_ip = gethostbyname('www.valzargaming.com');
 $civ13_ip = gethostbyname('www.civ13.com');
 
 $socket = new \React\Socket\Server(sprintf('%s:%s', '0.0.0.0', '55557'), $tutelar->loop);
-$webapi = new \React\Http\Server($loop, function (\Psr\Http\Message\ServerRequestInterface $request) use ($tutelar, $socket, $external_ip, $vzg_ip, $civ13_ip)
+$webapi = new \React\Http\HttpServer($tutelar->loop, function (\Psr\Http\Message\ServerRequestInterface $request) use ($tutelar, $socket, $external_ip, $vzg_ip, $civ13_ip)
 {
     /*
     $path = explode('/', $request->getUri()->getPath());
@@ -234,7 +234,7 @@ $webapi = new \React\Http\Server($loop, function (\Psr\Http\Message\ServerReques
             break;
 
         case 'avatars':
-            $idarray = $data ?? array(); // $data contains POST data
+            $idarray = array(); // $data contains POST data
             $results = [];
             $promise = $tutelar->discord->users->fetch($idarray[0])->then(function ($user) use (&$results) {
               $results[$user->id] = $user->avatar;

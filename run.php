@@ -38,7 +38,7 @@ include 'functions.php'; //execInBackground()
 include 'variable_functions.php';
 
 
-$nick = 'ValZarGaming'; // Twitch username (Case sensitive)
+$nick = 'Valgorithms'; // Twitch username (Case sensitive)
 $twitch_options = array(
 	//Required
 	'secret' => $secret, // Client secret
@@ -124,23 +124,28 @@ $twitch_options = array(
 //Discord servers to relay chat for
 //Syntax: $twitch_options['channels']['twitch_channel_name']['discord_guild_id'] = 'discord_channel_id';
 
-//$twitch_options['channels']['shriekingechodanica']['923969098185068594'] = '924019611534503996';
-$twitch_options['channels']['shriekingechodanica']['999053951670423643'] = '1014429625826414642';
-$twitch_options['channels']['rattlesire']['923969098185068594'] = '924019611534503996';
-$twitch_options['channels']['silentwingsstudio']['923969098185068594'] = '924019611534503996';
 
-$twitch_options['channels']['valzargaming']['923969098185068594'] = '924019611534503996';
-$twitch_options['channels']['valzargaming']['1077144430588469349'] = '1077144433096654934';
+
+//Official ValZarGaming Team
+//ValZarGaming
+$twitch_options['channels']['valgorithms']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['valzargamingcaptures']['923969098185068594'] = '924019611534503996';
-$twitch_options['channels']['valzargamingcaptures']['1077144430588469349'] = '1077144433096654934';
-//$twitch_options['channels']['seigiva']['923969098185068594'] = '924019611534503996';
-//strtolower($nick), // Your channel
-//'smalltowngamingtv', // (Optional) Additional channels
-//'rattlesire',
-//'shrineplays',
-//'violentvixen_',
-//'linkdrako',
-//'ebonychimera',
+$twitch_options['channels']['quenya']['923969098185068594'] = '924019611534503996';
+$twitch_options['channels']['shriekingechodanica']['923969098185068594'] = '924019611534503996';
+$twitch_options['channels']['trashcat6699']['923969098185068594'] = '924019611534503996';
+$twitch_options['channels']['emmkaede']['923969098185068594'] = '924019611534503996';
+$twitch_options['channels']['silentwingsstudio']['923969098185068594'] = '924019611534503996';
+//Valgorithms
+$twitch_options['channels']['valgorithms']['1077144430588469349'] = '1077144433096654934';
+$twitch_options['channels']['valzargamingcaptures']['1077144430588469349'] = '1201002265419456602';
+$twitch_options['channels']['quenya']['1077144430588469349'] = '1200997389444599928';
+$twitch_options['channels']['shriekingechodanica']['1077144430588469349'] = '1077144433096654934';
+$twitch_options['channels']['trashcat6699']['1077144430588469349'] = '1077144433096654934';
+$twitch_options['channels']['emmkaede']['1077144430588469349'] = '1077144433096654934';
+$twitch_options['channels']['silentwingsstudio']['1077144430588469349'] = '1077144433096654934';
+//Danica's Rat Nest
+$twitch_options['channels']['shriekingechodanica']['999053951670423643'] = '1014429625826414642'; // Danica's Rat Nest
+
 // Responses that reference other values in options should be declared afterwards
 $twitch_options['responses']['social'] = 'Come follow the magick through several dimensions:  Twitter - '.$twitch_options['social']['twitter'].' |  Discord - '.$twitch_options['social']['discord'].' |  YouTube - '.$twitch_options['social']['youtube'];
 $twitch_options['responses']['tip'] = 'Wanna help fund the magick?  PayPal - '.$twitch_options['tip']['paypal'];

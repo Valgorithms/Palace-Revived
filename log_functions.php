@@ -64,7 +64,7 @@ $log_builder = function(\Tutelar\Tutelar $tutelar, $new, ?string $title = '', ?s
             }
         } elseif ($old instanceof \Discord\Parts\User\Member) {
             if ($old->username != $new->username) $embed->addFieldValues('Username', "`{$old->username}`→`{$new->username}`" , true);
-            if ($old->nick != $new->nick) $embed->addFieldValues('Nickname', "`{$old->nick}`→`{$new->nick}`" , true);
+            if ($old->nick != $new->nick) $embed->addFieldValues('Nickname','"`' . ($old->nick ?? $old->user->global_name ?? $old->user->username)  . "`→`{$new->nick}`" , true);
             if ($old->avatar != $new->avatar) $embed->addFieldValues('Avatar', "`{$old->avatar}`→`{$new->avatar}`" , true);
             if ($new->roles != $old->roles) {
                 $new_role_names = [];

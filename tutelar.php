@@ -501,7 +501,7 @@ class Tutelar
                 ],
                 [
                     'name' => 'Robot',
-                    'emoji' => '🦾',
+                    'emoji' => '🤖',
                     'color' => null,
                     'hoist' => false,
                     'mentionable' => false,

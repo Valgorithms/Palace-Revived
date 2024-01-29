@@ -136,10 +136,10 @@ $twitch_options['channels']['trashcat6699']['923969098185068594'] = '92401961153
 $twitch_options['channels']['emmkaede']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['silentwingsstudio']['923969098185068594'] = '924019611534503996';
 //Valgorithms
-$twitch_options['channels']['valgorithms']['1077144430588469349'] = '1077144433096654934';
+$twitch_options['channels']['valgorithms']['1077144430588469349'] = '1201002265419456602';
 $twitch_options['channels']['valzargamingcaptures']['1077144430588469349'] = '1201002265419456602';
 $twitch_options['channels']['quenya']['1077144430588469349'] = '1200997389444599928';
-$twitch_options['channels']['shriekingechodanica']['1077144430588469349'] = '1077144433096654934';
+$twitch_options['channels']['shriekingechodanica']['1077144430588469349'] = '1201412793774116965';
 $twitch_options['channels']['trashcat6699']['1077144430588469349'] = '1077144433096654934';
 $twitch_options['channels']['emmkaede']['1077144430588469349'] = '1077144433096654934';
 $twitch_options['channels']['silentwingsstudio']['1077144430588469349'] = '1077144433096654934';

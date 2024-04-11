@@ -243,8 +243,10 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
             $target = $message_content_lower = strtolower($message_content);
             if (!isset($tutelar->discord_config[$message->guild_id]['reaction_roles'][$target])) return $message->reply("Invalid reaction role `$target`! Valid options are " . implode(', ', array_keys($tutelar->discord_config[$message->guild_id]['reaction_roles'])));
             foreach (array_keys($tutelar->discord_config[$message->guild_id]['reaction_roles']) as $key) if ($key == $target) { //???
+                $message_content = '';
+                if (isset($tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['message_content']))
+                    $message_content = $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['message_content'];
                 $emojis = [];
-                $message_content = $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['message_content'];
                 foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'] as $arr => $val) {
                     if (!isset($val['emoji'])) continue;
                     $emojis[] = $val['emoji'];

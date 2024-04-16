@@ -1786,6 +1786,17 @@ class Tutelar
             }
         }
     }
+
+    /**
+     * This function is used to sanitize a ckey or a Discord snowflake.
+     *
+     * @param string $input The input string to be sanitized.
+     * @return string The sanitized input string.
+     */
+    public function sanitizeInput(string $input): string
+    {
+        return trim(str_replace(['<@!', '<@&', '<@', '>', '.', '_', '-', '+', ' '], '', strtolower($input)));
+    }
     
     public function saveConfig() : bool
     {

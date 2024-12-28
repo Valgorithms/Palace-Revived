@@ -350,7 +350,7 @@ $whois = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\User $user, $g
 $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $message_content, string $message_content_lower) use ($whois, $perm_check, $debug_guild_message, $owner_message, $manager_message, $admin_message, $moderator_message)
 {
     if (str_starts_with($message_content_lower, 'whois')) {
-        if (is_numeric($message_content = trim(substr($message_content, strlen('whois')))) && $member = $message->guild->members->get('id', $message_content)) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
+        if (is_numeric($message_content = $tutelar->sanitizeInput(substr($message_content, strlen('whois')))) && $member = $message->guild->members->get('id', $message_content)) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
         if (empty($arr = \GetMentions($message_content))) return $message->react("👎");
         if (!is_numeric($arr[0])) return $message->react("👎");
         if ($member = $message->guild->members->get('id', $arr[0])) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
@@ -466,7 +466,7 @@ $any_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $mes
     
     //Miscellaneous Discord stuff
     if (str_starts_with($message_content_lower, 'avatar')) {
-        $message_content_lower = trim(str_replace(['<@!', '<@', '>'], '', substr($message_content_lower, strlen('avatar'))));
+        $message_content_lower = $tutelar->sanitizeInput(substr($message_content_lower, strlen('avatar')));
         if (! $message_content_lower) return $message->reply($message->user->avatar);
         if (! is_numeric($message_content_lower)) return $message->reply('Invalid parameter! Please include the ID of the user you want to see the avatar of.');
         return $tutelar->discord->users->fetch($message_content_lower)->then(

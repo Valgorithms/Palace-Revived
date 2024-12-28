@@ -34,7 +34,7 @@ $discord2ckey = function ($tutelar, $id)
 $ss13_slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($discord2ckey)
 {
     if ($command = $commands->get('name', 'ckey')) $commands->delete($command->id);
-    $tutelar->discord->guilds->get('id', '468979034571931648')->commands->freshen()->done( function ($commands) use ($tutelar) {
+    $tutelar->discord->guilds->get('id', '468979034571931648')->commands->freshen()->then( function ($commands) use ($tutelar) {
         //if ($command = $commands->get('name', 'ckey')) $commands->delete($command->id);
         if (! $commands->get('name', 'ckey')) {
             $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
@@ -47,7 +47,7 @@ $ss13_slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($discord
         }
     });
     /* Blue Colony
-	$tutelar->discord->guilds->get('id', '807759102624792576')->commands->freshen()->done( function ($commands) use ($tutelar) {
+	$tutelar->discord->guilds->get('id', '807759102624792576')->commands->freshen()->then( function ($commands) use ($tutelar) {
         //if ($command = $commands->get('name', 'ckey')) $commands->delete($command->id);
         if (! $commands->get('name', 'ckey')) {
             $command = new \Discord\Parts\Interactions\Command\Command($tutelar->discord, [
@@ -62,7 +62,7 @@ $ss13_slash_init = function (\Tutelar\Tutelar $tutelar, $commands) use ($discord
     
     $tutelar->discord->listenCommand('ckey', function ($interaction) use ($tutelar, $discord2ckey) {
         if (!$response = $discord2ckey($tutelar, $interaction->data->target_id)) return $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent('There was an error retrieving data'));
-        if ($response instanceof \React\Promise\Promise) return $response->done( function ($response) use ($interaction) { $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent($response), true); });
+        if ($response instanceof \React\Promise\Promise) return $response->then( function ($response) use ($interaction) { $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent($response), true); });
         $interaction->respondWithMessage(\Discord\Builders\MessageBuilder::new()->setContent($response), true);
     });
 };
@@ -209,9 +209,9 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
             if (isset($tutelar->owner_id) && $owner = $tutelar->discord->users->get('id', $tutelar->owner_id)) $embed->setFooter(($tutelar->github ?  "{$tutelar->github}" . PHP_EOL : '') . "{$tutelar->discord->username} by {$owner->displayname}");
             $embed->setTimestamp();
             $builder->addEmbed($embed);
-            $channel->sendMessage($builder)->done(function($message){$message->react("👍")->done(function($result)use($message){$message->react("👎");});});
+            $channel->sendMessage($builder)->then(function($message){$message->react("👍")->then(function($result)use($message){$message->react("👎");});});
             if ($m = $message->guild->channels->get('id' , $tutelar->discord_config[$message->guild_id]['channels']['suggestion_pending'])->messages->get('id', $suggestion['message_id'])) $m->delete(); 
-            else $message->guild->channels->get('id', $tutelar->discord_config[$message->guild_id]['channels']['suggestion_pending'])->messages->fetch('id', $suggestion['message_id'])->done(function ($message) {$message->delete();});
+            else $message->guild->channels->get('id', $tutelar->discord_config[$message->guild_id]['channels']['suggestion_pending'])->messages->fetch('id', $suggestion['message_id'])->then(function ($message) {$message->delete();});
             $message->react("👍");
             return $tutelar->VarSave('suggestions.json', $tutelar->suggestions);
         }
@@ -242,10 +242,10 @@ $ss13_guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, stri
             if (strlen($message_content) <= 1024) $embed->addFieldValues('Suggestion', $message_content);
             else $builder->setContent($message_content);
             $builder->addEmbed($embed);
-            $channel->sendMessage($builder)->done(function($new_message) use ($tutelar, $message) {
+            $channel->sendMessage($builder)->then(function($new_message) use ($tutelar, $message) {
                 $tutelar->suggestions[$message->guild_id]['pending'][$message->id]['message_id'] = $new_message->id;
                 $tutelar->VarSave('suggestions.json', $tutelar->suggestions);
-                $new_message->react("👍")->done(function($result)use($new_message){$new_message->react("👎");});
+                $new_message->react("👍")->then(function($result)use($new_message){$new_message->react("👎");});
             });
             return $message->reply("Your suggestion has been submitted for review with ID {$message->id}");
         }

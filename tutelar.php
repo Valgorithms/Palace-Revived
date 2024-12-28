@@ -141,7 +141,7 @@ class Tutelar
                 if (!empty($this->functions['init'])) foreach ($this->functions['init'] as $key => $func) $func($this);
                 else $this->logger->debug('No init functions found!');
                 
-                $this->discord->application->commands->freshen()->done(function ($commands) {
+                $this->discord->application->commands->freshen()->then(function ($commands) {
                     if (!empty($this->functions['init_slash'])) foreach ($this->functions['init_slash'] as $key => $func) $func($this, $commands);
                     else $this->logger->debug('No init slash functions found!');
                 });
@@ -1649,14 +1649,14 @@ class Tutelar
         $this->discord->on('MESSAGE_REACTION_ADD', function ($reaction) {
             if ($reaction->user_id == $this->discord->id) return; //Do not add roles to the bot
             if (is_null($reaction->message)) {
-				$reaction->channel->messages->fetch($reaction->message_id)->done(function ($message) use ($reaction) {
+				$reaction->channel->messages->fetch($reaction->message_id)->then(function ($message) use ($reaction) {
 					$this->roleReactionAdd($reaction);
 				});
 			} else $this->roleReactionAdd($reaction);
         });
         $this->discord->on('MESSAGE_REACTION_REMOVE', function (\Discord\Parts\WebSockets\MessageReaction $reaction) {
             if ($reaction->user_id == $this->discord->id) return; //Do not add roles to the bot
-            if (is_null($reaction->message)) $reaction->channel->messages->fetch($reaction->message_id)->done(function ($message) use ($reaction) { $this->roleReactionRemove($reaction); });
+            if (is_null($reaction->message)) $reaction->channel->messages->fetch($reaction->message_id)->then(function ($message) use ($reaction) { $this->roleReactionRemove($reaction); });
 			else $this->roleReactionRemove($reaction);
         });
         $this->discord->getLoop()->addPeriodicTimer(1800, function () { //Automatically save configurations every 6 hours if changes were made
@@ -1746,7 +1746,7 @@ class Tutelar
     public function reactionLoop($message, array $emojis) : void
     {
         $add = function ($message, $emojis) use (&$add) {
-            if (count($emojis) !== 0) $message->react(array_shift($emojis))->done(function () use ($add, $emojis, $message) {
+            if (count($emojis) !== 0) $message->react(array_shift($emojis))->then(function () use ($add, $emojis, $message) {
                 $add($message, $emojis);
             });
         };
@@ -1763,7 +1763,7 @@ class Tutelar
                 if ($reaction->member->roles->get('name', $v['name']) ?? $reaction->member->roles->get('id', $v['id'])) return;
                 if (! $role = ($reaction->guild->roles->get('name', $v['name']) ?? $reaction->guild->roles->get('id', $v['id']))) return $this->logger->warning('Unable to get configured role from server! ' . $v['name'] . ' : ' . $v['id']);
                 $reaction->member->addRole($role->id);
-                $reaction->channel->sendMessage($reaction->user . ' added the `' . $role->name . '` role!')->done(function ($message) {
+                $reaction->channel->sendMessage($reaction->user . ' added the `' . $role->name . '` role!')->then(function ($message) {
                     $this->discord->getLoop()->addTimer(10, function () use ($message) { $message->delete(); });
                 });
             }
@@ -1780,7 +1780,7 @@ class Tutelar
                 if (! $reaction->member->roles->get('name', $v['name']) ?? $reaction->member->roles->get('id', $v['id'])) return;
                 if (! $role = $reaction->guild->roles->get('name', $v['name']) ?? $reaction->guild->roles->get('id', $v['id'])) return $this->logger->warning('Unable to get configured role from server! ' . $v['name'] . ' : ' . $v['id']);
                 $reaction->member->removeRole($role->id);
-                $reaction->channel->sendMessage($reaction->user . ' removed the `' . $role->name . '` role')->done(function ($message) {
+                $reaction->channel->sendMessage($reaction->user . ' removed the `' . $role->name . '` role')->then(function ($message) {
                     $this->discord->getLoop()->addTimer(10, function () use ($message) { $message->delete(); });
                 });
             }

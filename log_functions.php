@@ -218,7 +218,7 @@ $log_userUpdate = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User\User 
     if ($user->id == $tutelar->discord->id) return; // Ignore user updates by this bot
     if ($builder = $log_builder($tutelar, $user, 'User Updated', $user, $user_old))
         foreach ($tutelar->discord->guilds as $guild) if ($member = $guild->members->get('id', $user->id) && $channel = $tutelar->discord->getChannel($tutelar->discord_config[$guild->id]['channels']['log'])) {
-            $channel->sendMessage($builder)->done(
+            $channel->sendMessage($builder)->then(
                 function ($message) use ($tutelar, $user) {
                     $tutelar->logger->info('Logged updated user: ' . $user->id);
                 }, function ($error) use ($tutelar) {

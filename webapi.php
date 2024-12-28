@@ -218,7 +218,7 @@ $webapi = new \React\Http\HttpServer($tutelar->loop, function (\Psr\Http\Message
                 return webapiFail('user_id', $id);
             }
             if (!$user = $tutelar->discord->users->get('id', $id)) {
-                $tutelar->discord->users->fetch($id)->done(
+                $tutelar->discord->users->fetch($id)->then(
                     function ($user) {
                         $return = $user->avatar;
                         return new \React\Http\Message\Response(200, ['Content-Type' => 'text/plain'], $return);
@@ -246,7 +246,7 @@ $webapi = new \React\Http\HttpServer($tutelar->loop, function (\Psr\Http\Message
                 });
               });
             }
-            $promise->done(function () use ($results) {
+            $promise->then(function () use ($results) {
               return new \React\Http\Message\Response (200, ['Content-Type' => 'application/json'], json_encode($results));
             }, function () use ($results) {
               // return with error ?

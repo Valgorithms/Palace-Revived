@@ -108,7 +108,7 @@ $log_MESSAGE_UPDATE = function (\Tutelar\Tutelar $tutelar, $message, $message_ol
     if (isset($message->user) && $message->user->bot) return; //Don't log messages made by bots
     if ($message->guild_id && isset($tutelar->discord_config[$message->guild_id]['channels']['log']) && $channel = $tutelar->discord->getChannel($tutelar->discord_config[$message->guild_id]['channels']['log'])) {
         if ($builder = $log_builder($tutelar, $message, 'Message Updated', null, $message_old))
-            $channel->sendMessage($builder)->done(
+            $channel->sendMessage($builder)->then(
                 function ($new_message) use ($tutelar, $message) {
                     $tutelar->logger->info('Logged updated message: ' . $message->id);
                 }, function ($error) use ($tutelar) {
@@ -128,7 +128,7 @@ $log_MESSAGE_DELETE = function (\Tutelar\Tutelar $tutelar, $message) use ($log_b
     if (isset($message->user) && $message->user->bot) return; //Don't log messages made by bots
     if ($message->guild_id && $channel = $tutelar->discord->getChannel($tutelar->discord_config[$message->guild_id]['channels']['log'])) {
         if ($builder = $log_builder($tutelar, $message, 'Message Deleted'))
-            $channel->sendMessage($builder)->done(
+            $channel->sendMessage($builder)->then(
                 function ($new_message) use ($tutelar, $message) {
                     $tutelar->logger->info('Logged deleted message: ' . $message->id);
                 }, function ($error) use ($tutelar) {
@@ -147,7 +147,7 @@ $log_GUILD_MEMBER_ADD = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\User
 {
     if ($channel = $tutelar->discord->getChannel($tutelar->discord_config[$member->guild_id]['channels']['welcomelog'] ?? $tutelar->discord_config[$member->guild_id]['channels']['log'])) {
         if ($builder = $log_builder($tutelar, $member, 'Member Joined', $member))
-            $channel->sendMessage($builder)->done(
+            $channel->sendMessage($builder)->then(
                 function ($message) use ($tutelar, $member) {
                     $tutelar->logger->info('Logged added member: ' . $member->id);
                 }, function ($error) use ($tutelar) {
@@ -161,7 +161,7 @@ $log_GUILD_MEMBER_REMOVE = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\U
 {
     if ($channel = $tutelar->discord->getChannel($tutelar->discord_config[$member->guild_id]['channels']['welcomelog'] ?? $tutelar->discord_config[$member->guild_id]['channels']['log'])) {
         if ($builder = $log_builder($tutelar, $member, 'Member Left', $member))
-            $channel->sendMessage($builder)->done(
+            $channel->sendMessage($builder)->then(
                 function ($message) use ($tutelar, $member) {
                     $tutelar->logger->info('Logged removed member: ' . $member->id);
                 }, function ($error) use ($tutelar) {
@@ -175,7 +175,7 @@ $log_GUILD_MEMBER_UPDATE = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\U
 {
     if ($channel = $tutelar->discord->getChannel($tutelar->discord_config[$member->guild_id]['channels']['log'])) {
         if ($builder = $log_builder($tutelar, $member, 'Member Updated', $member, $member_old))
-            $channel->sendMessage($builder)->done(
+            $channel->sendMessage($builder)->then(
                 function ($message) use ($tutelar, $member) {
                     $tutelar->logger->info('Logged updated member: ' . $member->id);
                 }, function ($error) use ($tutelar) {
@@ -189,7 +189,7 @@ $log_GUILD_BAN_ADD = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\Guild\B
 {
     if ($channel = $tutelar->discord->getChannel($tutelar->discord_config[$ban->guild_id]['channels']['log'])) {
         if ($builder = $log_builder($tutelar, $ban, 'Member Banned', $ban->user))
-            $channel->sendMessage($builder)->done(
+            $channel->sendMessage($builder)->then(
                 function ($message) use ($tutelar, $ban) {
                     $tutelar->logger->info('Logged banned member: ' . $ban->user);
                 }, function ($error) use ($tutelar) {
@@ -203,7 +203,7 @@ $log_GUILD_BAN_REMOVE = function (\Tutelar\Tutelar $tutelar, \Discord\Parts\Guil
 {
     if ($channel = $tutelar->discord->getChannel($tutelar->discord_config[$ban->guild_id]['channels']['log'])) {
         if ($builder = $log_builder($tutelar, $ban, 'Member Unbanned', $ban->user))
-            $channel->sendMessage($builder)->done(
+            $channel->sendMessage($builder)->then(
                 function ($message) use ($tutelar, $ban) {
                     $tutelar->logger->info('Logged unbanned member: ' . $ban->user);
                 }, function ($error) use ($tutelar) {

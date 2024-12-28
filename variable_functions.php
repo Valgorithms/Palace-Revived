@@ -73,7 +73,7 @@ $perm_check = function (array $required_perms, $member, \Discord\Parts\Channel\C
 };
 
 $timeout = function (\Tutelar\Tutelar $tutelar, $member, ?string $duration = '6 hours', ?string $reason = null) {
-    $member->timeoutMember(new \Carbon\Carbon($duration), $reason)->done(
+    $member->timeoutMember(new \Carbon\Carbon($duration), $reason)->then(
         function () {
             // ...
         }, function ($error) use ($tutelar) {
@@ -144,7 +144,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                     foreach ($tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'] as $k => $arr)
                         if ($arr['name'] == $name) return $message->reply("A custom role with the name `$name` already exists in the config");
                 if (!$emoji) return $message->reply("Missing emoji parameter! Creating new custom roles should be done in the format of @{$tutelar->discord->username} add role_name unicode_emoji");
-                $message->react($emoji)->done(
+                $message->react($emoji)->then(
                     function ($reaction) use ($tutelar, $message, $name, $emoji) { //Unicode should be valid, so create the role
                         $index = isset($tutelar->discord_config[$message->guild_id]['reaction_roles']['custom']['roles']) ? sizeof($tutelar->discord_config[$message->guild_id]['reaction_roles']['custom']['roles'])+1 : 0;
                         $increment = '';
@@ -177,7 +177,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                         $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['mentionable'] = false;
                         $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['permissions'] = 0;
                         $role_template = new \Discord\Parts\Guild\Role($tutelar->discord, $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]);
-                        $message->guild->createRole($role_template->getUpdatableAttributes())->done(
+                        $message->guild->createRole($role_template->getUpdatableAttributes())->then(
                             function ($role) use ($tutelar, $message, $index, $increment) {
                                 $tutelar->logger->info("Created new custom role id: {$role->id}");
                                 $tutelar->discord_config[$message->guild_id]['reaction_roles']["custom$increment"]['roles'][$index]['id'] = $role->id;
@@ -262,7 +262,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                                 'permissions' => $val['permissions']
                             ]
                         );
-                        $message->guild->createRole($role_template->getUpdatableAttributes())->done(
+                        $message->guild->createRole($role_template->getUpdatableAttributes())->then(
                             function ($role) use ($tutelar, $message, $key, $arr, $val) {
                                 $tutelar->logger->info("Created new {$val['name']} role id {$role->id}");
                                 $val['id'] = $role->id;
@@ -278,7 +278,7 @@ $manager_message = function (\Tutelar\Tutelar $tutelar, $message, string $messag
                         $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['roles'][$arr] = $val;
                     }
                 }
-                $message->channel->sendMessage($message_content)->done( //Sending message not firing
+                $message->channel->sendMessage($message_content)->then( //Sending message not firing
                     function ($new_message) use ($tutelar, $message, $emojis, $key) {
                         $tutelar->reactionLoop($new_message, $emojis);
                         $tutelar->discord_config[$message->guild_id]['reaction_roles'][$key]['id'] = $new_message->id;
@@ -354,7 +354,7 @@ $guild_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $m
         if (empty($arr = \GetMentions($message_content))) return $message->react("👎");
         if (!is_numeric($arr[0])) return $message->react("👎");
         if ($member = $message->guild->members->get('id', $arr[0])) return $message->channel->sendEmbed($whois($tutelar, $member->user, $message->guild_id));
-        $tutelar->discord->users->fetch($arr[0])->done(
+        $tutelar->discord->users->fetch($arr[0])->then(
             function ($user) use ($tutelar, $message, $whois) { $message->channel->sendEmbed($whois($tutelar, $user, $message->guild_id)); },
             function ($error) use ($message) { $message->react("👎"); }
         );
@@ -405,7 +405,7 @@ $any_debug_message = function (\Tutelar\Tutelar $tutelar, $message, string $mess
         return $message->reply($string);
     }
     if (str_starts_with($message_content_lower, 'guild leave ')) {
-        $tutelar->discord->guilds->get('id', explode(' ', str_replace('guild leave ', '', $message_content_lower))[0])->leave()->done(
+        $tutelar->discord->guilds->get('id', explode(' ', str_replace('guild leave ', '', $message_content_lower))[0])->leave()->then(
             function () use ($message) { $message->react("👍"); },
             function () use ($message) { $message->react("👎"); }
         );
@@ -420,7 +420,7 @@ $any_debug_message = function (\Tutelar\Tutelar $tutelar, $message, string $mess
         foreach ($guild->channels as $channel) if ($channel->type != 4) return $channel->createInvite([
             'max_age' => 60, // 1 minute
             'max_uses' => 1, // 1 use
-        ])->done(
+        ])->then(
             function ($invite) use ($message, $guild) { $message->reply("{$guild->name} ({$guild->id}) https://discord.gg/{$invite->code}"); },
             function () use ($message) { $message->react("❌"); }
         );
@@ -445,7 +445,7 @@ $any_called_debug_message = function (\Tutelar\Tutelar $tutelar, $message, strin
         return $message->channel->createInvite([
             'max_age' => 60, // 1 minute
             'max_uses' => 5, // 5 uses
-        ])->done(function ($invite) use ($message) {
+        ])->then(function ($invite) use ($message) {
             $url = "https://discord.gg/{$invite->code}";
             $message->reply("Invite URL: $url");
         });
@@ -469,7 +469,7 @@ $any_called_message = function (\Tutelar\Tutelar $tutelar, $message, string $mes
         $message_content_lower = trim(str_replace(['<@!', '<@', '>'], '', substr($message_content_lower, strlen('avatar'))));
         if (! $message_content_lower) return $message->reply($message->user->avatar);
         if (! is_numeric($message_content_lower)) return $message->reply('Invalid parameter! Please include the ID of the user you want to see the avatar of.');
-        return $tutelar->discord->users->fetch($message_content_lower)->done(
+        return $tutelar->discord->users->fetch($message_content_lower)->then(
             function ($user) use ($message) {
                 return $message->reply($user->avatar);
             },

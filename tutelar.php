@@ -159,7 +159,7 @@ class Tutelar
     {
         if (is_null($options['logger'])) {
             $logger = new \Monolog\Logger('Tutelar');
-            $logger->pushHandler(new \Monolog\Handler\StreamHandler('php://stdout', \Monolog\Logger::DEBUG));
+            $logger->pushHandler(new \Monolog\Handler\StreamHandler('php://stdout', \Monolog\Level::Info));
             $options['logger'] = $logger;
         }
         

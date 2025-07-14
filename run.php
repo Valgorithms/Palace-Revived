@@ -6,6 +6,10 @@
  * Copyright (c) 2022-present Valithor Obsidion <valithor@valzargaming.com>
  */
 
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
+use React\EventLoop\Loop;
+
 set_time_limit(0);
 ignore_user_abort(1);
 ini_set('max_execution_time', 0);
@@ -15,13 +19,15 @@ require getcwd() . '/token.php'; //$token
 require getcwd() . '/secret.php'; //twitchphp helix secrets
 include getcwd() . '/vendor/autoload.php';
 
-$loop = \React\EventLoop\Loop::get();
-$logger = new Monolog\Logger('New logger');
-$logger->pushHandler(new Monolog\Handler\StreamHandler('php://stdout'));
+$streamHandler = new StreamHandler('php://stdout', Level::Info);
+$logger = new Monolog\Logger('New logger', [$streamHandler]);
+//$logger->pushHandler(new Monolog\Handler\StreamHandler('php://stdout'));
+
+
 $discord = new \Discord\Discord([
-    'loop' => $loop,
+    'loop' => Loop::get(),
     'logger' => $logger,
-    //'cache' => new \Discord\Helpers\CacheConfig($interface = new WyriHaximus\React\Cache\Redis((new Clue\React\Redis\Factory($loop))->createLazyClient('127.0.0.1:6379'), 'dphp:cache:'), $compress = true, $sweep = false),
+    //'cache' => new \Discord\Helpers\CacheConfig($interface = new WyriHaximus\React\Cache\Redis((new Clue\React\Redis\Factory(Loop::get()))->createLazyClient('127.0.0.1:6379'), 'dphp:cache:'), $compress = true, $sweep = false),
     /*'socket_options' => [
         'dns' => '8.8.8.8', // can change dns
     ],*/
@@ -33,7 +39,7 @@ $discord = new \Discord\Discord([
 include 'stats_object.php'; 
 $stats = new Stats();
 $stats->init($discord);
-$browser = new \React\Http\Browser($loop);
+$browser = new \React\Http\Browser(Loop::get());
 include 'functions.php'; //execInBackground()
 include 'variable_functions.php';
 
@@ -47,7 +53,7 @@ $twitch_options = array(
 	'discord' => $discord, // Pass your own instance of DiscordPHP (https://github.com/discord-php/DiscordPHP)	
 	'discord_output' => true, // Output Twitch chat to a Discord server
 	
-	'loop' => $loop, // (Optional) Pass your own instance of $loop to share with other ReactPHP applications
+	'loop' => Loop::get(), // (Optional) Pass your own instance of Loop::get() to share with other ReactPHP applications
 	'socket_options' => [
 		//'dns' => '8.8.8.8', // Can change DNS provider
 	],
@@ -130,17 +136,15 @@ $twitch_options = array(
 //ValZarGaming
 $twitch_options['channels']['valgorithms']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['valzargamingcaptures']['923969098185068594'] = '924019611534503996';
-$twitch_options['channels']['quenya']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['shriekingechodanica']['923969098185068594'] = '924019611534503996';
 $twitch_options['channels']['silentwingsstudio']['923969098185068594'] = '924019611534503996';
 //Valgorithms
 $twitch_options['channels']['valgorithms']['1077144430588469349'] = '1201002265419456602';
 $twitch_options['channels']['valzargamingcaptures']['1077144430588469349'] = '1201002265419456602';
-$twitch_options['channels']['quenya']['1077144430588469349'] = '1200997389444599928';
 $twitch_options['channels']['shriekingechodanica']['1077144430588469349'] = '1201412793774116965';
 $twitch_options['channels']['silentwingsstudio']['1077144430588469349'] = '1077144433096654934';
 //Danica's Rat Nest
-$twitch_options['channels']['shriekingechodanica']['999053951670423643'] = '1014429625826414642'; // Danica's Rat Nest
+$twitch_options['channels']['shriekingechodanica']['999053951670423643'] = '1014429625826414642';
 
 // Responses that reference other values in options should be declared afterwards
 $twitch_options['responses']['social'] = 'Come follow the magick through several dimensions:  Twitter - '.$twitch_options['social']['twitter'].' |  Discord - '.$twitch_options['social']['discord'].' |  YouTube - '.$twitch_options['social']['youtube'];
@@ -151,7 +155,7 @@ $twitch_options['responses']['discord'] = $twitch_options['social']['discord'];
 
 include 'db.php'; //$mysqli[$mysqli1, $mysqli2, $mysqli3], //$pdo[$pdo1, $pdo2, $pdo3]
 $options = array(
-    'loop' => $loop,
+    'loop' => Loop::get(),
     'discord' => $discord,
     //'twitch' => $twitch,
     'twitch_options' => $twitch_options,
